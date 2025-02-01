@@ -10,6 +10,37 @@ app.include_router(frontend_router)
 app.mount("/static", StaticFiles(directory="frontend/static/"))
 app.mount("/order-detail/static/", StaticFiles(directory="frontend/static/"))
 app.mount("/catalog/static/", StaticFiles(directory="frontend/static/"))
+app.mount("/upload", StaticFiles(directory="upload/"))
+
+@app.get('/api/products/limited')
+async def products_limited():
+    return [
+  {
+    "id": 123,
+    "category": 55,
+    "price": 500.67,
+    "count": 12,
+    "date": "Thu Feb 09 2023 21:39:52 GMT+0100 (Central European Standard Time)",
+    "title": "video card",
+    "description": "description of the product",
+    "freeDelivery": True,
+    "images": [
+      {
+        "src": "upload/1.png",
+        "alt": "Image alt string"
+      }
+    ],
+    "tags": [
+      {
+        "id": 12,
+        "name": "Gaming"
+      }
+    ],
+    "reviews": 5,
+    "rating": 4.6
+  }
+]
+
 
 
 if __name__ == '__main__':
