@@ -2,7 +2,6 @@ from starlette.requests import Request
 from starlette.responses import HTMLResponse
 from fastapi import APIRouter
 from starlette.templating import Jinja2Templates
-from fastapi.staticfiles import StaticFiles
 
 
 router = APIRouter()
@@ -20,17 +19,17 @@ async def read_root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request, "user": A()})
 
 
-@router.get("about/")
+@router.get("/about")
 async def about(request: Request):
     return templates.TemplateResponse("about.html", {"request": request, "user": A()})
 
 
-@router.get("account/")
+@router.get("/account")
 async def account(request: Request):
     return templates.TemplateResponse("account.html", {"request": request, "user": A()})
 
 
-@router.get("cart/")
+@router.get("/cart")
 async def cart(request: Request):
     return templates.TemplateResponse("cart.html", {"request": request, "user": A()})
 
@@ -41,9 +40,10 @@ async def catalog(request: Request):
     return templates.TemplateResponse("catalog.html", {"request": request, "user": A()})
 
 
-@router.get("catalog/{id}/")
-async def about(request: Request):
-    return templates.TemplateResponse("catalog.html", {"request": request, "user": A()})
+@router.get("/catalog/{id}")
+async def catalog_id(id: int, request: Request):
+    print('id', id)
+    return templates.TemplateResponse("catalog.html", {"request": request, "user": A(), "id": id})
 
 
 @router.get("history-order/")
@@ -53,9 +53,9 @@ async def history(request: Request):
     )
 
 
-@router.get("order-detail/{id}/")
-async def about(request: Request):
-    return templates.TemplateResponse("catalog.html", {"request": request, "user": A()})
+@router.get("/order-detail/{id}")
+async def order_detail(request: Request, id: int):
+    return templates.TemplateResponse("oneorder.html", {"request": request, "user": A()})
 
 
 @router.get("about/")

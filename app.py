@@ -8,6 +8,8 @@ app = FastAPI()
 app.include_router(frontend_router)
 
 app.mount("/static", StaticFiles(directory="frontend/static/"))
+app.mount("/order-detail/static/", StaticFiles(directory="frontend/static/"))
+app.mount("/catalog/static/", StaticFiles(directory="frontend/static/"))
 
 
 if __name__ == '__main__':
