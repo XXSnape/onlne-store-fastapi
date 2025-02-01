@@ -19,7 +19,6 @@
     <div class="Section">
       <div class="wrap">
         <form class="form Cart" @submit.prevent="submitBasket">
-          {% csrf_token %}
           <!-- Данные по товару в корзине -->
           <div v-for="product in Object.values(basket)" class="Cart-product">
             <div class="Cart-block Cart-block_row">

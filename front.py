@@ -16,6 +16,7 @@ class A:
 
 @router.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
+    print('hello')
     return templates.TemplateResponse("index.html", {"request": request, "user": A()})
 
 
@@ -34,8 +35,9 @@ async def cart(request: Request):
     return templates.TemplateResponse("cart.html", {"request": request, "user": A()})
 
 
-@router.get("catalog/")
+@router.get("/catalog", response_class=HTMLResponse)
 async def catalog(request: Request):
+    print('catalog')
     return templates.TemplateResponse("catalog.html", {"request": request, "user": A()})
 
 

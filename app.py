@@ -9,5 +9,6 @@ app.include_router(frontend_router)
 
 app.mount("/static", StaticFiles(directory="frontend/static/"))
 
+
 if __name__ == '__main__':
     uvicorn.run("app:app", reload=True)

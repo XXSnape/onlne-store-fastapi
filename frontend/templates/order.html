@@ -216,7 +216,6 @@
          {% else %}
         <div class="row-block">
           <form method="post" @submit.prevent="auth">
-            {% csrf_token %}
             <div class="form-group">
               <label class="form-label" for="username">Логин</label>
               <input class="form-input" id="username" name="username" type="text" placeholder="Login"/>
