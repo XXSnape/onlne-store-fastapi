@@ -2,12 +2,13 @@ from starlette.requests import Request
 from starlette.responses import HTMLResponse
 from fastapi import APIRouter
 from starlette.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
+
 
 router = APIRouter()
 templates = Jinja2Templates(
-    directory="frontend/templates",
+    directory="frontend/templates/",
 )
-
 
 class A:
     is_authenticated = True
