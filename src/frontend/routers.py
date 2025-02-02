@@ -9,6 +9,7 @@ templates = Jinja2Templates(
     directory="src/frontend/templates/",
 )
 
+
 class A:
     is_authenticated = True
 
@@ -52,7 +53,9 @@ async def history_order(request: Request):
 
 @router.get("/order-detail/{id}")
 async def order_detail(request: Request):
-    return templates.TemplateResponse("oneorder.html", {"request": request, "user": A()})
+    return templates.TemplateResponse(
+        "oneorder.html", {"request": request, "user": A()}
+    )
 
 
 @router.get("/orders/<int:id>")
@@ -64,29 +67,40 @@ async def orders_id(request: Request):
 async def payment_id(request: Request):
     return templates.TemplateResponse("payment.html", {"request": request, "user": A()})
 
+
 @router.get("/payment-someone/")
 async def payment_someone(request: Request):
-    return templates.TemplateResponse("paymentsomeone.html", {"request": request, "user": A()})
+    return templates.TemplateResponse(
+        "paymentsomeone.html", {"request": request, "user": A()}
+    )
+
 
 @router.get("/product/<int:id>/")
 async def product_id(request: Request):
     return templates.TemplateResponse("product.html", {"request": request, "user": A()})
 
+
 @router.get("/profile")
 async def profile(request: Request):
     return templates.TemplateResponse("profile.html", {"request": request, "user": A()})
 
+
 @router.get("/progress-payment/")
 async def progress_payment(request: Request):
-    return templates.TemplateResponse("progressPayment.html", {"request": request, "user": A()})
+    return templates.TemplateResponse(
+        "progressPayment.html", {"request": request, "user": A()}
+    )
+
 
 @router.get("/sale")
 async def sale(request: Request):
     return templates.TemplateResponse("sale.html", {"request": request, "user": A()})
 
+
 @router.get("/sign-in/")
 async def sign_in(request: Request):
     return templates.TemplateResponse("signIn.html", {"request": request, "user": A()})
+
 
 @router.get("/sign-up/")
 async def sign_up(request: Request):
