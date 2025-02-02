@@ -1,16 +1,15 @@
 import uvicorn
 from fastapi import FastAPI
 from starlette.staticfiles import StaticFiles
-
-from front import router as frontend_router
+from frontend.routers import router as frontend_router
 
 app = FastAPI()
 app.include_router(frontend_router)
 
-app.mount("/static", StaticFiles(directory="frontend/static/"))
-app.mount("/order-detail/static/", StaticFiles(directory="frontend/static/"))
-app.mount("/catalog/static/", StaticFiles(directory="frontend/static/"))
-app.mount("/upload", StaticFiles(directory="upload/"))
+app.mount("/static", StaticFiles(directory="src/frontend/static"))
+app.mount("/order-detail/static/", StaticFiles(directory="src/frontend/static/"))
+app.mount("/catalog/static/", StaticFiles(directory="src/frontend/static/"))
+app.mount("/upload", StaticFiles(directory="src/upload/"))
 
 @app.get('/api/products/limited')
 async def products_limited():
@@ -44,4 +43,4 @@ async def products_limited():
 
 
 if __name__ == '__main__':
-    uvicorn.run("app:app", reload=True)
+    uvicorn.run("main:app", reload=True)
