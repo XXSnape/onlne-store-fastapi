@@ -88,7 +88,9 @@ class AbstractRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def get_object_id_by_params(self, session: AsyncSession, data: dict) -> bool:
+    async def get_object_id_by_params(
+        self, session: AsyncSession, data: dict
+    ) -> bool:
         """
         Ищет объект в базе данных.
 

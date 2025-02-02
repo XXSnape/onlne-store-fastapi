@@ -2,7 +2,12 @@
 Модуль с абстрактным классом Base.
 """
 
-from sqlalchemy.orm import DeclarativeBase, Mapped, declared_attr, mapped_column
+from sqlalchemy.orm import (
+    DeclarativeBase,
+    Mapped,
+    declared_attr,
+    mapped_column,
+)
 
 
 class BaseModel(DeclarativeBase):
@@ -28,7 +33,9 @@ class BaseModel(DeclarativeBase):
         """
         cols = [
             f"{field}={getattr(self, field)}"
-            for field in self.__table__.columns.keys()[: self.number_output_fields]
+            for field in self.__table__.columns.keys()[
+                : self.number_output_fields
+            ]
         ]
 
         return f"<{self.__class__.__name__} {', '.join(cols)}>"

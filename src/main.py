@@ -2,12 +2,16 @@ import uvicorn
 from fastapi import FastAPI
 from starlette.staticfiles import StaticFiles
 from frontend.routers import router as frontend_router
+from users.routers import router as users_router
 
 app = FastAPI()
 app.include_router(frontend_router)
+app.include_router(users_router, prefix="/api")
 
 app.mount("/static", StaticFiles(directory="src/frontend/static"))
-app.mount("/order-detail/static/", StaticFiles(directory="src/frontend/static/"))
+app.mount(
+    "/order-detail/static/", StaticFiles(directory="src/frontend/static/")
+)
 app.mount("/catalog/static/", StaticFiles(directory="src/frontend/static/"))
 app.mount("/upload", StaticFiles(directory="src/upload/"))
 
