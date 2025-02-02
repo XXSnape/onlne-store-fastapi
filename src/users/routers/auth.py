@@ -1,19 +1,13 @@
-from typing import Annotated, TypeAlias
-
-from fastapi import APIRouter, Body
-from fastapi import Depends
+from fastapi import APIRouter
 from starlette.responses import Response
-from starlette.status import HTTP_200_OK
 
 from core import SessionDep, settings
-from core.dependencies.user_by_cookie import get_user_id
-from .schemas.sign_in import SignInSchema
-from .services.sign_in import login_user
-from .services.sign_up import create_user
+from users.dependencies.credentials import Credentials
+from users.services.sign_in import login_user
+from users.services.sign_up import create_user
+
 
 router = APIRouter()
-
-Credentials: TypeAlias = Annotated[str, Body()]
 
 
 @router.post("/sign-up")

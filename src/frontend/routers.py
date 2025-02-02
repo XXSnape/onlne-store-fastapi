@@ -10,10 +10,6 @@ templates = Jinja2Templates(
     directory="src/frontend/templates/",
 )
 
-#
-# class A:
-#     is_authenticated = True
-
 
 @router.get("/", response_class=HTMLResponse)
 async def root(request: Request, user: UserDep):
@@ -31,6 +27,7 @@ async def about(request: Request, user: UserDep):
 
 @router.get("/account")
 async def account(request: Request, user: UserDep):
+
     return templates.TemplateResponse(
         "account.html", {"request": request, "user": user}
     )

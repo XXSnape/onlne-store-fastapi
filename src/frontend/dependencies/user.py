@@ -35,7 +35,8 @@ async def get_user(
     if payload is None:
         return UserIsAuthenticatedSchema(is_authenticated=False)
     return UserIsAuthenticatedSchema(
-        is_authenticated=True, username=payload.get("username")
+        is_authenticated=True,
+        username=payload.get("username"),
     )
 
 

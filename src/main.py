@@ -1,12 +1,16 @@
 import uvicorn
 from fastapi import FastAPI
+from starlette.middleware import Middleware
+from starlette.middleware.authentication import AuthenticationMiddleware
 from starlette.staticfiles import StaticFiles
 from frontend.routers import router as frontend_router
-from users.routers import router as users_router
+from users.routers.auth import router as users_router
+from users.routers.profile import router as profiles_router
 
 app = FastAPI()
 app.include_router(frontend_router)
 app.include_router(users_router, prefix="/api")
+app.include_router(profiles_router, prefix="/api")
 
 app.mount("/static", StaticFiles(directory="src/frontend/static"))
 app.mount(
