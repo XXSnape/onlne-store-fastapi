@@ -298,7 +298,7 @@ class ManagerRepository(AbstractRepository):
         cls, *attrs: str, session: AsyncSession, data: dict
     ):
         query = select(
-            *(hasattr(cls.model, attr) for attr in attrs)
+            *(getattr(cls.model, attr) for attr in attrs)
         ).filter_by(**data)
         result = await session.execute(query)
         return result.one_or_none()
