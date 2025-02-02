@@ -178,6 +178,7 @@ class ManagerRepository(AbstractRepository):
             return result.scalar_one()
 
         except IntegrityError as err:
+            print(err)
             await session.rollback()
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
@@ -291,3 +292,13 @@ class ManagerRepository(AbstractRepository):
         """
         query = select(func.count(cls.model.id)).filter_by(**data)
         return await session.scalar(query)
+
+    @classmethod
+    async def get_object_attrs_by_params(
+        cls, *attrs: str, session: AsyncSession, data: dict
+    ):
+        query = select(
+            *(hasattr(cls.model, attr) for attr in attrs)
+        ).filter_by(**data)
+        result = await session.execute(query)
+        return result.one_or_none()

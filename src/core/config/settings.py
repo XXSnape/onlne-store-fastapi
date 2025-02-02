@@ -15,10 +15,11 @@ class AuthJWTSettings(BaseSettings):
     algorithm - алгоритм шифрования
     """
 
-    private_key_path: Path = BASE_DIR / "core" / "certs" / "private.pem"
-    public_key_path: Path = BASE_DIR / "core" / "certs" / "public.pem"
+    private_key_path: Path = BASE_DIR / "certs" / "private.pem"
+    public_key_path: Path = BASE_DIR / "certs" / "public.pem"
     access_token_expire_minutes: int = 30
     algorithm: str = "RS256"
+    cookie_key_token: str = "access-token"
 
 
 class DBSettings(BaseSettings):

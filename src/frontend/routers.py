@@ -3,131 +3,132 @@ from starlette.responses import HTMLResponse
 from fastapi import APIRouter
 from starlette.templating import Jinja2Templates
 
+from frontend.dependencies.user import UserDep
 
 router = APIRouter()
 templates = Jinja2Templates(
     directory="src/frontend/templates/",
 )
 
-
-class A:
-    is_authenticated = False
+#
+# class A:
+#     is_authenticated = True
 
 
 @router.get("/", response_class=HTMLResponse)
-async def root(request: Request):
+async def root(request: Request, user: UserDep):
     return templates.TemplateResponse(
-        "index.html", {"request": request, "user": A()}
+        "index.html", {"request": request, "user": user}
     )
 
 
 @router.get("/about")
-async def about(request: Request):
+async def about(request: Request, user: UserDep):
     return templates.TemplateResponse(
-        "about.html", {"request": request, "user": A()}
+        "about.html", {"request": request, "user": user}
     )
 
 
 @router.get("/account")
-async def account(request: Request):
+async def account(request: Request, user: UserDep):
     return templates.TemplateResponse(
-        "account.html", {"request": request, "user": A()}
+        "account.html", {"request": request, "user": user}
     )
 
 
 @router.get("/cart")
-async def cart(request: Request):
+async def cart(request: Request, user: UserDep):
     return templates.TemplateResponse(
-        "cart.html", {"request": request, "user": A()}
+        "cart.html", {"request": request, "user": user}
     )
 
 
 @router.get("/catalog", response_class=HTMLResponse)
-async def catalog(request: Request):
+async def catalog(request: Request, user: UserDep):
     return templates.TemplateResponse(
-        "catalog.html", {"request": request, "user": A()}
+        "catalog.html", {"request": request, "user": user}
     )
 
 
 @router.get("/catalog/{id}")
-async def catalog_id(request: Request):
+async def catalog_id(request: Request, user: UserDep):
     return templates.TemplateResponse(
-        "catalog.html", {"request": request, "user": A()}
+        "catalog.html", {"request": request, "user": user}
     )
 
 
 @router.get("/history-order")
-async def history_order(request: Request):
+async def history_order(request: Request, user: UserDep):
     return templates.TemplateResponse(
-        "historyorder.html", {"request": request, "user": A()}
+        "historyorder.html", {"request": request, "user": user}
     )
 
 
 @router.get("/order-detail/{id}")
-async def order_detail(request: Request):
+async def order_detail(request: Request, user: UserDep):
     return templates.TemplateResponse(
-        "oneorder.html", {"request": request, "user": A()}
+        "oneorder.html", {"request": request, "user": user}
     )
 
 
 @router.get("/orders/<int:id>")
-async def orders_id(request: Request):
+async def orders_id(request: Request, user: UserDep):
     return templates.TemplateResponse(
-        "order.html", {"request": request, "user": A()}
+        "order.html", {"request": request, "user": user}
     )
 
 
 @router.get("/payment/{id}")
-async def payment_id(request: Request):
+async def payment_id(request: Request, user: UserDep):
     return templates.TemplateResponse(
-        "payment.html", {"request": request, "user": A()}
+        "payment.html", {"request": request, "user": user}
     )
 
 
 @router.get("/payment-someone")
-async def payment_someone(request: Request):
+async def payment_someone(request: Request, user: UserDep):
     return templates.TemplateResponse(
-        "paymentsomeone.html", {"request": request, "user": A()}
+        "paymentsomeone.html", {"request": request, "user": user}
     )
 
 
 @router.get("/product/<int:id>")
-async def product_id(request: Request):
+async def product_id(request: Request, user: UserDep):
     return templates.TemplateResponse(
-        "product.html", {"request": request, "user": A()}
+        "product.html", {"request": request, "user": user}
     )
 
 
 @router.get("/profile")
-async def profile(request: Request):
+async def profile(request: Request, user: UserDep):
     return templates.TemplateResponse(
-        "profile.html", {"request": request, "user": A()}
+        "profile.html", {"request": request, "user": user}
     )
 
 
 @router.get("/progress-payment")
-async def progress_payment(request: Request):
+async def progress_payment(request: Request, user: UserDep):
     return templates.TemplateResponse(
-        "progressPayment.html", {"request": request, "user": A()}
+        "progressPayment.html", {"request": request, "user": user}
     )
 
 
 @router.get("/sale")
-async def sale(request: Request):
+async def sale(request: Request, user: UserDep):
     return templates.TemplateResponse(
-        "sale.html", {"request": request, "user": A()}
+        "sale.html", {"request": request, "user": user}
     )
 
 
 @router.get("/sign-in")
-async def sign_in(request: Request):
+async def sign_in(request: Request, user: UserDep):
     return templates.TemplateResponse(
-        "signIn.html", {"request": request, "user": A()}
+        "signIn.html", {"request": request, "user": user}
     )
 
 
 @router.get("/sign-up")
-async def sign_up(request: Request):
+async def sign_up(request: Request, user: UserDep):
     return templates.TemplateResponse(
-        "signUp.html", {"request": request, "user": A()}
+        "signUp.html", {"request": request, "user": user}
     )
