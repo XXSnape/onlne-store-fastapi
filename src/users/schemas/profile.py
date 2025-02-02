@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from sqlalchemy.sql.annotation import Annotated
+from typing import Annotated
 
 
 class AvatarSchema(BaseModel):
@@ -11,4 +11,4 @@ class ProfileSchema(BaseModel):
     fullname: str
     email: str
     phone: str
-    avatar: Annotated[AvatarSchema | dict, Field(default_factory=dict)]
+    avatar: Annotated[AvatarSchema | None, Field(default=None)]

@@ -20,7 +20,7 @@ async def save_avatar_to_disk(avatar: UploadFile, user_id: int):
     ) as output_file:
         content = await avatar.read()
         await output_file.write(content)
-    return path_to_avatar
+    return path_to_avatar + f"/{avatar.filename}"
 
 
 async def save_avatar(

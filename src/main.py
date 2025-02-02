@@ -1,7 +1,5 @@
 import uvicorn
 from fastapi import FastAPI
-from starlette.middleware import Middleware
-from starlette.middleware.authentication import AuthenticationMiddleware
 from starlette.staticfiles import StaticFiles
 from frontend.routers import router as frontend_router
 from users.routers.auth import router as users_router
