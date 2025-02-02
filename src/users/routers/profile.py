@@ -1,6 +1,8 @@
 from fastapi import APIRouter, UploadFile
+from starlette.responses import Response
 
 from core import UserIdDep, SessionDep
+from users.services.avatar import save_avatar
 
 router = APIRouter()
 
@@ -16,8 +18,8 @@ async def get_profile(user_id: UserIdDep):
 
 
 @router.post("/profile/avatar")
-async def save_avatar(
+async def save_user_avatar(
     user_id: UserIdDep, session: SessionDep, avatar: UploadFile
 ):
-    print(avatar.filename)
-    return "hello"
+    await save_avatar(session=session, user_id=user_id, avatar=avatar)
+    return Response()
