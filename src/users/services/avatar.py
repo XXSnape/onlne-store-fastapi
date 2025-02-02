@@ -29,6 +29,13 @@ async def save_avatar(
     avatar: UploadFile,
 ) -> None:
     path_to_avatar = await save_avatar_to_disk(avatar=avatar, user_id=user_id)
+    avatar = await AvatarRepository.get_object_by_params(
+        session=session, data={"user_id": user_id}
+    )
+    if avatar:
+        avatar.src = path_to_avatar
+        await session.commit()
+        return
     await AvatarRepository.create_object(
         session=session, data={"src": path_to_avatar, "user_id": user_id}
     )
