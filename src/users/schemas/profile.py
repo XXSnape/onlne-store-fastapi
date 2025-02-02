@@ -1,14 +1,17 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, AliasChoices
 from typing import Annotated
 
 
-class ProfileGeneralSchema(BaseModel):
+class ProfileInSchema(BaseModel):
+    fullname: Annotated[
+        str,
+        Field(
+            validation_alias=AliasChoices("fullname", "fullName"),
+            serialization_alias="fullName",
+        ),
+    ]
     email: str
     phone: str
-
-
-class ProfileInSchema(ProfileGeneralSchema):
-    fullname: Annotated[str, Field(validation_alias="fullName")]
 
 
 class AvatarSchema(BaseModel):
@@ -16,6 +19,5 @@ class AvatarSchema(BaseModel):
     alt: str
 
 
-class ProfileSchema(ProfileGeneralSchema):
-    fullname: Annotated[str, Field(serialization_alias="fullName")]
+class ProfileSchema(ProfileInSchema):
     avatar: Annotated[AvatarSchema | None, Field(default=None)]
