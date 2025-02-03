@@ -1,6 +1,8 @@
 from pydantic import BaseModel, Field, AliasChoices
 from typing import Annotated
 
+from core import ImageSchema
+
 
 class ProfileInSchema(BaseModel):
     fullname: Annotated[
@@ -14,10 +16,5 @@ class ProfileInSchema(BaseModel):
     phone: str
 
 
-class AvatarSchema(BaseModel):
-    src: str
-    alt: str
-
-
 class ProfileSchema(ProfileInSchema):
-    avatar: Annotated[AvatarSchema | None, Field(default=None)]
+    avatar: Annotated[ImageSchema | None, Field(default=None)]

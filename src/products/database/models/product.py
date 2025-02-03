@@ -67,3 +67,7 @@ class ProductModel(BaseModel):
     @hybrid_property
     def tags(self):
         return [tag for tag in self.category.tags]
+
+    @hybrid_property
+    def reviews_count(self):
+        return len(self.reviews)

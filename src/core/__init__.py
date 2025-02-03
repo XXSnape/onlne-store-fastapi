@@ -7,3 +7,4 @@ from .database import (
     creation_time,
 )
 from .dependencies import SessionDep, UserIdDep
+from .schemas import ImageSchema

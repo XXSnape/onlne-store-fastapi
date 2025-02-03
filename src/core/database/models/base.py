@@ -46,15 +46,15 @@ class BaseModel(DeclarativeBase):
         """
         return f"{cls.__name__.lower()[:-len('Model')]}s"
 
-    def __repr__(self) -> str:
-        """
-        Возвращает строку с первыми 3 колонками и значениями.
-        """
-        cols = [
-            f"{field}={getattr(self, field)}"
-            for field in self.__table__.columns.keys()[
-                : self.number_output_fields
-            ]
-        ]
-
-        return f"<{self.__class__.__name__} {', '.join(cols)}>"
+    # def __repr__(self) -> str:
+    #     """
+    #     Возвращает строку с первыми 3 колонками и значениями.
+    #     """
+    #     cols = [
+    #         f"{field}={getattr(self, field)}"
+    #         for field in self.__table__.columns.keys()[
+    #             : self.number_output_fields
+    #         ]
+    #     ]
+    #
+    #     return f"<{self.__class__.__name__} {', '.join(cols)}>"
