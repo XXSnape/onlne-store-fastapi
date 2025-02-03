@@ -4,11 +4,14 @@ from sqlalchemy import Text, ForeignKey
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 
 from core import BaseModel, price_decimal, creation_time
+from products.database.models.review import ReviewModel
+from products.database.models.speciification import SpecificationModel
 
 if TYPE_CHECKING:
     from .product_image import ProductImageModel
     from .category import CategoryModel
     from .sale import SaleModel
+    from .speciification import SpecificationModel
 
 
 class ProductModel(BaseModel):
@@ -35,3 +38,9 @@ class ProductModel(BaseModel):
     )
     category: Mapped["CategoryModel"] = relationship(back_populates="products")
     sale: Mapped["SaleModel"] = relationship(back_populates="product")
+    specifications: Mapped[list["SpecificationModel"]] = relationship(
+        back_populates="product"
+    )
+    reviews: Mapped[list["ReviewModel"]] = relationship(
+        back_populates="product"
+    )

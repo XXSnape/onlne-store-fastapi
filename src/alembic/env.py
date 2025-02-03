@@ -27,8 +27,9 @@ from products.database import (
     CategoryModel,
     CategoryImageModel,
     SaleModel,
+    SpecificationModel,
+    ReviewModel,
 )
-from products.database.models import ProductImageModel
 
 target_metadata = BaseModel.metadata
 config.set_main_option("sqlalchemy.url", settings.db.url)

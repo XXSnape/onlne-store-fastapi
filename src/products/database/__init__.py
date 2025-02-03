@@ -4,4 +4,6 @@ from .models import (
     CategoryImageModel,
     SaleModel,
     ProductImageModel,
+    SpecificationModel,
+    ReviewModel,
 )

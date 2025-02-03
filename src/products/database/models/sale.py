@@ -6,12 +6,12 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import Mapped, mapped_column
 
 from core import BaseModel, price_decimal
-from .product_mixin import ProductRelationshipMixin
+from products.database.models.mixins.product import ProductRelationshipMixin
 
 
 class SaleModel(ProductRelationshipMixin, BaseModel):
-    _is_unique = True
-    _back_populates_value = "sale"
+    _is_unique_product = True
+    _back_populates = "sale"
 
     sale_price: Mapped[price_decimal]
     date_from: Mapped[date] = mapped_column(
