@@ -68,7 +68,7 @@ async def order_detail(request: Request, user: UserDep):
     )
 
 
-@router.get("/orders/<int:id>")
+@router.get("/orders/{id}")
 async def orders_id(request: Request, user: UserDep):
     return templates.TemplateResponse(
         "order.html", {"request": request, "user": user}
@@ -89,7 +89,7 @@ async def payment_someone(request: Request, user: UserDep):
     )
 
 
-@router.get("/product/<int:id>")
+@router.get("/product/{id}")
 async def product_id(request: Request, user: UserDep):
     return templates.TemplateResponse(
         "product.html", {"request": request, "user": user}

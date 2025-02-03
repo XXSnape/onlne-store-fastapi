@@ -4,17 +4,20 @@ from starlette.staticfiles import StaticFiles
 from frontend.routers import router as frontend_router
 from users.routers.auth import router as users_router
 from users.routers.profile import router as profiles_router
+from products.routers.products import router as products_router
 
 app = FastAPI()
 app.include_router(frontend_router)
 app.include_router(users_router, prefix="/api")
 app.include_router(profiles_router, prefix="/api")
+app.include_router(products_router, prefix="/api")
 
 app.mount("/static", StaticFiles(directory="src/frontend/static"))
 app.mount(
     "/order-detail/static/", StaticFiles(directory="src/frontend/static/")
 )
 app.mount("/catalog/static/", StaticFiles(directory="src/frontend/static/"))
+app.mount("/product/static/", StaticFiles(directory="src/frontend/static/"))
 app.mount("/upload", StaticFiles(directory="src/upload/"))
 
 
