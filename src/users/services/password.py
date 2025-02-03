@@ -17,7 +17,7 @@ async def change_user_password(
     if (
         validate_password(
             password=change_password_in.current_password,
-            hashed_password=password[0],
+            hashed_password=password.password,
         )
         is False
     ):

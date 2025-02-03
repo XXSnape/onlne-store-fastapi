@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 from typing import Any, Optional
 
 from fastapi import HTTPException, status
-from sqlalchemy import delete, func, insert, select, update
+from sqlalchemy import delete, func, insert, select, update, Row
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -296,7 +296,7 @@ class ManagerRepository(AbstractRepository):
     @classmethod
     async def get_object_attrs_by_params(
         cls, *attrs: str, session: AsyncSession, data: dict
-    ):
+    ) -> Row[tuple[Any]] | None:
         query = select(
             *(getattr(cls.model, attr) for attr in attrs)
         ).filter_by(**data)

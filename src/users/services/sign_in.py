@@ -19,11 +19,11 @@ async def login_user(
     if (
         user is None
         or validate_password(
-            password=credentials["password"], hashed_password=user[1]
+            password=credentials["password"], hashed_password=user.password
         )
         is False
     ):
         raise unauthorized_error
     put_token_in_cookies(
-        user_id=user[0], response=response, username=credentials["username"]
+        user_id=user.id, response=response, username=credentials["username"]
     )

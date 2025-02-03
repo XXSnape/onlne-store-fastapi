@@ -2,6 +2,7 @@ from typing import Annotated
 
 from fastapi import Cookie, Depends
 from jwt import InvalidTokenError
+from starlette.responses import Response
 
 from core import settings
 from core.utils.jwt import decode_jwt
@@ -9,6 +10,7 @@ from frontend.schemas.user import UserIsAuthenticatedSchema
 
 
 def get_token_payload_without_exc(
+    response: Response,
     token: Annotated[
         str | None, Cookie(alias=settings.auth_jwt.cookie_key_token)
     ] = None,
@@ -25,6 +27,7 @@ def get_token_payload_without_exc(
             token=token,
         )
     except InvalidTokenError as e:
+        response.delete_cookie(key=settings.auth_jwt.cookie_key_token)
         return None
     return payload
 
