@@ -1,6 +1,9 @@
+import statistics
+from decimal import Decimal
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Text, ForeignKey
+from sqlalchemy import Text, ForeignKey, CheckConstraint
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 
 from core import BaseModel, price_decimal, creation_time
@@ -15,6 +18,10 @@ if TYPE_CHECKING:
 
 
 class ProductModel(BaseModel):
+    __table_args__ = (
+        CheckConstraint("count >= 0"),
+        CheckConstraint("price_per_unit >= 0"),
+    )
     title: Mapped[str]
     price_per_unit: Mapped[price_decimal]
     count: Mapped[int]
@@ -44,3 +51,19 @@ class ProductModel(BaseModel):
     reviews: Mapped[list["ReviewModel"]] = relationship(
         back_populates="product"
     )
+
+    @hybrid_property
+    def price(self) -> Decimal:
+        if self.sale:
+            return self.sale.sale_price
+        return self.price_per_unit
+
+    @hybrid_property
+    def rating(self) -> float:
+        if not self.reviews:
+            return 0
+        return statistics.mean(review.rate for review in self.reviews)
+
+    @hybrid_property
+    def tags(self):
+        return [tag for tag in self.category.tags]

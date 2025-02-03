@@ -6,4 +6,6 @@ from .models import (
     ProductImageModel,
     SpecificationModel,
     ReviewModel,
+    TagModel,
+    TagCategoryModel,
 )

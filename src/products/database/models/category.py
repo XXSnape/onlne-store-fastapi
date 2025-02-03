@@ -5,6 +5,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from core import BaseModel
 from products.database.models.product import ProductModel
+from products.database.models.tag import TagModel
 
 if TYPE_CHECKING:
     from .product import ProductModel
@@ -18,6 +19,9 @@ class CategoryModel(BaseModel):
     )
     products: Mapped[list["ProductModel"]] = relationship(
         back_populates="category"
+    )
+    tags: Mapped[list["TagModel"]] = relationship(
+        secondary="tags_categories_association", back_populates="categories"
     )
 
 

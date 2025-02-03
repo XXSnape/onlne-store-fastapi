@@ -13,13 +13,16 @@ class SaleModel(ProductRelationshipMixin, BaseModel):
     _is_unique_product = True
     _back_populates = "sale"
 
+    __table_args__ = (
+        CheckConstraint("date_from < date_to"),
+        CheckConstraint("sale_price >= 0"),
+    )
+
     sale_price: Mapped[price_decimal]
     date_from: Mapped[date] = mapped_column(
         Date, default=date.today, server_default=func.current_date()
     )
     date_to: Mapped[date]
-
-    __table_args__ = (CheckConstraint("date_from < date_to"),)
 
     @hybrid_property
     def images(self):

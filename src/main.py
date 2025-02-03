@@ -15,6 +15,7 @@ from products.admin.models import (
 from users.routers.auth import router as users_router
 from users.routers.profile import router as profiles_router
 from products.routers.products import router as products_router
+from users.admin.models import UserAdmin
 from sqladmin import Admin
 
 
@@ -59,6 +60,8 @@ admin.add_view(CategoryAdmin)
 admin.add_view(ProductImageAdmin)
 admin.add_view(CategoryImageAdmin)
 admin.add_view(SaleAdmin)
+admin.add_view(UserAdmin)
+
 
 if __name__ == "__main__":
     uvicorn.run("main:app", reload=True)

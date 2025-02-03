@@ -29,6 +29,8 @@ from products.database import (
     SaleModel,
     SpecificationModel,
     ReviewModel,
+    TagModel,
+    TagCategoryModel,
 )
 
 target_metadata = BaseModel.metadata
