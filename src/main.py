@@ -1,10 +1,16 @@
 import uvicorn
 from fastapi import FastAPI
 from starlette.staticfiles import StaticFiles
+
+from core import db_helper
 from frontend.routers import router as frontend_router
+
+from products.admin.models import ProductAdmin, CategoryAdmin
 from users.routers.auth import router as users_router
 from users.routers.profile import router as profiles_router
 from products.routers.products import router as products_router
+from sqladmin import Admin
+
 
 app = FastAPI()
 app.include_router(frontend_router)
@@ -40,6 +46,10 @@ async def products_limited():
         }
     ]
 
+
+admin = Admin(app, db_helper.engine)
+admin.add_view(ProductAdmin)
+admin.add_view(CategoryAdmin)
 
 if __name__ == "__main__":
     uvicorn.run("main:app", reload=True)

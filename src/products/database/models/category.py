@@ -16,7 +16,7 @@ class CategoryModel(BaseModel):
     image: Mapped["CategoryImageModel"] = relationship(
         back_populates="category"
     )
-    product: Mapped[list["ProductModel"]] = relationship(
+    products: Mapped[list["ProductModel"]] = relationship(
         back_populates="category"
     )
 

@@ -8,6 +8,7 @@ from core import BaseModel, price_decimal, creation_time
 if TYPE_CHECKING:
     from .product_image import ProductImageModel
     from .category import CategoryModel
+    from .sale import SaleModel
 
 
 class ProductModel(BaseModel):
@@ -33,3 +34,4 @@ class ProductModel(BaseModel):
         back_populates="product"
     )
     category: Mapped["CategoryModel"] = relationship(back_populates="products")
+    sale: Mapped["SaleModel"] = relationship(back_populates="product")
