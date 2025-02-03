@@ -15,7 +15,7 @@ class SaleModel(ProductRelationshipMixin, BaseModel):
 
     sale_price: Mapped[price_decimal]
     date_from: Mapped[date] = mapped_column(
-        Date, server_default=func.current_date()
+        Date, default=date.today, server_default=func.current_date()
     )
     date_to: Mapped[date]
 

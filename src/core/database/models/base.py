@@ -3,13 +3,9 @@
 """
 
 import datetime
-from decimal import Decimal
-from typing import TypeAlias, Annotated
+from typing import TypeAlias
 
-from sqlalchemy import Numeric, func, DateTime
 from sqlalchemy.orm import (
-    DeclarativeBase,
-    Mapped,
     declared_attr,
 )
 from decimal import Decimal
@@ -27,6 +23,7 @@ price_decimal: TypeAlias = Annotated[Decimal, mapped_column(Numeric(10, 4))]
 creation_time: TypeAlias = Annotated[
     datetime.datetime,
     mapped_column(
+        default=datetime.datetime.now,
         server_default=func.now(),
     ),
 ]
