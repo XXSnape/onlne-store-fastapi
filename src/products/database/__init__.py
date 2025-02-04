@@ -5,6 +5,7 @@ from .models import (
     SaleModel,
     ProductImageModel,
     SpecificationModel,
+    SpecificationProductModel,
     ReviewModel,
     TagModel,
     TagCategoryModel,

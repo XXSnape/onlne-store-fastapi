@@ -28,6 +28,7 @@ from products.database import (
     CategoryImageModel,
     SaleModel,
     SpecificationModel,
+    SpecificationProductModel,
     ReviewModel,
     TagModel,
     TagCategoryModel,

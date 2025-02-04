@@ -46,7 +46,8 @@ class ProductModel(BaseModel):
     category: Mapped["CategoryModel"] = relationship(back_populates="products")
     sale: Mapped["SaleModel"] = relationship(back_populates="product")
     specifications: Mapped[list["SpecificationModel"]] = relationship(
-        back_populates="product"
+        secondary='specifications_products_association',
+        back_populates="products"
     )
     reviews: Mapped[list["ReviewModel"]] = relationship(
         back_populates="product"
