@@ -14,3 +14,9 @@ async def get_products(
         ProductGeneralSchema.model_validate(product, from_attributes=True)
         for product in products
     ]
+
+
+async def get_product_by_id(
+    session: AsyncSession,
+):
+    pass

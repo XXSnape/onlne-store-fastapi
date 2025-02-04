@@ -53,5 +53,15 @@ class ProductRepository(ManagerRepository):
         result = await session.execute(query)
         return result.scalars().all()
 
-    # @classmethod
-    # async def get_limited_products(cls):
+    @classmethod
+    async def get_product_by_id(cls, session: AsyncSession, product_id: int):
+        query = select(cls.model).options(
+            selectinload(cls.model.reviews).load_only(
+                ReviewModel.product_id, ReviewModel.rate
+            ),
+            joinedload(cls.model.sale).load_only(SaleModel.sale_price),
+            joinedload(cls.model.category)
+            .load_only(CategoryModel.id)
+            .selectinload(CategoryModel.tags),
+            selectinload(cls.model.images),
+        )
