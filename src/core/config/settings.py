@@ -7,6 +7,10 @@ load_dotenv()
 BASE_DIR = Path(__file__).parent.parent
 
 
+class AppSettings(BaseSettings):
+    limit: int = 2
+
+
 class AuthJWTSettings(BaseSettings):
     """
     private_key_path - путь к закрытому ключу
@@ -60,6 +64,7 @@ class Settings(BaseSettings):
     )
     db: DBSettings = DBSettings()
     auth_jwt: AuthJWTSettings = AuthJWTSettings()
+    app: AppSettings = AppSettings()
 
 
 settings = Settings()

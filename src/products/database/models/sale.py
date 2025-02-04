@@ -27,3 +27,11 @@ class SaleModel(ProductRelationshipMixin, BaseModel):
     @hybrid_property
     def images(self):
         return self.product.images
+
+    @hybrid_property
+    def price(self):
+        return self.product.price_per_unit
+
+    @hybrid_property
+    def title(self):
+        return self.product.title

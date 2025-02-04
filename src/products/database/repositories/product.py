@@ -8,7 +8,7 @@ from sqlalchemy.orm import (
     defer,
 )
 
-from core import ManagerRepository
+from core import ManagerRepository, settings
 from products.database import (
     ProductModel,
     ReviewModel,
@@ -83,3 +83,30 @@ class ProductRepository(ManagerRepository):
         )
         result = await session.execute(query)
         return result.scalars().one_or_none()
+
+
+class SaleRepository(ManagerRepository):
+    model = SaleModel
+
+    @classmethod
+    async def get_discounted_products(
+        cls, session: AsyncSession, current_page: int
+    ) -> tuple[list[SaleModel], int]:
+        count_query = select(func.count()).select_from(cls.model)
+        count_result = await session.scalar(count_query)
+        query = (
+            select(cls.model)
+            .options(
+                joinedload(cls.model.product)
+                .load_only(
+                    ProductModel.id,
+                    ProductModel.title,
+                    ProductModel.price_per_unit,
+                )
+                .selectinload(ProductModel.images)
+            )
+            .offset((current_page - 1) * settings.app.limit)
+            .limit(settings.app.limit)
+        )
+        result = await session.execute(query)
+        return result.scalars().all(), count_result
