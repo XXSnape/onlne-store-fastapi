@@ -8,10 +8,16 @@ from products.schemas.products import (
 
 
 async def get_products(
-    session: AsyncSession, is_popular: bool = False, is_limited: bool = False
+    session: AsyncSession,
+    is_popular: bool = False,
+    is_limited: bool = False,
+    is_banner: bool = False,
 ):
     products = await ProductRepository.get_small_info_about_products(
-        session=session, is_popular=is_popular, is_limited=is_limited
+        session=session,
+        is_popular=is_popular,
+        is_limited=is_limited,
+        is_banner=is_banner,
     )
     return [
         ProductGeneralSchema.model_validate(product, from_attributes=True)

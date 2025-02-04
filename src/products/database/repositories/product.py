@@ -27,15 +27,14 @@ class ProductRepository(ManagerRepository):
         session: AsyncSession,
         is_popular: bool = False,
         is_limited: bool = False,
+        is_banner: bool = False,
     ):
-        popular_products = (
+        subquery = (
             select(cls.model.id)
             .outerjoin(ReviewModel, cls.model.id == ReviewModel.product_id)
             .group_by(cls.model.id)
-            .order_by(func.avg(ReviewModel.rate).desc())
             .limit(5)
         )
-
         query = select(cls.model).options(
             defer(cls.model.full_description),
             selectinload(cls.model.reviews).load_only(
@@ -47,8 +46,19 @@ class ProductRepository(ManagerRepository):
             .selectinload(CategoryModel.tags),
             selectinload(cls.model.images),
         )
+
         if is_popular:
+            popular_products = subquery.order_by(
+                func.count(cls.model.id).desc()
+            )
             query = query.where(cls.model.id.in_(popular_products))
+
+        if is_banner:
+            banners_products = subquery.order_by(
+                func.count(ReviewModel.rate).desc()
+            )
+            query = query.where(cls.model.id.in_(banners_products))
+
         if is_limited:
             query = query.where(cls.model.count == 0)
         result = await session.execute(query)

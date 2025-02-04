@@ -19,3 +19,8 @@ async def popular_product(session: SessionDep):
 @router.get("/products/limited")
 async def limited_product(session: SessionDep):
     return await get_products(session=session, is_limited=True)
+
+
+@router.get("/banners")
+async def get_banners(session: SessionDep):
+    return await get_products(session=session, is_banner=True)
