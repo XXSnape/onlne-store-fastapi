@@ -1,7 +1,10 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from products.database.repositories.product import ProductRepository
-from products.schemas.products import ProductGeneralSchema
+from products.schemas.products import (
+    ProductGeneralSchema,
+    ProductDetailsSchema,
+)
 
 
 async def get_products(
@@ -16,7 +19,8 @@ async def get_products(
     ]
 
 
-async def get_product_by_id(
-    session: AsyncSession,
-):
-    pass
+async def get_product_by_id(session: AsyncSession, product_id: int):
+    product = await ProductRepository.get_product_by_id(
+        session=session, product_id=product_id
+    )
+    return ProductDetailsSchema.model_validate(product, from_attributes=True)

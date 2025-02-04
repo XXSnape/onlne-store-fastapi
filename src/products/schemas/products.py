@@ -5,6 +5,7 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 
 from core import ImageSchema
+from .reviews import ReviewSchema
 from .tags import TagSchema
 
 
@@ -27,3 +28,14 @@ class ProductGeneralSchema(BaseModel):
     tags: list[TagSchema]
     reviews: Annotated[int, Field(validation_alias="reviews_count")]
     rating: int
+
+
+class ProductDetailsSchema(ProductGeneralSchema):
+    full_description: Annotated[
+        str,
+        Field(
+            validation_alias="full_description",
+            serialization_alias="fullDescription",
+        ),
+    ]
+    reviews: list[ReviewSchema]

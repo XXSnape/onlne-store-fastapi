@@ -49,26 +49,7 @@ app.mount("/order-detail/static/", StaticFiles(directory="frontend/static/"))
 app.mount("/catalog/static/", StaticFiles(directory="frontend/static/"))
 app.mount("/product/static/", StaticFiles(directory="frontend/static/"))
 app.mount("/uploads", StaticFiles(directory="uploads/"))
-
-
-@app.get("/api/products/limited")
-async def products_limited():
-    return [
-        {
-            "id": 123,
-            "category": 55,
-            "price": 500.67,
-            "count": 12,
-            "date": "Thu Feb 09 2023 21:39:52 GMT+0100 (Central European Standard Time)",
-            "title": "video card",
-            "description": "description of the product",
-            "freeDelivery": True,
-            "images": [{"src": "upload/1.png", "alt": "Image alt string"}],
-            "tags": [{"id": 12, "name": "Gaming"}],
-            "reviews": 5,
-            "rating": 4.6,
-        }
-    ]
+app.mount("/product/uploads", StaticFiles(directory="uploads/"))
 
 
 admin = Admin(app, db_helper.engine)

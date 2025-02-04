@@ -1,14 +1,14 @@
 from fastapi import APIRouter
 
 from core import SessionDep
-from products.services.products import get_products
+from products.services.products import get_products, get_product_by_id
 
 router = APIRouter()
 
 
 @router.get("/product/{product_id}")
-async def get_product(product_id: int):
-    return ...
+async def get_product(product_id: int, session: SessionDep):
+    return await get_product_by_id(session=session, product_id=product_id)
 
 
 @router.get("/products/popular")
