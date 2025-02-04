@@ -19,7 +19,7 @@ from products.admin import (
 )
 from users.routers.auth import router as users_router
 from users.routers.profile import router as profiles_router
-from products.routers.products import router as products_router
+from products.routers import router as products_router
 from users.admin import AvatarAdmin, UserAdmin
 from sqladmin import Admin
 
