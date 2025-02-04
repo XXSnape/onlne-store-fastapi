@@ -1,5 +1,7 @@
+from fastapi_storages import FileSystemStorage
+from fastapi_storages.integrations.sqlalchemy import ImageType
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import Mapped, mapped_column
 from core import BaseModel
 from .mixins.user import UserRelationshipMixin
 
@@ -7,7 +9,10 @@ from .mixins.user import UserRelationshipMixin
 class AvatarModel(UserRelationshipMixin, BaseModel):
     _is_unique_user = True
     _back_populates = "avatar"
-    src: Mapped[str]
+
+    src: Mapped[str] = mapped_column(
+        ImageType(storage=FileSystemStorage(path="uploads/avatars"))
+    )
 
     @hybrid_property
     def alt(self) -> str:

@@ -7,7 +7,7 @@ from frontend.dependencies.user import UserDep
 
 router = APIRouter()
 templates = Jinja2Templates(
-    directory="src/frontend/templates/",
+    directory="frontend/templates/",
 )
 
 
