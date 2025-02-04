@@ -2,13 +2,20 @@ import statistics
 from decimal import Decimal
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Text, ForeignKey, CheckConstraint
+from sqlalchemy import (
+    Text,
+    ForeignKey,
+    CheckConstraint,
+    type_coerce,
+    ColumnElement,
+)
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 
 from core import BaseModel, price_decimal, creation_time
 from products.database.models.review import ReviewModel
 from products.database.models.speciification import SpecificationModel
+from sqlalchemy import Numeric
 
 if TYPE_CHECKING:
     from .product_image import ProductImageModel
@@ -46,8 +53,8 @@ class ProductModel(BaseModel):
     category: Mapped["CategoryModel"] = relationship(back_populates="products")
     sale: Mapped["SaleModel"] = relationship(back_populates="product")
     specifications: Mapped[list["SpecificationModel"]] = relationship(
-        secondary='specifications_products_association',
-        back_populates="products"
+        secondary="specifications_products_association",
+        back_populates="products",
     )
     reviews: Mapped[list["ReviewModel"]] = relationship(
         back_populates="product"

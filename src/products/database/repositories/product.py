@@ -1,4 +1,4 @@
-from sqlalchemy import select, func
+from sqlalchemy import select, func, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import (
     contains_eager,
@@ -15,6 +15,8 @@ from products.database import (
     CategoryModel,
     SaleModel,
 )
+from products.schemas.catalog import FilterQuerySchema
+from products.utils.constants import SortingEnum
 from users.database import UserModel
 
 
@@ -55,7 +57,7 @@ class ProductRepository(ManagerRepository):
 
         if is_banner:
             banners_products = subquery.order_by(
-                func.count(ReviewModel.rate).desc()
+                func.avg(ReviewModel.rate).desc()
             )
             query = query.where(cls.model.id.in_(banners_products))
 
@@ -83,6 +85,59 @@ class ProductRepository(ManagerRepository):
         )
         result = await session.execute(query)
         return result.scalars().one_or_none()
+
+    @classmethod
+    async def get_catalog(
+        cls, session: AsyncSession, filtering_data: FilterQuerySchema
+    ):
+        query = (
+            select(cls.model)
+            .outerjoin(SaleModel)
+            .options(
+                defer(cls.model.full_description),
+                selectinload(cls.model.reviews).load_only(
+                    ReviewModel.product_id, ReviewModel.rate
+                ),
+                contains_eager(cls.model.sale),
+                joinedload(cls.model.category)
+                .load_only(CategoryModel.id)
+                .selectinload(CategoryModel.tags),
+                selectinload(cls.model.images),
+            )
+        )
+        if filtering_data.name:
+            query = query.where(cls.model.title.contains(filtering_data.name))
+        if filtering_data.min_price:
+            query = query.where(
+                cls.model.price_per_unit >= filtering_data.min_price,
+            )
+        if filtering_data.max_price:
+            query = query.where(
+                or_(
+                    cls.model.price_per_unit <= filtering_data.max_price,
+                    SaleModel.sale_price <= filtering_data.max_price,
+                )
+            )
+        if filtering_data.free_delivery:
+            query = query.where(cls.model.free_delivery == True)
+        if filtering_data.is_available:
+            query = query.where(cls.model.count > 0)
+        if filtering_data.category_id:
+            query = query.where(
+                cls.model.category_id == filtering_data.category_id
+            )
+        if filtering_data.sort == SortingEnum.reviews:
+            subquery = (
+                select(
+                    cls.model.id, func.avg(ReviewModel.rate).label("review")
+                )
+                .outerjoin(ReviewModel, cls.model.id == ReviewModel.product_id)
+                .group_by(cls.model.id)
+            ).subquery()
+            query = query.join(subquery).order_by(subquery.c.review.desc())
+
+        result = await session.execute(query)
+        return []
 
 
 class SaleRepository(ManagerRepository):
