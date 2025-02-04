@@ -1,14 +1,16 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Final
 
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from core import BaseModel
+from core import BaseModel, ImageModelMixin
 from products.database.models.product import ProductModel
 from products.database.models.tag import TagModel
 
 if TYPE_CHECKING:
     from .product import ProductModel
+
+DIRECTORY_OF_IMAGES: Final[str] = "categories"
 
 
 class CategoryModel(BaseModel):
@@ -25,9 +27,9 @@ class CategoryModel(BaseModel):
     )
 
 
-class CategoryImageModel(BaseModel):
+class CategoryImageModel(BaseModel, ImageModelMixin):
+    _directory = DIRECTORY_OF_IMAGES
     __tablename__ = "category_images"
-    src: Mapped[str]
     category_id: Mapped[int] = mapped_column(
         ForeignKey("categories.id", ondelete="CASCADE"), unique=True
     )

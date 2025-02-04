@@ -9,8 +9,8 @@ from typing import Sequence, Union
 
 from alembic import op
 import sqlalchemy as sa
-from src.alembic import custom_types
 import fastapi_storages.integrations.sqlalchemy
+
 ${imports if imports else ""}
 
 # revision identifiers, used by Alembic.

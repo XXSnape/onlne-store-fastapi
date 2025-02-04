@@ -5,6 +5,7 @@ from .database import (
     BaseModel,
     price_decimal,
     creation_time,
+    ImageModelMixin,
 )
 from .dependencies import SessionDep, UserIdDep
 from .schemas import ImageSchema
