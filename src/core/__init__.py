@@ -9,3 +9,4 @@ from .database import (
 )
 from .dependencies import SessionDep, UserIdDep
 from .schemas import ImageSchema
+from .admin import UUIDFilenameAdminMixin

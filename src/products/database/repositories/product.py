@@ -1,6 +1,12 @@
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import contains_eager, joinedload, selectinload, load_only
+from sqlalchemy.orm import (
+    contains_eager,
+    joinedload,
+    selectinload,
+    load_only,
+    defer,
+)
 
 from core import ManagerRepository
 from products.database import (
@@ -30,6 +36,7 @@ class ProductRepository(ManagerRepository):
         )
 
         query = select(cls.model).options(
+            defer(cls.model.full_description),
             selectinload(cls.model.reviews).load_only(
                 ReviewModel.product_id, ReviewModel.rate
             ),

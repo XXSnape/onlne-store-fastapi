@@ -1,0 +1,1 @@
+from .filename import UUIDFilenameAdminMixin

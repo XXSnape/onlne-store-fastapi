@@ -5,19 +5,38 @@ from starlette.staticfiles import StaticFiles
 from core import db_helper
 from frontend.routers import router as frontend_router
 
-from products.admin.models import (
-    ProductAdmin,
+from products.admin import (
     CategoryAdmin,
-    ProductImageAdmin,
     CategoryImageAdmin,
+    TagAdmin,
+    TagCategoryAdmin,
+    ProductAdmin,
+    ProductImageAdmin,
+    SpecificationAdmin,
+    SpecificationProductAdmin,
+    ReviewAdmin,
     SaleAdmin,
 )
 from users.routers.auth import router as users_router
 from users.routers.profile import router as profiles_router
 from products.routers.products import router as products_router
-from users.admin.models import UserAdmin
+from users.admin import AvatarAdmin, UserAdmin
 from sqladmin import Admin
 
+views = [
+    CategoryAdmin,
+    CategoryImageAdmin,
+    TagAdmin,
+    TagCategoryAdmin,
+    ProductAdmin,
+    ProductImageAdmin,
+    SpecificationAdmin,
+    SpecificationProductAdmin,
+    ReviewAdmin,
+    AvatarAdmin,
+    UserAdmin,
+    SaleAdmin,
+]
 
 app = FastAPI()
 app.include_router(frontend_router)
@@ -53,12 +72,8 @@ async def products_limited():
 
 
 admin = Admin(app, db_helper.engine)
-admin.add_view(ProductAdmin)
-admin.add_view(CategoryAdmin)
-admin.add_view(ProductImageAdmin)
-admin.add_view(CategoryImageAdmin)
-admin.add_view(SaleAdmin)
-admin.add_view(UserAdmin)
+for view in views:
+    admin.add_view(view)
 
 
 if __name__ == "__main__":

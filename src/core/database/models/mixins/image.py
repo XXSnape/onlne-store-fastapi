@@ -4,6 +4,10 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import Mapped, mapped_column, declared_attr
 
 
+def get_filename(path: str):
+    return path.split("/")[-1].split("_")[-1]
+
+
 class ImageModelMixin:
     _directory: str | None = None
 
@@ -17,5 +21,9 @@ class ImageModelMixin:
 
     @hybrid_property
     def alt(self) -> str:
-        filename = self.src.split("/")[-1].split("_")[-1]
+        filename = get_filename(self.src)
         return filename
+
+    def __repr__(self) -> str:
+        filename = get_filename(self.src)
+        return f"{self._directory}/{filename}"

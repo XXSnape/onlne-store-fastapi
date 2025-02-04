@@ -1,6 +1,6 @@
-from sqlalchemy import select, Row, ScalarResult
+from sqlalchemy import select, ScalarResult
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import joinedload, load_only
+from sqlalchemy.orm import joinedload, defer
 
 from core import ManagerRepository
 from users.database import UserModel
@@ -12,22 +12,20 @@ class UserRepository(ManagerRepository):
     @classmethod
     async def get_user_profile(
         cls, session: AsyncSession, user_id: int
-    ) -> ScalarResult[UserModel]:
+    ) -> UserModel | None:
         query = (
             select(cls.model)
             .options(
-                load_only(
-                    cls.model.fullname,
-                    cls.model.email,
-                    cls.model.phone,
-                    cls.model.username,
+                defer(
+                    cls.model.password,
+                ),
+                defer(
+                    cls.model.is_admin,
                 ),
                 joinedload(cls.model.avatar),
             )
             .filter_by(id=user_id)
         )
         result = await session.execute(query)
-        # print(result.all())
         res = result.unique().scalars().one_or_none()
-        print("res", res)
         return res

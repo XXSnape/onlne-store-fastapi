@@ -1,15 +1,13 @@
 from sqladmin import ModelView
+
+from core import UUIDFilenameAdminMixin
 from products.database import (
-    CategoryModel,
     ProductModel,
     ProductImageModel,
-    CategoryImageModel,
     SaleModel,
+    SpecificationModel,
+    SpecificationProductModel,
 )
-
-
-class CategoryAdmin(ModelView, model=CategoryModel):
-    column_list = [CategoryModel.id, CategoryModel.title]
 
 
 class ProductAdmin(ModelView, model=ProductModel):
@@ -22,12 +20,10 @@ class ProductAdmin(ModelView, model=ProductModel):
     ]
 
 
-class ProductImageAdmin(ModelView, model=ProductImageModel):
+class ProductImageAdmin(
+    UUIDFilenameAdminMixin, ModelView, model=ProductImageModel
+):
     column_list = [ProductImageModel.id, ProductImageModel.src]
-
-
-class CategoryImageAdmin(ModelView, model=CategoryImageModel):
-    column_list = [CategoryImageModel.id, CategoryImageModel.src]
 
 
 class SaleAdmin(ModelView, model=SaleModel):
@@ -38,3 +34,11 @@ class SaleAdmin(ModelView, model=SaleModel):
         SaleModel.date_to,
         SaleModel.product,
     ]
+
+
+class SpecificationAdmin(ModelView, model=SpecificationModel):
+    column_list = "__all__"
+
+
+class SpecificationProductAdmin(ModelView, model=SpecificationProductModel):
+    column_list = "__all__"
