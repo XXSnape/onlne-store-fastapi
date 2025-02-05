@@ -14,14 +14,23 @@ from products.database import (
     ReviewModel,
     CategoryModel,
     SaleModel,
+    TagCategoryModel,
+    TagModel,
 )
 from products.schemas.catalog import FilterQuerySchema
-from products.utils.constants import SortingEnum
+from products.utils.constants import SortingEnum, SortingTypeEnum
 from users.database import UserModel
 
 
 class ProductRepository(ManagerRepository):
     model = ProductModel
+
+    @staticmethod
+    def get_sorting_attribute(column, sort_type: SortingTypeEnum):
+        return getattr(
+            column,
+            ("desc" if sort_type == SortingTypeEnum.dec else "asc"),
+        )()
 
     @classmethod
     async def get_small_info_about_products(
@@ -90,6 +99,7 @@ class ProductRepository(ManagerRepository):
     async def get_catalog(
         cls, session: AsyncSession, filtering_data: FilterQuerySchema
     ):
+        print("tags", filtering_data.tags)
         query = (
             select(cls.model)
             .outerjoin(SaleModel)
@@ -126,18 +136,72 @@ class ProductRepository(ManagerRepository):
             query = query.where(
                 cls.model.category_id == filtering_data.category_id
             )
+        if filtering_data.tags:
+
+            products_with_tags = (
+                select(cls.model.id)
+                .distinct()
+                .join(CategoryModel)
+                .join(TagCategoryModel)
+                .join(TagModel)
+                .where(TagModel.id.in_(filtering_data.tags))
+            )
+            query = query.where(cls.model.id.in_(products_with_tags))
+            print("query", query)
+
+        count_query = select(func.count()).select_from(query.subquery())
+        count_result = await session.scalar(count_query)
+
         if filtering_data.sort == SortingEnum.reviews:
-            subquery = (
+            sorting_by_reviews_cte = (
                 select(
                     cls.model.id, func.avg(ReviewModel.rate).label("review")
                 )
                 .outerjoin(ReviewModel, cls.model.id == ReviewModel.product_id)
                 .group_by(cls.model.id)
-            ).subquery()
-            query = query.join(subquery).order_by(subquery.c.review.desc())
+            ).cte()
+            query = query.outerjoin(sorting_by_reviews_cte).order_by(
+                cls.get_sorting_attribute(
+                    column=sorting_by_reviews_cte.c.review,
+                    sort_type=filtering_data.sort_type,
+                )
+            )
 
+        if filtering_data.sort == SortingEnum.rating:
+            sorting_by_rating_cte = (
+                select(
+                    cls.model.id,
+                    func.avg(ReviewModel.rate).label("average_rating"),
+                )
+                .outerjoin(ReviewModel, cls.model.id == ReviewModel.product_id)
+                .group_by(cls.model.id)
+            ).cte()
+            query = query.outerjoin(sorting_by_rating_cte).order_by(
+                cls.get_sorting_attribute(
+                    column=sorting_by_rating_cte.c.average_rating,
+                    sort_type=filtering_data.sort_type,
+                )
+            )
+        if filtering_data.sort == SortingEnum.price:
+            query = query.order_by(
+                cls.get_sorting_attribute(
+                    column=SaleModel.sale_price,
+                    sort_type=filtering_data.sort_type,
+                ),
+                cls.get_sorting_attribute(
+                    column=cls.model.price_per_unit,
+                    sort_type=filtering_data.sort_type,
+                ),
+            )
+        if filtering_data.sort == SortingEnum.date:
+            query = query.order_by(
+                cls.get_sorting_attribute(
+                    column=cls.model.date,
+                    sort_type=filtering_data.sort_type,
+                )
+            )
         result = await session.execute(query)
-        return []
+        return result.scalars().all(), count_result
 
 
 class SaleRepository(ManagerRepository):

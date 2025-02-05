@@ -77,8 +77,7 @@ class SaleProductsSchema(ProductBaseSchema):
     ]
 
 
-class ResultSaleSchema(BaseModel):
-    items: list[SaleProductsSchema]
+class ResultSchema(BaseModel):
     current_page: Annotated[
         int,
         Field(
@@ -93,3 +92,11 @@ class ResultSaleSchema(BaseModel):
         return self.items_count // settings.app.limit + (
             self.items_count % settings.app.limit != 0
         )
+
+
+class ResultSaleSchema(ResultSchema):
+    items: list[SaleProductsSchema]
+
+
+class ResultCatalogSchema(ResultSchema):
+    items: list[ProductGeneralSchema]

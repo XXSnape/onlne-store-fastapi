@@ -9,6 +9,7 @@ from products.services.products import (
     get_products,
     get_product_by_id,
     get_sales_products,
+    get_catalog,
 )
 
 router = APIRouter()
@@ -43,13 +44,11 @@ async def get_discounted_items(
 
 
 @router.get("/catalog")
-async def get_catalog(
+async def get_catalog_of_products(
     session: SessionDep,
     filtering_data: Annotated[FilterQuerySchema, Query()],
 ):
-    return await ProductRepository.get_catalog(
-        session=session, filtering_data=filtering_data
-    )
+    return await get_catalog(session=session, filtering_data=filtering_data)
     # print("qqq", filtering_data)
     # # return filter.pages.current_page
     # # print(current_page)

@@ -4,11 +4,13 @@ from products.database.repositories.product import (
     ProductRepository,
     SaleRepository,
 )
+from products.schemas.catalog import FilterQuerySchema
 from products.schemas.products import (
     ProductGeneralSchema,
     ProductDetailsSchema,
     SaleProductsSchema,
     ResultSaleSchema,
+    ResultCatalogSchema,
 )
 
 
@@ -47,5 +49,21 @@ async def get_sales_products(session: AsyncSession, current_page: int):
             for product in products
         ],
         current_page=current_page,
+        items_count=count,
+    )
+
+
+async def get_catalog(
+    session: AsyncSession, filtering_data: FilterQuerySchema
+):
+    products, count = await ProductRepository.get_catalog(
+        session=session, filtering_data=filtering_data
+    )
+    return ResultCatalogSchema(
+        items=[
+            ProductGeneralSchema.model_validate(product, from_attributes=True)
+            for product in products
+        ],
+        current_page=filtering_data.current_page,
         items_count=count,
     )
