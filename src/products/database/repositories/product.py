@@ -1,11 +1,13 @@
-from sqlalchemy import select, func, or_
+from typing import Any, Sequence
+
+from sqlalchemy import select, func, or_, Row, RowMapping
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import (
     contains_eager,
     joinedload,
     selectinload,
-    load_only,
     defer,
+    InstrumentedAttribute,
 )
 
 from core import ManagerRepository, settings
@@ -31,6 +33,22 @@ class ProductRepository(ManagerRepository):
             column,
             ("desc" if sort_type == SortingTypeEnum.dec else "asc"),
         )()
+
+    @classmethod
+    def get_query_with_cte_filtering(
+        cls, query, attribute: InstrumentedAttribute[int], function, sort_type
+    ):
+        sorting_by_reviews_cte = (
+            select(cls.model.id, function(attribute).label("sorting"))
+            .join(ReviewModel, cls.model.id == ReviewModel.product_id)
+            .group_by(cls.model.id)
+        ).cte()
+        return query.outerjoin(sorting_by_reviews_cte).order_by(
+            cls.get_sorting_attribute(
+                column=sorting_by_reviews_cte.c.sorting,
+                sort_type=sort_type,
+            )
+        )
 
     @classmethod
     async def get_small_info_about_products(
@@ -80,6 +98,7 @@ class ProductRepository(ManagerRepository):
         query = (
             select(cls.model)
             .options(
+
                 selectinload(cls.model.reviews)
                 .joinedload(ReviewModel.user)
                 .load_only(UserModel.username, UserModel.email),
@@ -98,8 +117,7 @@ class ProductRepository(ManagerRepository):
     @classmethod
     async def get_catalog(
         cls, session: AsyncSession, filtering_data: FilterQuerySchema
-    ):
-        print(f"{filtering_data.is_available=}")
+    ) -> tuple[Sequence[ProductModel], int]:
         query = (
             select(cls.model)
             .outerjoin(SaleModel)
@@ -131,7 +149,6 @@ class ProductRepository(ManagerRepository):
         if filtering_data.free_delivery:
             query = query.where(cls.model.free_delivery == True)
         if filtering_data.is_available:
-            print("is_avalable")
             query = query.where(cls.model.count > 0)
         if filtering_data.category_id:
             query = query.where(
@@ -150,37 +167,21 @@ class ProductRepository(ManagerRepository):
 
         count_query = select(func.count()).select_from(query.subquery())
         count_result = await session.scalar(count_query)
-        print(f"{count_result=}")
 
         if filtering_data.sort == SortingEnum.reviews:
-            sorting_by_reviews_cte = (
-                select(
-                    cls.model.id, func.avg(ReviewModel.rate).label("review")
-                )
-                .outerjoin(ReviewModel, cls.model.id == ReviewModel.product_id)
-                .group_by(cls.model.id)
-            ).cte()
-            query = query.outerjoin(sorting_by_reviews_cte).order_by(
-                cls.get_sorting_attribute(
-                    column=sorting_by_reviews_cte.c.review,
-                    sort_type=filtering_data.sort_type,
-                )
+            query = cls.get_query_with_cte_filtering(
+                query=query,
+                attribute=cls.model.id,
+                function=func.count,
+                sort_type=filtering_data.sort_type,
             )
 
         if filtering_data.sort == SortingEnum.rating:
-            sorting_by_rating_cte = (
-                select(
-                    cls.model.id,
-                    func.avg(ReviewModel.rate).label("average_rating"),
-                )
-                .outerjoin(ReviewModel, cls.model.id == ReviewModel.product_id)
-                .group_by(cls.model.id)
-            ).cte()
-            query = query.outerjoin(sorting_by_rating_cte).order_by(
-                cls.get_sorting_attribute(
-                    column=sorting_by_rating_cte.c.average_rating,
-                    sort_type=filtering_data.sort_type,
-                )
+            query = cls.get_query_with_cte_filtering(
+                query=query,
+                attribute=ReviewModel.rate,
+                function=func.avg,
+                sort_type=filtering_data.sort_type,
             )
         if filtering_data.sort == SortingEnum.price:
             query = query.order_by(
