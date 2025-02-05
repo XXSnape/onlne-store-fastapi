@@ -98,7 +98,6 @@ class ProductRepository(ManagerRepository):
         query = (
             select(cls.model)
             .options(
-
                 selectinload(cls.model.reviews)
                 .joinedload(ReviewModel.user)
                 .load_only(UserModel.username, UserModel.email),

@@ -26,6 +26,11 @@ class CategoryModel(BaseModel):
         secondary="tags_categories_association", back_populates="categories"
     )
 
+    parent_id: Mapped[int | None] = mapped_column(
+        ForeignKey("categories.id", ondelete="CASCADE"), default=None
+    )
+    children: Mapped[list["CategoryModel"]] = relationship("CategoryModel")
+
 
 class CategoryImageModel(BaseModel, ImageModelMixin):
     _directory = DIRECTORY_OF_IMAGES
