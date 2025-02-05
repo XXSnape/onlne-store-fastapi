@@ -15,6 +15,8 @@ DIRECTORY_OF_IMAGES: Final[str] = "categories"
 
 class CategoryModel(BaseModel):
     __tablename__ = "categories"
+    number_output_fields = 8
+
     title: Mapped[str]
     image: Mapped["CategoryImageModel"] = relationship(
         back_populates="category"

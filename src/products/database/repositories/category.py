@@ -1,15 +1,25 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import joinedload, selectinload
 
 from core import ManagerRepository
-from products.database import CategoryModel, TagModel
+from products.database import CategoryModel, TagModel, CategoryImageModel
 
 
 class CategoryRepository(ManagerRepository):
     model = CategoryModel
 
-    # async def
-    # async def get_tags_by_category_id(
-    #     self, session: AsyncSession, category_id: int | None
-    # ):
-    #     query = select(TagModel)
+    @classmethod
+    async def get_categories(cls, session: AsyncSession):
+        query = (
+            select(CategoryModel)
+            .options(
+                joinedload(CategoryModel.image),
+                selectinload(
+                    CategoryModel.children, recursion_depth=5
+                ).joinedload(CategoryModel.image),
+            )
+            .where(CategoryModel.parent_id.is_(None))
+        )
+        result = await session.execute(query)
+        return result.scalars().all()

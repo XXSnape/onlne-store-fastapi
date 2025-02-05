@@ -6,6 +6,7 @@ from core import SessionDep, settings
 from products.database.repositories.product import ProductRepository
 from products.dependencies.queries import get_filtering_options
 from products.schemas.catalog import FilterQuerySchema
+from products.services.categories import get_categories_and_subcategories
 from products.services.products import (
     get_products,
     get_product_by_id,
@@ -51,21 +52,12 @@ async def get_catalog_of_products(
         FilterQuerySchema, Depends(get_filtering_options)
     ],
 ):
-    print(f"{filtering_data=}")
     return await get_catalog(session=session, filtering_data=filtering_data)
 
 
-# @router.get("/catalog")
-# async def get_catalog_of_products(
-#     session: SessionDep,
-#     tags: Annotated[list[int], Query(alias="tags[]")],
-#     name: Annotated[str, Query(alias="name")] = "",
-# ):
-#     print(tags, type(tags))
-#     for tag in tags:
-#         print(tag, type(tag))
-#     return []
-# print("qqq", filtering_data)
-# # return filter.pages.current_page
-# # print(current_page)
-# return await get_products(session=session, is_popular=True)
+@router.get("/categories")
+async def get_categories(
+    session: SessionDep,
+):
+    result = await get_categories_and_subcategories(session)
+    return result
