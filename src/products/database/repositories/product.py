@@ -99,7 +99,7 @@ class ProductRepository(ManagerRepository):
     async def get_catalog(
         cls, session: AsyncSession, filtering_data: FilterQuerySchema
     ):
-        print("tags", filtering_data.tags)
+        print(f"{filtering_data.is_available=}")
         query = (
             select(cls.model)
             .outerjoin(SaleModel)
@@ -131,13 +131,13 @@ class ProductRepository(ManagerRepository):
         if filtering_data.free_delivery:
             query = query.where(cls.model.free_delivery == True)
         if filtering_data.is_available:
+            print("is_avalable")
             query = query.where(cls.model.count > 0)
         if filtering_data.category_id:
             query = query.where(
                 cls.model.category_id == filtering_data.category_id
             )
         if filtering_data.tags:
-
             products_with_tags = (
                 select(cls.model.id)
                 .distinct()
@@ -147,10 +147,10 @@ class ProductRepository(ManagerRepository):
                 .where(TagModel.id.in_(filtering_data.tags))
             )
             query = query.where(cls.model.id.in_(products_with_tags))
-            print("query", query)
 
         count_query = select(func.count()).select_from(query.subquery())
         count_result = await session.scalar(count_query)
+        print(f"{count_result=}")
 
         if filtering_data.sort == SortingEnum.reviews:
             sorting_by_reviews_cte = (
