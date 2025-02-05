@@ -16,6 +16,7 @@ class RedisSettings(BaseSettings):
 
 
 class AppSettings(BaseSettings):
+    cookie_key_card: str = "card-id"
     limit: int = 2
 
 

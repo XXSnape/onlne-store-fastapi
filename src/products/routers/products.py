@@ -1,9 +1,10 @@
+import asyncio
 from typing import Annotated
 
 from fastapi import APIRouter, Query, Depends
+from fastapi_cache.decorator import cache
 
-from core import SessionDep, settings
-from products.database.repositories.product import ProductRepository
+from core import SessionDep
 from products.dependencies.queries import get_filtering_options
 from products.schemas.catalog import FilterQuerySchema
 from products.services.categories import get_categories_and_subcategories
@@ -23,16 +24,20 @@ async def get_product(product_id: int, session: SessionDep):
 
 
 @router.get("/products/popular")
+@cache(expire=60 * 5)
 async def popular_product(session: SessionDep):
     return await get_products(session=session, is_popular=True)
 
 
 @router.get("/products/limited")
+@cache(expire=60 * 5)
 async def limited_product(session: SessionDep):
+    await asyncio.sleep(5)
     return await get_products(session=session, is_limited=True)
 
 
 @router.get("/banners")
+@cache(expire=60 * 5)
 async def get_banners(session: SessionDep):
     return await get_products(session=session, is_banner=True)
 
@@ -46,6 +51,7 @@ async def get_discounted_items(
 
 
 @router.get("/catalog")
+@cache(expire=60)
 async def get_catalog_of_products(
     session: SessionDep,
     filtering_data: Annotated[
@@ -56,6 +62,7 @@ async def get_catalog_of_products(
 
 
 @router.get("/categories")
+@cache(expire=60 * 5)
 async def get_categories(
     session: SessionDep,
 ):
