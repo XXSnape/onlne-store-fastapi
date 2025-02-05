@@ -7,6 +7,14 @@ load_dotenv()
 BASE_DIR = Path(__file__).parent.parent
 
 
+class RedisSettings(BaseSettings):
+    """
+    redis_host - хост редиса
+    """
+
+    redis_host: str
+
+
 class AppSettings(BaseSettings):
     limit: int = 2
 
@@ -65,6 +73,7 @@ class Settings(BaseSettings):
     db: DBSettings = DBSettings()
     auth_jwt: AuthJWTSettings = AuthJWTSettings()
     app: AppSettings = AppSettings()
+    redis: RedisSettings = RedisSettings()
 
 
 settings = Settings()
