@@ -57,6 +57,7 @@ class ProductRepository(ManagerRepository):
         is_popular: bool = False,
         is_limited: bool = False,
         is_banner: bool = False,
+        ids: list[int] | None = None,
     ):
         subquery = (
             select(cls.model.id)
@@ -90,6 +91,8 @@ class ProductRepository(ManagerRepository):
 
         if is_limited:
             query = query.where(cls.model.count == 0)
+        if ids:
+            query = query.where(cls.model.id.in_(ids))
         result = await session.execute(query)
         return result.scalars().all()
 

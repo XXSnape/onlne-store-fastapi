@@ -26,6 +26,7 @@ async def sign_up(
 async def sign_out():
     response = Response()
     response.delete_cookie(key=settings.auth_jwt.cookie_key_token)
+    response.delete_cookie(key=settings.app.cookie_key_card)
     return response
 
 

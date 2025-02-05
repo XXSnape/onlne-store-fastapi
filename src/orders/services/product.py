@@ -9,6 +9,7 @@ from orders.exceptions.count import too_many_products
 from orders.schemas.basket import BasketInSchema
 from secrets import token_urlsafe
 from products.database.repositories.product import ProductRepository
+from products.services.products import get_products
 
 
 async def add_product_to_basket(
@@ -31,15 +32,16 @@ async def add_product_to_basket(
     if card_id is None:
         card_id = token_urlsafe(32)
         await redis.hset(card_id, mapping={str(basket_in.id): basket_in.count})
-        response.set_cookie(key=settings.app.cookie_key_card, value=card_id)
-        return
+        response.set_cookie(
+            key=settings.app.cookie_key_card, value=card_id, httponly=True
+        )
+        return await get_products(session=session, ids=[basket_in.id])
     card = await redis.hgetall(card_id)
-    print("card", card)
     card[str(basket_in.id)] = basket_in.count
-    print("changed card", card)
     await redis.hset(card_id, mapping=card)
-    card = await redis.hgetall(card_id)
-    print("new card", card)
+    return await get_products(
+        session=session, ids=[int(id) for id in card.keys()]
+    )
 
 
 async def get_product_quantity(session: AsyncSession, product_id: int) -> int:
