@@ -3,7 +3,7 @@ from fastapi import Cookie
 from sqlalchemy.sql.annotation import Annotated
 from starlette.responses import Response
 
-from core import SessionDep, settings
+from core import settings
 from redis.asyncio import Redis
 from orders.exceptions.count import too_many_products
 from orders.schemas.basket import BasketInSchema
@@ -12,8 +12,17 @@ from products.database.repositories.product import ProductRepository
 from products.services.products import get_products
 
 
+async def get_products_in_card(
+    session: AsyncSession, redis: Redis, card_id: str
+):
+    card = await redis.hgetall(card_id)
+    return await get_products(
+        session=session, ids=[int(id) for id in card.keys()]
+    )
+
+
 async def add_product_to_basket(
-    session: SessionDep,
+    session: AsyncSession,
     redis: Redis,
     basket_in: BasketInSchema,
     response: Response,
@@ -21,13 +30,14 @@ async def add_product_to_basket(
         str | None, Cookie(alias=settings.app.cookie_key_card)
     ] = None,
 ):
-    product_quantity = await redis.get(f"product_{basket_in.id}")
+    key_product = f"product_{basket_in.id}"
+    product_quantity = await redis.get(key_product)
     if product_quantity is None:
         product_quantity = await get_product_quantity(
             session=session, product_id=basket_in.id
         )
-        await redis.set("my-key", "value", ex=40)
-    if product_quantity < basket_in.count:
+        await redis.set(key_product, product_quantity, ex=40)
+    if int(product_quantity) < basket_in.count:
         raise too_many_products
     if card_id is None:
         card_id = token_urlsafe(32)
@@ -39,8 +49,8 @@ async def add_product_to_basket(
     card = await redis.hgetall(card_id)
     card[str(basket_in.id)] = basket_in.count
     await redis.hset(card_id, mapping=card)
-    return await get_products(
-        session=session, ids=[int(id) for id in card.keys()]
+    return await get_products_in_card(
+        session=session, redis=redis, card_id=card_id
     )
 
 
