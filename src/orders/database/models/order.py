@@ -1,3 +1,4 @@
+import sqlalchemy
 from sqlalchemy import UniqueConstraint, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -16,8 +17,10 @@ from users.database.models.mixins.user import UserRelationshipMixin
 class OrderModel(UserRelationshipMixin, BaseModel):
     _back_populates = "orders"
     created_at: Mapped[creation_time]
-    delivery_type: Mapped[DeliveryTypeEnum]
-    payment_type: Mapped[PaymentTypeEnum]
+    delivery_type: Mapped[DeliveryTypeEnum | None] = mapped_column(
+        default=None
+    )
+    payment_type: Mapped[PaymentTypeEnum | None] = mapped_column(default=None)
     status: Mapped[OrderStatusEnum] = mapped_column(
         default=OrderStatusEnum.unpaid, server_default=OrderStatusEnum.unpaid
     )
