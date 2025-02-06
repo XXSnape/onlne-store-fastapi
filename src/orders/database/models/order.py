@@ -32,7 +32,7 @@ class OrderModel(UserRelationshipMixin, BaseModel):
 
 
 class OrderProductModel(ProductRelationshipMixin, BaseModel):
-    _back_populates = "product"
+    _back_populates = "orders"
 
     __tablename__ = "orders_products_association"
     __table_args__ = (

@@ -8,6 +8,7 @@ from pydantic import (
     PlainSerializer,
     field_validator,
     model_validator,
+    AliasChoices,
 )
 from datetime import datetime, date
 
@@ -42,7 +43,9 @@ class ProductGeneralSchema(ProductBaseSchema):
         ),
     ]
     tags: list[TagSchema]
-    reviews: Annotated[int, Field(validation_alias="reviews_count")]
+    reviews: Annotated[
+        int, Field(validation_alias=AliasChoices("reviews_count", "reviews"))
+    ]
     rating: int
 
     @model_validator(mode="after")
