@@ -20,6 +20,7 @@ async def get_products(
     is_limited: bool = False,
     is_banner: bool = False,
     ids: list[int] | None = None,
+    context: dict | None = None,
 ):
     products = await ProductRepository.get_small_info_about_products(
         session=session,
@@ -29,7 +30,9 @@ async def get_products(
         ids=ids,
     )
     return [
-        ProductGeneralSchema.model_validate(product, from_attributes=True)
+        ProductGeneralSchema.model_validate(
+            product, from_attributes=True, context=context
+        )
         for product in products
     ]
 

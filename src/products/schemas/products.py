@@ -1,8 +1,17 @@
 from decimal import Decimal
-from typing import Annotated
+from typing import Annotated, Self
 
-from pydantic import BaseModel, Field, computed_field, PlainSerializer
+from pydantic import (
+    BaseModel,
+    Field,
+    computed_field,
+    PlainSerializer,
+    field_validator,
+    model_validator,
+)
 from datetime import datetime, date
+
+from pydantic_core.core_schema import ValidationInfo
 
 from core import ImageSchema, settings
 from .reviews import ReviewSchema
@@ -35,6 +44,12 @@ class ProductGeneralSchema(ProductBaseSchema):
     tags: list[TagSchema]
     reviews: Annotated[int, Field(validation_alias="reviews_count")]
     rating: int
+
+    @model_validator(mode="after")
+    def validate_count_by_context(self, info: ValidationInfo) -> Self:
+        if info.context:
+            self.count = int(info.context[str(self.id)])
+        return self
 
 
 class ProductDetailsSchema(ProductGeneralSchema):

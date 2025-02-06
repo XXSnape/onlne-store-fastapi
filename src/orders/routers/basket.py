@@ -4,10 +4,15 @@ from typing import Annotated
 from starlette.responses import Response
 
 from core import SessionDep, settings
+from core.dependencies.credentials import CredentialsDep
 from orders.dependencies.redis import RedisDep
 
 from orders.schemas.basket import BasketInSchema
-from orders.services.product import add_product_to_basket, get_products_in_card
+from orders.services.product import (
+    add_product_to_basket,
+    get_products_in_card,
+    delete_product_from_basket,
+)
 
 router = APIRouter()
 
@@ -45,4 +50,25 @@ async def get_basket(
         return []
     return await get_products_in_card(
         session=session, redis=redis, card_id=card_id
+    )
+
+
+@router.delete("/basket")
+async def delete_product(
+    session: SessionDep,
+    redis: RedisDep,
+    basket_in: BasketInSchema,
+    response: Response,
+    card_id: Annotated[
+        str | None, Cookie(alias=settings.app.cookie_key_card)
+    ] = None,
+):
+    if card_id is None:
+        return []
+    return await delete_product_from_basket(
+        session=session,
+        redis=redis,
+        product_id=basket_in.id,
+        response=response,
+        card_id=card_id,
     )

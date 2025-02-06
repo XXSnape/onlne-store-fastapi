@@ -8,4 +8,6 @@ def get_credentials(credentials: Annotated[str, Body()]) -> dict[str, str]:
     return loads(credentials)
 
 
-Credentials: TypeAlias = Annotated[dict[str, str], Depends(get_credentials)]
+CredentialsDep: TypeAlias = Annotated[
+    dict[str, str | int], Depends(get_credentials)
+]
