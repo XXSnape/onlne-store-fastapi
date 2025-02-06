@@ -16,6 +16,7 @@ from catalog.admin import (
     ReviewAdmin,
     SaleAdmin,
 )
+from orders.admin import OrderAdmin, OrderProductAdmin
 from users.routers.auth import router as users_router
 from users.routers.profile import router as profiles_router
 from catalog.routers import router as products_router
@@ -53,6 +54,8 @@ views = [
     AvatarAdmin,
     UserAdmin,
     SaleAdmin,
+    OrderAdmin,
+    OrderProductAdmin,
 ]
 
 app = FastAPI(lifespan=lifespan)

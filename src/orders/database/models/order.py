@@ -1,8 +1,11 @@
+from decimal import Decimal
+
 from sqlalchemy import UniqueConstraint, ForeignKey
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from catalog.database.models.mixins.product import ProductRelationshipMixin
-from core import BaseModel, creation_time
+from core import BaseModel, creation_time, price_decimal
 from orders.utils.constants import (
     DeliveryTypeEnum,
     PaymentTypeEnum,
@@ -28,6 +31,19 @@ class OrderModel(UserRelationshipMixin, BaseModel):
     products: Mapped[list["OrderProductModel"]] = relationship(
         back_populates="order"
     )
+    total_cost: Mapped[price_decimal | None] = mapped_column(default=None)
+
+    @hybrid_property
+    def fullname(self):
+        return self.user.fullname
+
+    @hybrid_property
+    def email(self):
+        return self.user.email
+
+    @hybrid_property
+    def phone(self):
+        return self.user.phone
 
 
 class OrderProductModel(ProductRelationshipMixin, BaseModel):
@@ -46,3 +62,43 @@ class OrderProductModel(ProductRelationshipMixin, BaseModel):
         ForeignKey("orders.id", ondelete="CASCADE")
     )
     order: Mapped["OrderModel"] = relationship(back_populates="products")
+
+    @hybrid_property
+    def price(self) -> Decimal:
+        return self.product.price
+
+    @hybrid_property
+    def rating(self) -> float:
+        return self.product.rating
+
+    @hybrid_property
+    def tags(self):
+        return self.product.tags
+
+    @hybrid_property
+    def reviews(self):
+        return self.product.reviews_count
+
+    @hybrid_property
+    def title(self):
+        return self.product.title
+
+    @hybrid_property
+    def date(self):
+        return self.product.date
+
+    @hybrid_property
+    def description(self):
+        return self.product.description
+
+    @hybrid_property
+    def free_delivery(self):
+        return self.product.free_delivery
+
+    @hybrid_property
+    def category(self):
+        return self.product.category_id
+
+    @hybrid_property
+    def images(self):
+        return self.product.images
