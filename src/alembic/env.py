@@ -22,7 +22,7 @@ if config.config_file_name is not None:
 # target_metadata = mymodel.Base.metadata
 from core import BaseModel, settings
 from users.database import UserModel, AvatarModel
-from products.database import (
+from catalog.database import (
     ProductModel,
     CategoryModel,
     CategoryImageModel,

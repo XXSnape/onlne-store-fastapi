@@ -7,7 +7,7 @@ from core import BaseModel
 
 if TYPE_CHECKING:
     from .avatar import AvatarModel
-    from products.database.models.review import ReviewModel
+    from catalog.database.models.review import ReviewModel
 
 
 class UserModel(BaseModel):

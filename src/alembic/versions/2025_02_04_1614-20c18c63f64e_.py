@@ -16,10 +16,10 @@ from fastapi_storages import FileSystemStorage
 from users.database.models.avatar import (
     DIRECTORY_OF_IMAGES as avatar_directory,
 )
-from products.database.models.product_image import (
+from catalog.database.models.product_image import (
     DIRECTORY_OF_IMAGES as product_directory,
 )
-from products.database.models.category import (
+from catalog.database.models.category import (
     DIRECTORY_OF_IMAGES as category_directory,
 )
 

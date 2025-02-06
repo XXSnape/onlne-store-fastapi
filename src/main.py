@@ -1,11 +1,10 @@
 import uvicorn
-from fastapi import FastAPI
 from starlette.staticfiles import StaticFiles
 
 from core import db_helper, settings
 from frontend.routers import router as frontend_router
 
-from products.admin import (
+from catalog.admin import (
     CategoryAdmin,
     CategoryImageAdmin,
     TagAdmin,
@@ -19,8 +18,8 @@ from products.admin import (
 )
 from users.routers.auth import router as users_router
 from users.routers.profile import router as profiles_router
-from products.routers import router as products_router
-from orders.routers.basket import router as basket_router
+from catalog.routers import router as products_router
+from catalog.routers.basket import router as basket_router
 from users.admin import AvatarAdmin, UserAdmin
 from sqladmin import Admin
 from redis import asyncio as aioredis
