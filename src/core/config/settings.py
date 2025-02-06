@@ -14,6 +14,13 @@ class RedisSettings(BaseSettings):
 
     redis_host: str
 
+    @property
+    def url(self) -> str:
+        """
+        Возвращает строку для подключения к редису.
+        """
+        return f"redis://{self.redis_host}"
+
 
 class AppSettings(BaseSettings):
     cookie_key_card: str = "card-id"

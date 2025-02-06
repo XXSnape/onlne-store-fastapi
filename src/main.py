@@ -2,7 +2,7 @@ import uvicorn
 from fastapi import FastAPI
 from starlette.staticfiles import StaticFiles
 
-from core import db_helper
+from core import db_helper, settings
 from frontend.routers import router as frontend_router
 
 from products.admin import (
@@ -36,7 +36,7 @@ from fastapi_cache.backends.redis import RedisBackend
 
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
-    redis = aioredis.from_url("redis://localhost")
+    redis = aioredis.from_url(settings.redis.url)
     FastAPICache.init(RedisBackend(redis), prefix="fastapi-cache")
     yield
 
