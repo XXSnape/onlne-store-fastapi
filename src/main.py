@@ -19,7 +19,6 @@ from catalog.admin import (
 from users.routers.auth import router as users_router
 from users.routers.profile import router as profiles_router
 from catalog.routers import router as products_router
-from catalog.routers.basket import router as basket_router
 from users.admin import AvatarAdmin, UserAdmin
 from sqladmin import Admin
 from redis import asyncio as aioredis
@@ -60,7 +59,6 @@ app.include_router(frontend_router)
 app.include_router(users_router, prefix="/api")
 app.include_router(profiles_router, prefix="/api")
 app.include_router(products_router, prefix="/api")
-app.include_router(basket_router, prefix="/api")
 
 app.mount("/static", StaticFiles(directory="frontend/static"))
 app.mount("/order-detail/static/", StaticFiles(directory="frontend/static/"))

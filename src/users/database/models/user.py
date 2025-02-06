@@ -8,6 +8,7 @@ from core import BaseModel
 if TYPE_CHECKING:
     from .avatar import AvatarModel
     from catalog.database.models.review import ReviewModel
+    from orders.database import OrderModel
 
 
 class UserModel(BaseModel):
@@ -23,3 +24,4 @@ class UserModel(BaseModel):
     is_admin: Mapped[bool] = mapped_column(default=False, server_default="0")
     avatar: Mapped["AvatarModel"] = relationship(back_populates="user")
     reviews: Mapped[list["ReviewModel"]] = relationship(back_populates="user")
+    orders: Mapped[list["OrderModel"]] = relationship(back_populates="user")

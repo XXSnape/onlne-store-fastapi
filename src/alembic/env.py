@@ -33,6 +33,7 @@ from catalog.database import (
     TagModel,
     TagCategoryModel,
 )
+from orders.database import OrderModel, OrderProductModel
 
 target_metadata = BaseModel.metadata
 config.set_main_option("sqlalchemy.url", settings.db.url)

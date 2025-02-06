@@ -6,8 +6,6 @@ from sqlalchemy import (
     Text,
     ForeignKey,
     CheckConstraint,
-    type_coerce,
-    ColumnElement,
 )
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import mapped_column, Mapped, relationship
@@ -15,13 +13,15 @@ from sqlalchemy.orm import mapped_column, Mapped, relationship
 from core import BaseModel, price_decimal, creation_time
 from catalog.database.models.review import ReviewModel
 from catalog.database.models.speciification import SpecificationModel
-from sqlalchemy import Numeric
+
+from orders.database.models.order import OrderProductModel
 
 if TYPE_CHECKING:
     from .product_image import ProductImageModel
     from .category import CategoryModel
     from .sale import SaleModel
     from .speciification import SpecificationModel
+    from orders.database import OrderProductModel
 
 
 class ProductModel(BaseModel):
@@ -57,6 +57,10 @@ class ProductModel(BaseModel):
         back_populates="products",
     )
     reviews: Mapped[list["ReviewModel"]] = relationship(
+        back_populates="product"
+    )
+
+    orders: Mapped[list["OrderProductModel"]] = relationship(
         back_populates="product"
     )
 
