@@ -1,6 +1,6 @@
 import sqlalchemy
 from fastapi import HTTPException
-from sqlalchemy import select, update
+from sqlalchemy import select, update, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload, selectinload
 
@@ -13,6 +13,8 @@ from catalog.database import (
 from catalog.exceptions.count import too_many_products
 from core import ManagerRepository, ImageModelMixin
 from orders.database import OrderModel, OrderProductModel
+from orders.utils.constants import OrderStatusEnum
+from users.database import UserModel
 
 
 class OrderRepository(ManagerRepository):
@@ -73,3 +75,20 @@ class OrderProductRepository(ManagerRepository):
         except sqlalchemy.exc.IntegrityError as e:
             print(e, type(e))
             raise too_many_products
+
+    @classmethod
+    async def is_there_purchase(
+        cls, session: AsyncSession, product_id: int, user_id: int
+    ):
+        query = (
+            select(func.count())
+            .select_from(cls.model)
+            .join(OrderModel)
+            .where(
+                cls.model.product_id == product_id,
+                OrderModel.status == OrderStatusEnum.paid,
+                OrderModel.user_id == user_id,
+            )
+        )
+        result = await session.scalar(query)
+        return result > 0
