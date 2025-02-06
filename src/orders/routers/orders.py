@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from catalog.schemas.products import ProductGeneralSchema
 from core import SessionDep, UserIdDep
+from orders.services.order import add_products_to_new_order
 
 router = APIRouter()
 
@@ -13,6 +14,9 @@ async def create_order(
     user_id: UserIdDep,
     products: list[ProductGeneralSchema],
 ):
-    print(products)
-
-    pass
+    order_id = await add_products_to_new_order(
+        session=session,
+        user_id=user_id,
+        products=products,
+    )
+    return {"orderId": order_id}

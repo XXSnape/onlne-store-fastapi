@@ -24,7 +24,7 @@ class OrderModel(UserRelationshipMixin, BaseModel):
         default=OrderStatusEnum.unpaid, server_default=OrderStatusEnum.unpaid
     )
     city: Mapped[str | None] = mapped_column(default=None)
-    address: Mapped[str] = mapped_column(default=None)
+    address: Mapped[str | None] = mapped_column(default=None)
     products: Mapped[list["OrderProductModel"]] = relationship(
         back_populates="order"
     )

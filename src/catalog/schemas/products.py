@@ -31,14 +31,16 @@ class ProductBaseSchema(BaseModel):
 
 
 class ProductGeneralSchema(ProductBaseSchema):
-    category: Annotated[int, Field(validation_alias="category_id")]
+    category: Annotated[
+        int, Field(validation_alias=AliasChoices("category_id", "category"))
+    ]
     count: int
     date: datetime
     description: str
     free_delivery: Annotated[
         bool,
         Field(
-            validation_alias="free_delivery",
+            validation_alias=AliasChoices("free_delivery", "freeDelivery"),
             serialization_alias="freeDelivery",
         ),
     ]
