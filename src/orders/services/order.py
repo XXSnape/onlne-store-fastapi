@@ -6,8 +6,10 @@ from core.exceptions.not_found import not_found
 from orders.database import OrderProductModel, OrderModel
 from orders.database.repositories.order import (
     OrderRepository,
+    OrderProductRepository,
 )
 from orders.schemas.orders import OrderInSchema, OrdersSchema
+from orders.utils.constants import OrderStatusEnum
 
 
 async def add_products_to_new_order(
@@ -68,3 +70,19 @@ async def get_user_order(session: AsyncSession, user_id: int, order_id: int):
     if order is None:
         raise not_found
     return OrdersSchema.model_validate(order, from_attributes=True)
+
+
+async def pay_order(session: AsyncSession, user_id: int, order_id: int):
+    order: OrderModel = await OrderRepository.get_object_by_params(
+        session=session,
+        data={
+            "id": order_id,
+            "user_id": user_id,
+            "status": OrderStatusEnum.unpaid,
+        },
+    )
+    if not order:
+        raise not_found
+    await OrderProductRepository.update_products_quantity(session, order_id)
+    order.status = OrderStatusEnum.paid
+    await session.commit()

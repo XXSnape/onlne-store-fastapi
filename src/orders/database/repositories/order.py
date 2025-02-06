@@ -1,4 +1,6 @@
-from sqlalchemy import select
+import sqlalchemy
+from fastapi import HTTPException
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload, selectinload
 
@@ -8,6 +10,7 @@ from catalog.database import (
     CategoryModel,
     ProductModel,
 )
+from catalog.exceptions.count import too_many_products
 from core import ManagerRepository, ImageModelMixin
 from orders.database import OrderModel, OrderProductModel
 
@@ -49,3 +52,24 @@ class OrderRepository(ManagerRepository):
 
 class OrderProductRepository(ManagerRepository):
     model = OrderProductModel
+
+    @classmethod
+    async def update_products_quantity(
+        cls, session: AsyncSession, order_id: int
+    ):
+        try:
+            update_stmt = (
+                update(ProductModel)
+                .where(
+                    ProductModel.id == cls.model.product_id,
+                    cls.model.order_id == order_id,
+                )
+                .values(
+                    {ProductModel.count: ProductModel.count - cls.model.count}
+                )
+            )
+            await session.execute(update_stmt)
+            await session.commit()
+        except sqlalchemy.exc.IntegrityError as e:
+            print(e, type(e))
+            raise too_many_products
