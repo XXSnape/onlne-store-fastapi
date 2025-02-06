@@ -16,19 +16,9 @@ class OrderRepository(ManagerRepository):
     model = OrderModel
 
     @classmethod
-    async def get_user_orders(cls, session: AsyncSession, user_id: int):
-        # query = select(cls.model).options(
-        #     defer(cls.model.full_description),
-        #     selectinload(cls.model.reviews).load_only(
-        #         ReviewModel.product_id, ReviewModel.rate
-        #     ),
-        #     joinedload(cls.model.sale).load_only(SaleModel.sale_price),
-        #     joinedload(cls.model.category)
-        #     .load_only(CategoryModel.id)
-        #     .selectinload(CategoryModel.tags),
-        #     selectinload(cls.model.images),
-        # ) ImageModel
-
+    async def get_user_orders(
+        cls, session: AsyncSession, user_id: int, order_id: int | None = None
+    ):
         query = (
             select(cls.model)
             .options(
@@ -49,6 +39,10 @@ class OrderRepository(ManagerRepository):
             )
             .where(cls.model.user_id == user_id)
         )
+        if order_id:
+            query = query.where(cls.model.id == order_id)
+            result = await session.execute(query)
+            return result.scalars().one_or_none()
         result = await session.execute(query)
         return result.scalars().all()
 

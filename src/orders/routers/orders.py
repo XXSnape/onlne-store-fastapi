@@ -10,6 +10,7 @@ from orders.services.order import (
     add_products_to_new_order,
     add_details_to_order,
     get_user_orders,
+    get_user_order,
 )
 
 router = APIRouter()
@@ -51,3 +52,12 @@ async def get_orders(
     user_id: UserIdDep,
 ):
     return await get_user_orders(session=session, user_id=user_id)
+
+
+@router.get("/orders/{order_id}")
+async def get_order(session: SessionDep, user_id: UserIdDep, order_id: int):
+    return await get_user_order(
+        session=session,
+        user_id=user_id,
+        order_id=order_id,
+    )
