@@ -1,4 +1,3 @@
-import sqlalchemy
 from sqlalchemy import UniqueConstraint, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -24,8 +23,8 @@ class OrderModel(UserRelationshipMixin, BaseModel):
     status: Mapped[OrderStatusEnum] = mapped_column(
         default=OrderStatusEnum.unpaid, server_default=OrderStatusEnum.unpaid
     )
-    city: Mapped[str]
-    address: Mapped[str]
+    city: Mapped[str | None] = mapped_column(default=None)
+    address: Mapped[str] = mapped_column(default=None)
     products: Mapped[list["OrderProductModel"]] = relationship(
         back_populates="order"
     )

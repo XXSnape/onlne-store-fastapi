@@ -60,6 +60,8 @@ app.include_router(frontend_router)
 app.include_router(users_router, prefix="/api")
 app.include_router(profiles_router, prefix="/api")
 app.include_router(products_router, prefix="/api")
+app.include_router(orders_router, prefix="/api")
+
 
 app.mount("/static", StaticFiles(directory="frontend/static"))
 app.mount("/order-detail/static/", StaticFiles(directory="frontend/static/"))
