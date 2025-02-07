@@ -14,3 +14,15 @@ services:
     image: redis:7.4-alpine
     ports:
       - "6379:6379"
+
+  app:
+    container_name: fastapi
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./upload_files:/app/src/uploads
+    depends_on:
+      - postgres
+      - redis
+    restart: on-failure
