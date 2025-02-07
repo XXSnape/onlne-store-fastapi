@@ -1,22 +1,19 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from users.database.repositories.user import UserRepository
+from users.schemas.sign_up import SignUpSchema
 from users.utils.cookie import put_token_in_cookies
-from users.utils.auth import get_hashed_password
 from fastapi import Response
 
 
 async def create_user(
     session: AsyncSession,
-    credentials: dict[str, str | bytes],
+    credentials: SignUpSchema,
     response: Response,
 ) -> None:
-    del credentials["name"]
-    credentials["fullname"] = "Неизвестно"
-    credentials["password"] = get_hashed_password(credentials["password"])
     user_id = await UserRepository.create_object(
-        session=session, data=credentials
+        session=session, data=credentials.model_dump()
     )
     put_token_in_cookies(
-        user_id=user_id, response=response, username=credentials["username"]
+        user_id=user_id, response=response, username=credentials.username
     )
