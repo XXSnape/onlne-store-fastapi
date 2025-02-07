@@ -1,20 +1,27 @@
+from typing import Annotated, Any
+
 from fastapi import APIRouter
+from fastapi.params import Depends
 from starlette.responses import Response
 
 from core import SessionDep, settings
-from core.dependencies.credentials import CredentialsDep
+from core.dependencies.credentials import CredentialsDep, StringOrModel, B
 from users.services.sign_in import login_user
 from users.services.sign_up import create_user
 
 
 router = APIRouter()
 
+s = StringOrModel(B)
+
 
 @router.post("/sign-up")
 async def sign_up(
-    credentials: CredentialsDep,
+    credentials: Annotated[Any, Depends(s)],
+    # credentials: CredentialsDep,
     session: SessionDep,
 ):
+    print("cred from router", credentials, type(credentials))
     response = Response()
     await create_user(
         session=session, credentials=credentials, response=response
