@@ -72,6 +72,7 @@ app.mount("/catalog/static/", StaticFiles(directory="frontend/static/"))
 app.mount("/product/static/", StaticFiles(directory="frontend/static/"))
 app.mount("/uploads", StaticFiles(directory="uploads/"))
 app.mount("/product/uploads", StaticFiles(directory="uploads/"))
+app.mount("/catalog/uploads", StaticFiles(directory="uploads/"))
 
 
 admin = Admin(app, db_helper.engine)

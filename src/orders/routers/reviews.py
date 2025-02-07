@@ -8,7 +8,7 @@ from orders.services.review import write_review_on_product
 router = APIRouter()
 
 
-@router.post("/product/{product_id}/review")
+@router.post("/product/{product_id}/reviews")
 async def write_review(
     session: SessionDep,
     product_id: int,
