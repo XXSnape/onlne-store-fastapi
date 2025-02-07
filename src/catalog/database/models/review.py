@@ -13,7 +13,6 @@ class ReviewModel(
     UserRelationshipMixin,
     BaseModel,
 ):
-    _on_delete_user = "SET NULL"
     __table_args__ = (
         CheckConstraint("rate >= 1 and rate <= 5"),
         UniqueConstraint(

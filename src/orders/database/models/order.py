@@ -63,42 +63,13 @@ class OrderProductModel(ProductRelationshipMixin, BaseModel):
     )
     order: Mapped["OrderModel"] = relationship(back_populates="products")
 
-    @hybrid_property
-    def price(self) -> Decimal:
-        return self.product.price
-
-    @hybrid_property
-    def rating(self) -> float:
-        return self.product.rating
-
-    @hybrid_property
-    def tags(self):
-        return self.product.tags
-
-    @hybrid_property
-    def reviews(self):
-        return self.product.reviews_count
-
-    @hybrid_property
-    def title(self):
-        return self.product.title
-
-    @hybrid_property
-    def date(self):
-        return self.product.date
-
-    @hybrid_property
-    def description(self):
-        return self.product.description
-
-    @hybrid_property
-    def free_delivery(self):
-        return self.product.free_delivery
-
-    @hybrid_property
-    def category(self):
-        return self.product.category_id
-
-    @hybrid_property
-    def images(self):
-        return self.product.images
+    def __getattr__(self, item: str):
+        if item.startswith("_"):
+            return super().getattr(item)
+        if item == "category":
+            return getattr(super().__getattribute__("product"), "category_id")
+        if item == "reviews":
+            return getattr(
+                super().__getattribute__("product"), "reviews_count"
+            )
+        return getattr(super().__getattribute__("product"), item)
