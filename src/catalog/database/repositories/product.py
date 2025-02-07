@@ -21,6 +21,8 @@ from catalog.database import (
 )
 from catalog.schemas.catalog import FilterQuerySchema
 from catalog.utils.constants import SortingEnum, SortingTypeEnum
+from orders.database import OrderProductModel, OrderModel
+from orders.utils.constants import OrderStatusEnum
 from users.database import UserModel
 
 
@@ -205,6 +207,23 @@ class ProductRepository(ManagerRepository):
             )
         result = await session.execute(query)
         return result.scalars().all(), count_result
+
+    @classmethod
+    async def is_there_purchase(
+        cls, session: AsyncSession, product_id: int, user_id: int
+    ):
+        query = (
+            select(func.count())
+            .select_from(OrderProductModel)
+            .join(OrderModel)
+            .where(
+                OrderProductModel.product_id == product_id,
+                OrderModel.status == OrderStatusEnum.paid,
+                OrderModel.user_id == user_id,
+            )
+        )
+        result = await session.scalar(query)
+        return result > 0
 
 
 class SaleRepository(ManagerRepository):

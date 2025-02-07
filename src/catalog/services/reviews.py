@@ -1,9 +1,10 @@
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from catalog.database.repositories.product import ProductRepository
 from catalog.database.repositories.review import ReviewRepository
 from orders.database.repositories.order import OrderProductRepository
-from orders.schemas.reviews import ReviewInSchema
+from catalog.schemas.reviews import ReviewInSchema
 
 
 async def write_review_on_product(
@@ -12,7 +13,7 @@ async def write_review_on_product(
     product_id: int,
     review_in: ReviewInSchema,
 ):
-    result = await OrderProductRepository.is_there_purchase(
+    result = await ProductRepository.is_there_purchase(
         session=session,
         user_id=user_id,
         product_id=product_id,

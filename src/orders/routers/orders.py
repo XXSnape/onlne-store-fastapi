@@ -4,14 +4,12 @@ from starlette.responses import Response
 from catalog.schemas.products import ProductGeneralSchema
 from core import SessionDep, UserIdDep
 from core.dependencies.user_by_cookie import get_user_id
-from orders.database.repositories.order import OrderRepository
 from orders.schemas.orders import OrderInSchema
 from orders.services.order import (
     add_products_to_new_order,
     add_details_to_order,
     get_user_orders,
     get_user_order,
-    pay_order,
 )
 
 router = APIRouter()
@@ -62,11 +60,3 @@ async def get_order(session: SessionDep, user_id: UserIdDep, order_id: int):
         user_id=user_id,
         order_id=order_id,
     )
-
-
-@router.post("/payment/{order_id}")
-async def pay_for_order(
-    session: SessionDep, user_id: UserIdDep, order_id: int
-):
-    await pay_order(session=session, user_id=user_id, order_id=order_id)
-    return Response()

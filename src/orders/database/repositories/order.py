@@ -75,20 +75,3 @@ class OrderProductRepository(ManagerRepository):
         except sqlalchemy.exc.IntegrityError as e:
             print(e, type(e))
             raise too_many_products
-
-    @classmethod
-    async def is_there_purchase(
-        cls, session: AsyncSession, product_id: int, user_id: int
-    ):
-        query = (
-            select(func.count())
-            .select_from(cls.model)
-            .join(OrderModel)
-            .where(
-                cls.model.product_id == product_id,
-                OrderModel.status == OrderStatusEnum.paid,
-                OrderModel.user_id == user_id,
-            )
-        )
-        result = await session.scalar(query)
-        return result > 0
