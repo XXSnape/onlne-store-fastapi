@@ -21,7 +21,8 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./upload_files:/app/src/uploads
+      - ./uploaded_files:/app/src/uploads
+      - ./certs:/app/src/core/certs
     depends_on:
       - postgres
       - redis

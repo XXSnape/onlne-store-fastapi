@@ -62,7 +62,7 @@ class DBSettings(BaseSettings):
     postgres_user: str
     postgres_password: str
     postgres_db: str
-    echo: bool = True
+    echo: bool = False
 
     @property
     def url(self) -> str:
