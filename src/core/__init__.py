@@ -8,5 +8,5 @@ from .database import (
     ImageModelMixin,
 )
 from .dependencies import SessionDep, UserIdDep
-from .schemas import ImageSchema
+from .schemas import ImageSchema, DateSchema
 from .admin import UUIDFilenameAdminMixin

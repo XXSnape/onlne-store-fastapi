@@ -225,6 +225,18 @@ class ProductRepository(ManagerRepository):
         result = await session.scalar(query)
         return result > 0
 
+    @classmethod
+    async def get_product_reviews(cls, session: AsyncSession, product_id: int):
+        query = (
+            select(cls.model)
+            .options(
+                selectinload(cls.model.reviews).joinedload(ReviewModel.user)
+            )
+            .where(cls.model.id == product_id)
+        )
+        result = await session.execute(query)
+        return result.scalars().one().reviews
+
 
 class SaleRepository(ManagerRepository):
     model = SaleModel

@@ -4,7 +4,7 @@ from starlette.responses import Response
 
 from core import UserIdDep, SessionDep
 from users.schemas.password import ChangePasswordSchema
-from users.schemas.profile import ProfileInSchema
+from users.schemas.profile import ProfileInSchema, ProfileSchema
 from users.services.avatar import save_avatar
 from users.services.password import change_user_password
 from users.services.profile import get_user_profile, update_user_profile
@@ -12,7 +12,7 @@ from users.services.profile import get_user_profile, update_user_profile
 router = APIRouter()
 
 
-@router.get("/profile")
+@router.get("/profile", response_model=ProfileSchema)
 async def get_profile(user_id: UserIdDep, session: SessionDep):
     return await get_user_profile(session=session, user_id=user_id)
 
@@ -25,14 +25,14 @@ async def save_user_avatar(
     return Response()
 
 
-@router.post("/profile")
+@router.post("/profile", response_model=ProfileSchema)
 async def update_profile(
     user_id: UserIdDep, session: SessionDep, profile_in: ProfileInSchema
 ):
     await update_user_profile(
         session=session, user_id=user_id, profile_in=profile_in
     )
-    return Response()
+    return await get_user_profile(session=session, user_id=user_id)
 
 
 @router.post("/profile/password")

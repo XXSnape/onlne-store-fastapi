@@ -14,7 +14,7 @@ from datetime import datetime, date
 
 from pydantic_core.core_schema import ValidationInfo
 
-from core import ImageSchema, settings
+from core import ImageSchema, settings, DateSchema
 from .reviews import ReviewSchema
 from .tags import TagSchema
 
@@ -30,12 +30,11 @@ class ProductBaseSchema(BaseModel):
     images: list[ImageSchema]
 
 
-class ProductGeneralSchema(ProductBaseSchema):
+class ProductGeneralSchema(ProductBaseSchema, DateSchema):
     category: Annotated[
         int, Field(validation_alias=AliasChoices("category_id", "category"))
     ]
     count: int
-    date: datetime
     description: str
     free_delivery: Annotated[
         bool,

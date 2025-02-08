@@ -4,7 +4,7 @@ from starlette.responses import Response
 from catalog.schemas.products import ProductGeneralSchema
 from core import SessionDep, UserIdDep
 from core.dependencies.user_by_cookie import get_user_id
-from orders.schemas.orders import OrderInSchema
+from orders.schemas.orders import OrderInSchema, OrderIdOutSchema, OrdersSchema
 from orders.services.order import (
     add_products_to_new_order,
     add_details_to_order,
@@ -15,7 +15,7 @@ from orders.services.order import (
 router = APIRouter()
 
 
-@router.post("/orders")
+@router.post("/orders", response_model=OrderIdOutSchema)
 async def create_order(
     session: SessionDep,
     user_id: UserIdDep,
@@ -45,7 +45,7 @@ async def confirm_order(
     return Response()
 
 
-@router.get("/orders")
+@router.get("/orders", response_model=list[OrdersSchema])
 async def get_orders(
     session: SessionDep,
     user_id: UserIdDep,
@@ -53,7 +53,7 @@ async def get_orders(
     return await get_user_orders(session=session, user_id=user_id)
 
 
-@router.get("/orders/{order_id}")
+@router.get("/orders/{order_id}", response_model=OrdersSchema)
 async def get_order(session: SessionDep, user_id: UserIdDep, order_id: int):
     return await get_user_order(
         session=session,

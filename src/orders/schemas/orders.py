@@ -41,3 +41,7 @@ class OrdersSchema(OrderInSchema):
     total_cost: Annotated[
         Decimal | None, Field(serialization_alias="totalCost")
     ]
+
+
+class OrderIdOutSchema(BaseModel):
+    order_id: Annotated[int, Field(serialization_alias="orderId")]

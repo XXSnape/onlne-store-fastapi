@@ -3,6 +3,7 @@ from fastapi import Cookie
 from typing import Annotated
 from starlette.responses import Response
 
+from catalog.schemas.products import ProductGeneralSchema
 from core import SessionDep, settings
 from catalog.dependencies.redis import RedisDep
 
@@ -16,7 +17,7 @@ from catalog.services.basket import (
 router = APIRouter()
 
 
-@router.post("/basket")
+@router.post("/basket", response_model=list[ProductGeneralSchema])
 async def add_product(
     session: SessionDep,
     redis: RedisDep,
@@ -37,7 +38,7 @@ async def add_product(
     return result
 
 
-@router.get("/basket")
+@router.get("/basket", response_model=list[ProductGeneralSchema])
 async def get_basket(
     session: SessionDep,
     redis: RedisDep,
@@ -52,7 +53,7 @@ async def get_basket(
     )
 
 
-@router.delete("/basket")
+@router.delete("/basket", response_model=list[ProductGeneralSchema])
 async def delete_product(
     session: SessionDep,
     redis: RedisDep,

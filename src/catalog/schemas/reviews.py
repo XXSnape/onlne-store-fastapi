@@ -1,7 +1,8 @@
 from typing import Annotated
 
 from pydantic import BaseModel, Field
-from datetime import datetime
+
+from core import DateSchema
 
 
 class ReviewInSchema(BaseModel):
@@ -9,7 +10,6 @@ class ReviewInSchema(BaseModel):
     rate: Annotated[int, Field(ge=1, le=5)]
 
 
-class ReviewSchema(ReviewInSchema):
+class ReviewSchema(ReviewInSchema, DateSchema):
     author: str
     email: str
-    date: datetime

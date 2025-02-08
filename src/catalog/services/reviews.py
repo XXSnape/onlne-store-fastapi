@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from catalog.database.repositories.product import ProductRepository
 from catalog.database.repositories.review import ReviewRepository
 from orders.database.repositories.order import OrderProductRepository
-from catalog.schemas.reviews import ReviewInSchema
+from catalog.schemas.reviews import ReviewInSchema, ReviewSchema
 
 
 async def write_review_on_product(
@@ -20,7 +20,8 @@ async def write_review_on_product(
     )
     if result is False:
         raise HTTPException(
-            detail="Товар не был куплен", status_code=status.HTTP_403_FORBIDDEN
+            detail="Товар не был куплен",
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
         )
     await ReviewRepository.create_object(
         session=session,
@@ -30,3 +31,10 @@ async def write_review_on_product(
             **review_in.model_dump(),
         },
     )
+    reviews = await ProductRepository.get_product_reviews(
+        session=session, product_id=product_id
+    )
+    return [
+        ReviewSchema.model_validate(review, from_attributes=True)
+        for review in reviews
+    ]
