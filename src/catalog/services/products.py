@@ -12,6 +12,7 @@ from catalog.schemas.products import (
     ResultSaleSchema,
     SaleProductsSchema,
 )
+from core.exceptions.not_found import not_found
 
 
 async def get_products(
@@ -41,6 +42,8 @@ async def get_product_by_id(session: AsyncSession, product_id: int):
     product = await ProductRepository.get_product_by_id(
         session=session, product_id=product_id
     )
+    if not product:
+        raise not_found
     return ProductDetailsSchema.model_validate(product, from_attributes=True)
 
 

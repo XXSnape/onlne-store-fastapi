@@ -3,7 +3,7 @@ from starlette.responses import Response
 
 from core import SessionDep, UserIdDep
 from orders.schemas.payment import PaymentInSchema
-from orders.services.order import pay_order
+from orders.services.orders import pay_order
 
 router = APIRouter()
 

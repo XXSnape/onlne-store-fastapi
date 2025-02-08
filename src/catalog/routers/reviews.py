@@ -22,4 +22,3 @@ async def write_review(
         user_id=user_id,
         review_in=review_in,
     )
-    # return Response()

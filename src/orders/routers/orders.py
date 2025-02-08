@@ -5,7 +5,7 @@ from catalog.schemas.products import ProductGeneralSchema
 from core import SessionDep, UserIdDep
 from core.dependencies.user_by_cookie import get_user_id
 from orders.schemas.orders import OrderIdOutSchema, OrderInSchema, OrdersSchema
-from orders.services.order import (
+from orders.services.orders import (
     add_details_to_order,
     add_products_to_new_order,
     get_user_order,

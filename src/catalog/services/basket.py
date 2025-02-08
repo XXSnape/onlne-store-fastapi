@@ -11,6 +11,7 @@ from catalog.exceptions.count import too_many_products
 from catalog.schemas.basket import BasketInSchema
 from catalog.services.products import get_products
 from core import settings
+from core.exceptions.not_found import not_found
 
 
 async def get_products_in_card(
@@ -86,4 +87,6 @@ async def get_product_quantity(session: AsyncSession, product_id: int) -> int:
     count_data = await ProductRepository.get_object_attrs_by_params(
         "count", session=session, data={"id": product_id}
     )
+    if not count_data:
+        raise not_found
     return count_data.count

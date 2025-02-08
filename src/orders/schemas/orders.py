@@ -5,12 +5,15 @@ from typing import Annotated
 from pydantic import BaseModel, Field
 
 from catalog.schemas.products import ProductGeneralSchema
+from core.schemas.pretty_datetime import datetime_serializer
 from orders.utils.constants import DeliveryTypeEnum, PaymentTypeEnum
 
 
 class OrderInSchema(BaseModel):
     id: int
-    created_at: Annotated[datetime, Field(validation_alias="createdAt")]
+    created_at: Annotated[
+        datetime, Field(validation_alias="createdAt"), datetime_serializer
+    ]
     fullname: Annotated[str, Field(validation_alias="fullName")]
     email: str
     phone: str
@@ -28,8 +31,12 @@ class OrderInSchema(BaseModel):
 
 
 class OrdersSchema(OrderInSchema):
-    created_at: Annotated[datetime, Field(serialization_alias="createdAt")]
+    created_at: Annotated[
+        datetime, Field(serialization_alias="createdAt"), datetime_serializer
+    ]
     fullname: Annotated[str, Field(serialization_alias="fullName")]
+    city: str | None
+    address: str | None
     email: str
     phone: str
     delivery_type: Annotated[
@@ -44,4 +51,4 @@ class OrdersSchema(OrderInSchema):
 
 
 class OrderIdOutSchema(BaseModel):
-    order_id: Annotated[int, Field(serialization_alias="orderId")]
+    order_id: Annotated[int, Field(alias="orderId")]
