@@ -19,7 +19,9 @@ class SchemaDep:
         try:
             return self.schema(**data_in)
         except ValidationError as e:
-            logger.exception('Невалидные данные из запроса', extra={'data': data})
+            logger.exception(
+                "Невалидные данные из запроса", extra={"data": data}
+            )
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                 detail=e.errors(),
