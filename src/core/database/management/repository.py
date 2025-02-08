@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 from typing import Any, Optional
 
 from fastapi import HTTPException, status
-from sqlalchemy import delete, func, insert, select, update, Row
+from sqlalchemy import insert, select, update, Row
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from core import logger
@@ -41,8 +41,6 @@ class AbstractRepository(ABC):
         exception_foreign_constraint_detail: Сообщение об ошибке,
         которое возникает из-за ограничений внешнего ключа
 
-        commit_need: Принимает значения True или False.
-        Если установлен в True, то изменения будут сохранены в базе. По умолчанию True.
 
         Возвращает идентификатор добавленной записи.
         """
@@ -63,9 +61,6 @@ class AbstractRepository(ABC):
         data: Словарь с данными, по которым будет осуществлен поиск объектов для удаления
 
         exception_detail: Сообщение об ошибке, которое возникает в случаях, когда объект не был удален
-
-        commit_need: Принимает значения True или False.
-        Если установлен в True, то изменения будут сохранены в базе. По умолчанию True.
 
         Возвращает True, если объекты были удалены и False в противном случае.
         """
@@ -164,9 +159,6 @@ class ManagerRepository(AbstractRepository):
         exception_foreign_constraint_detail: Сообщение об ошибке,
         которое возникает из-за ограничений внешнего ключа
 
-        commit_need: Принимает значения True или False.
-        Если установлен в True, то изменения будут сохранены в базе. По умолчанию True.
-
         Возвращает идентификатор добавленной записи.
         """
         stmt = insert(cls.model).values(**data).returning(cls.model.id)
@@ -182,33 +174,6 @@ class ManagerRepository(AbstractRepository):
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                 detail=exception_detail,
             )
-
-    @classmethod
-    async def delete_object_by_params(
-        cls,
-        session: AsyncSession,
-        data: dict,
-    ) -> bool:
-        """
-        Удаляет объекты из базы данных.
-
-        Параметры:
-
-        session: Сессия для асинхронной работы с базой данных
-        data: Словарь с данными, по которым будет осуществлен поиск объектов для удаления
-
-        exception_detail: Сообщение об ошибке, которое возникает в случаях, когда объект не был удален
-
-        commit_need: Принимает значения True или False.
-        Если установлен в True, то изменения будут сохранены в базе. По умолчанию True.
-
-        Возвращает True, если объекты были удалены и False в противном случае.
-        """
-        stmt = delete(cls.model).filter_by(**data).returning(cls.model.id)
-        result = await session.execute(stmt)
-        result = bool(result.fetchone())
-        await session.commit()
-        return result
 
     @classmethod
     async def update_object_by_params(
@@ -254,40 +219,6 @@ class ManagerRepository(AbstractRepository):
         query = select(cls.model).filter_by(**data)
         result = await session.execute(query)
         return result.scalar_one_or_none()
-
-    @classmethod
-    async def get_object_id_by_params(
-        cls, session: AsyncSession, data: dict
-    ) -> int | None:
-        """
-        Ищет объект в базе данных.
-
-        Параметры:
-
-        session: Сессия для асинхронной работы с базой данных
-        data: Словарь с данными, по которым будет осуществлен поиск объекта
-
-        Возвращает True, если объект существует, и False в противном случае.
-        """
-        query = select(cls.model.id).filter_by(**data).limit(1)
-        result = await session.execute(query)
-        return result.scalar_one_or_none()
-
-    @classmethod
-    async def count_number_objects_by_params(
-        cls, session: AsyncSession, data: dict
-    ) -> int:
-        """
-        Считает количество записей в таблице.
-
-        Параметры:
-
-        session: Сессия для асинхронной работы с базой данных
-
-        Возвращает количество записей в таблице.
-        """
-        query = select(func.count(cls.model.id)).filter_by(**data)
-        return await session.scalar(query)
 
     @classmethod
     async def get_object_attrs_by_params(

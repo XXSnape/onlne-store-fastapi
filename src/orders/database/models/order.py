@@ -1,5 +1,3 @@
-from decimal import Decimal
-
 from sqlalchemy import UniqueConstraint, ForeignKey
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import Mapped, mapped_column, relationship

@@ -6,11 +6,10 @@ from pydantic import (
     Field,
     computed_field,
     PlainSerializer,
-    field_validator,
     model_validator,
     AliasChoices,
 )
-from datetime import datetime, date
+from datetime import date
 
 from pydantic_core.core_schema import ValidationInfo
 

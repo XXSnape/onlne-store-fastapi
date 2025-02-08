@@ -14,7 +14,6 @@ from core import BaseModel, price_decimal, creation_time
 from catalog.database.models.review import ReviewModel
 from catalog.database.models.speciification import SpecificationModel
 
-from orders.database.models.order import OrderProductModel
 
 if TYPE_CHECKING:
     from .product_image import ProductImageModel

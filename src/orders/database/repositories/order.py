@@ -1,20 +1,15 @@
 import sqlalchemy
-from fastapi import HTTPException
-from sqlalchemy import select, update, func
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload, selectinload
 
 from catalog.database import (
-    ReviewModel,
-    SaleModel,
     CategoryModel,
     ProductModel,
 )
 from catalog.exceptions.count import too_many_products
-from core import ManagerRepository, ImageModelMixin, logger
+from core import ManagerRepository, logger
 from orders.database import OrderModel, OrderProductModel
-from orders.utils.constants import OrderStatusEnum
-from users.database import UserModel
 
 
 class OrderRepository(ManagerRepository):

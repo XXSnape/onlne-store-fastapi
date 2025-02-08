@@ -23,8 +23,12 @@ class RedisSettings(BaseSettings):
 
 
 class AppSettings(BaseSettings):
+    """
+    Настройки и ограничения
+    """
+
     cookie_key_card: str = "card-id"
-    limit: int = 2
+    limit: int = 20
 
 
 class AuthJWTSettings(BaseSettings):

@@ -55,10 +55,11 @@ def decode_jwt(
 
 def get_access_token(user_id: int, username: str) -> str:
     """
-    Создает токен доступа с полезной нагрузкой в виде id пользователя,
+    Создает токен доступа с полезной нагрузкой в виде id и username пользователя,
     которому принадлежит токен
     :param user_id: id пользователя
-    :return: токен дсотупа
+    :param username: username пользователя
+    :return: токен доcтупа
     """
     payload = {"sub": str(user_id), "username": username}
     token = encode_jwt(payload=payload)

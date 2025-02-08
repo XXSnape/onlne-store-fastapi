@@ -1,4 +1,4 @@
-from sqlalchemy import select, ScalarResult
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload, defer
 

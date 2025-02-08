@@ -5,4 +5,3 @@ from .sale import SaleModel
 from .speciification import SpecificationModel, SpecificationProductModel
 from .review import ReviewModel
 from .tag import TagCategoryModel, TagModel
-

@@ -1,4 +1,3 @@
-from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from catalog.schemas.products import ProductGeneralSchema

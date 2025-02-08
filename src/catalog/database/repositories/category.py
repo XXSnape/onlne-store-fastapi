@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload, selectinload
 
 from core import ManagerRepository
-from catalog.database import CategoryModel, TagModel, CategoryImageModel
+from catalog.database import CategoryModel
 
 
 class CategoryRepository(ManagerRepository):

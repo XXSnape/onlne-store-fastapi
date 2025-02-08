@@ -17,7 +17,8 @@ def get_token_payload_without_exc(
 ) -> dict[str, str | int] | None:
     """
     Декодирует токен и возвращает полезную нагрузку из него
-    :param credentials: Annotated[HTTPAuthorizationCredentials, Depends(http_bearer)]
+    :param response: Response
+    :param token: токен
     :return: полезная нагрузка в токене.
     """
     if not token:

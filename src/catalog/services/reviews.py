@@ -3,7 +3,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from catalog.database.repositories.product import ProductRepository
 from catalog.database.repositories.review import ReviewRepository
-from orders.database.repositories.order import OrderProductRepository
 from catalog.schemas.reviews import ReviewInSchema, ReviewSchema
 
 

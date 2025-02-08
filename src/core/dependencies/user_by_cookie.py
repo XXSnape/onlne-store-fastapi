@@ -3,18 +3,7 @@ from typing import Annotated
 from fastapi import Depends, HTTPException, status, Cookie
 from jwt import InvalidTokenError
 from core.utils.jwt import decode_jwt
-from .. import settings, logger
-
-
-# def get_user_or_none(
-#
-# )
-#
-# def get_token(request: Request):
-#     token = request.cookies.get('users_access_token')
-#     if not token:
-#         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Token not found')
-#     return token
+from core import settings, logger
 
 
 def get_token_payload(
@@ -22,7 +11,7 @@ def get_token_payload(
 ) -> dict[str, str | int]:
     """
     Декодирует токен и возвращает полезную нагрузку из него
-    :param credentials: Annotated[HTTPAuthorizationCredentials, Depends(http_bearer)]
+    :param token: токен
     :return: полезная нагрузка в токене.
     """
     try:
@@ -33,7 +22,7 @@ def get_token_payload(
         logger.exception("Токен невалиден")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=f"invalid token error",
+            detail="invalid token error",
         )
     return payload
 

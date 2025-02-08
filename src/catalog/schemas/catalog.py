@@ -1,7 +1,7 @@
 from decimal import Decimal
-from typing import Annotated, Any
+from typing import Annotated
 
-from pydantic import BaseModel, Field, AliasChoices
+from pydantic import BaseModel, Field
 
 from core import settings
 from catalog.utils.constants import SortingEnum, SortingTypeEnum

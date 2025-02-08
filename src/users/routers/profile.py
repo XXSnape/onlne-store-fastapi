@@ -1,5 +1,4 @@
-from fastapi import APIRouter, UploadFile, Body
-from typing import Annotated
+from fastapi import APIRouter, UploadFile
 from starlette.responses import Response
 
 from core import UserIdDep, SessionDep

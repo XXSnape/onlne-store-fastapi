@@ -4,10 +4,9 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from core import BaseModel, ImageModelMixin
-from catalog.database.models.product import ProductModel
-from catalog.database.models.tag import TagModel
 
 if TYPE_CHECKING:
+    from .tag import TagModel
     from .product import ProductModel
 
 DIRECTORY_OF_IMAGES: Final[str] = "categories"
