@@ -3,9 +3,9 @@ from typing import Annotated
 
 from fastapi import Query
 
-from core import settings
 from catalog.schemas.catalog import FilterQuerySchema
 from catalog.utils.constants import SortingEnum, SortingTypeEnum
+from core import settings
 
 
 def get_filtering_options(

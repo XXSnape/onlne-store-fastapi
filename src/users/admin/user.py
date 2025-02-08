@@ -1,7 +1,7 @@
 from sqladmin import ModelView
 
 from core import UUIDFilenameAdminMixin
-from users.database import UserModel, AvatarModel
+from users.database import AvatarModel, UserModel
 
 
 class UserAdmin(ModelView, model=UserModel):

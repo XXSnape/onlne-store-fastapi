@@ -8,10 +8,10 @@ Create Date: 2025-02-06 18:35:58.638944
 
 from typing import Sequence, Union
 
-from alembic import op
-import sqlalchemy as sa
 import fastapi_storages.integrations.sqlalchemy
+import sqlalchemy as sa
 
+from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = "e5eb30bfd7f7"

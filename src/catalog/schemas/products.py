@@ -1,19 +1,19 @@
+from datetime import date
 from decimal import Decimal
 from typing import Annotated, Self
 
 from pydantic import (
+    AliasChoices,
     BaseModel,
     Field,
-    computed_field,
     PlainSerializer,
+    computed_field,
     model_validator,
-    AliasChoices,
 )
-from datetime import date
-
 from pydantic_core.core_schema import ValidationInfo
 
-from core import ImageSchema, settings, DateSchema
+from core import DateSchema, ImageSchema, settings
+
 from .reviews import ReviewSchema
 from .tags import TagSchema
 

@@ -8,21 +8,16 @@ Create Date: 2025-02-04 16:14:38.113353
 
 from typing import Sequence, Union
 
-from alembic import op
-import sqlalchemy as sa
 import fastapi_storages.integrations.sqlalchemy
+import sqlalchemy as sa
 from fastapi_storages import FileSystemStorage
 
-from users.database.models.avatar import (
-    DIRECTORY_OF_IMAGES as avatar_directory,
-)
+from alembic import op
+from catalog.database.models.category import DIRECTORY_OF_IMAGES as category_directory
 from catalog.database.models.product_image import (
     DIRECTORY_OF_IMAGES as product_directory,
 )
-from catalog.database.models.category import (
-    DIRECTORY_OF_IMAGES as category_directory,
-)
-
+from users.database.models.avatar import DIRECTORY_OF_IMAGES as avatar_directory
 
 # revision identifiers, used by Alembic.
 revision: str = "20c18c63f64e"

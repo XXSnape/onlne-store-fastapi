@@ -1,27 +1,27 @@
 from typing import Sequence
 
-from sqlalchemy import select, func, or_
+from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import (
+    InstrumentedAttribute,
     contains_eager,
+    defer,
     joinedload,
     selectinload,
-    defer,
-    InstrumentedAttribute,
 )
 
-from core import ManagerRepository, settings
 from catalog.database import (
+    CategoryModel,
     ProductModel,
     ReviewModel,
-    CategoryModel,
     SaleModel,
     TagCategoryModel,
     TagModel,
 )
 from catalog.schemas.catalog import FilterQuerySchema
 from catalog.utils.constants import SortingEnum, SortingTypeEnum
-from orders.database import OrderProductModel, OrderModel
+from core import ManagerRepository, settings
+from orders.database import OrderModel, OrderProductModel
 from orders.utils.constants import OrderStatusEnum
 from users.database import UserModel
 

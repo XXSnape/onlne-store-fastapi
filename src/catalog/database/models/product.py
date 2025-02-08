@@ -3,24 +3,24 @@ from decimal import Decimal
 from typing import TYPE_CHECKING
 
 from sqlalchemy import (
-    Text,
-    ForeignKey,
     CheckConstraint,
+    ForeignKey,
+    Text,
 )
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import mapped_column, Mapped, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from core import BaseModel, price_decimal, creation_time
 from catalog.database.models.review import ReviewModel
 from catalog.database.models.speciification import SpecificationModel
-
+from core import BaseModel, creation_time, price_decimal
 
 if TYPE_CHECKING:
-    from .product_image import ProductImageModel
+    from orders.database import OrderProductModel
+
     from .category import CategoryModel
+    from .product_image import ProductImageModel
     from .sale import SaleModel
     from .speciification import SpecificationModel
-    from orders.database import OrderProductModel
 
 
 class ProductModel(BaseModel):

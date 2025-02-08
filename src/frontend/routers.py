@@ -1,6 +1,6 @@
+from fastapi import APIRouter
 from starlette.requests import Request
 from starlette.responses import HTMLResponse
-from fastapi import APIRouter
 from starlette.templating import Jinja2Templates
 
 from frontend.dependencies.user import UserDep

@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from users.database.repositories.user import UserRepository
-from users.schemas.profile import ProfileSchema, ProfileInSchema
+from users.schemas.profile import ProfileInSchema, ProfileSchema
 
 
 async def get_user_profile(session: AsyncSession, user_id: int):

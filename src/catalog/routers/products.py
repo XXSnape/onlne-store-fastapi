@@ -1,25 +1,25 @@
 import asyncio
 from typing import Annotated
 
-from fastapi import APIRouter, Query, Depends
+from fastapi import APIRouter, Depends, Query
 from fastapi_cache.decorator import cache
 
+from catalog.dependencies.queries import get_filtering_options
+from catalog.schemas.catalog import FilterQuerySchema
 from catalog.schemas.categories import ParentCategorySchema
 from catalog.schemas.products import (
     ProductDetailsSchema,
     ProductGeneralSchema,
     ResultCatalogSchema,
 )
-from core import SessionDep
-from catalog.dependencies.queries import get_filtering_options
-from catalog.schemas.catalog import FilterQuerySchema
 from catalog.services.categories import get_categories_and_subcategories
 from catalog.services.products import (
-    get_products,
-    get_product_by_id,
-    get_sales_products,
     get_catalog,
+    get_product_by_id,
+    get_products,
+    get_sales_products,
 )
+from core import SessionDep
 
 router = APIRouter()
 

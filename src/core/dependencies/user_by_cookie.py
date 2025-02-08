@@ -1,9 +1,10 @@
 from typing import Annotated
 
-from fastapi import Depends, HTTPException, status, Cookie
+from fastapi import Cookie, Depends, HTTPException, status
 from jwt import InvalidTokenError
+
+from core import logger, settings
 from core.utils.jwt import decode_jwt
-from core import settings, logger
 
 
 def get_token_payload(

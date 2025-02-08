@@ -4,7 +4,7 @@ from fastapi import Cookie, Depends
 from jwt import InvalidTokenError
 from starlette.responses import Response
 
-from core import settings, logger
+from core import logger, settings
 from core.utils.jwt import decode_jwt
 from frontend.schemas.user import UserIsAuthenticatedSchema
 

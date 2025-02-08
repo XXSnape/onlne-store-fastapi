@@ -1,7 +1,7 @@
 from fastapi import APIRouter, UploadFile
 from starlette.responses import Response
 
-from core import UserIdDep, SessionDep
+from core import SessionDep, UserIdDep
 from users.schemas.password import ChangePasswordSchema
 from users.schemas.profile import ProfileInSchema, ProfileSchema
 from users.services.avatar import save_avatar

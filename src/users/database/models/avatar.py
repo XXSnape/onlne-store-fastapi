@@ -1,6 +1,7 @@
 from typing import Final
 
 from core import BaseModel, ImageModelMixin
+
 from .mixins.user import UserRelationshipMixin
 
 DIRECTORY_OF_IMAGES: Final[str] = "avatars"

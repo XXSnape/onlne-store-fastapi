@@ -1,8 +1,7 @@
 from typing import Final
 
-
-from core import BaseModel, ImageModelMixin
 from catalog.database.models.mixins.product import ProductRelationshipMixin
+from core import BaseModel, ImageModelMixin
 
 DIRECTORY_OF_IMAGES: Final[str] = "products"
 

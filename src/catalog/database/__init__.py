@@ -1,12 +1,12 @@
 from .models import (
-    ProductModel,
-    CategoryModel,
     CategoryImageModel,
-    SaleModel,
+    CategoryModel,
     ProductImageModel,
+    ProductModel,
+    ReviewModel,
+    SaleModel,
     SpecificationModel,
     SpecificationProductModel,
-    ReviewModel,
-    TagModel,
     TagCategoryModel,
+    TagModel,
 )

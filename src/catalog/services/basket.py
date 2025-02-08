@@ -7,10 +7,10 @@ from sqlalchemy.sql.annotation import Annotated
 from starlette.responses import Response
 
 from catalog.database.repositories.product import ProductRepository
-from catalog.services.products import get_products
-from core import settings
 from catalog.exceptions.count import too_many_products
 from catalog.schemas.basket import BasketInSchema
+from catalog.services.products import get_products
+from core import settings
 
 
 async def get_products_in_card(

@@ -6,8 +6,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from core import BaseModel, ImageModelMixin
 
 if TYPE_CHECKING:
-    from .tag import TagModel
     from .product import ProductModel
+    from .tag import TagModel
 
 DIRECTORY_OF_IMAGES: Final[str] = "categories"
 

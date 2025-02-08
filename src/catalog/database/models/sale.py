@@ -1,12 +1,11 @@
 from datetime import date
 
-
-from sqlalchemy import Date, func, CheckConstraint
+from sqlalchemy import CheckConstraint, Date, func
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import Mapped, mapped_column
 
-from core import BaseModel, price_decimal
 from catalog.database.models.mixins.product import ProductRelationshipMixin
+from core import BaseModel, price_decimal
 
 
 class SaleModel(ProductRelationshipMixin, BaseModel):

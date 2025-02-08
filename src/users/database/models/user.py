@@ -6,9 +6,10 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from core import BaseModel
 
 if TYPE_CHECKING:
-    from .avatar import AvatarModel
     from catalog.database.models.review import ReviewModel
     from orders.database import OrderModel
+
+    from .avatar import AvatarModel
 
 
 class UserModel(BaseModel):

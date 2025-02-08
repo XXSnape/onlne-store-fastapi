@@ -1,10 +1,10 @@
-from sqlalchemy import UniqueConstraint, CheckConstraint, TEXT
+from sqlalchemy import TEXT, CheckConstraint, UniqueConstraint
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import Mapped
 from sqlalchemy.testing.schema import mapped_column
 
-from core import BaseModel, creation_time
 from catalog.database.models.mixins.product import ProductRelationshipMixin
+from core import BaseModel, creation_time
 from users.database.models.mixins.user import UserRelationshipMixin
 
 

@@ -3,8 +3,8 @@ from typing import Annotated
 
 from pydantic import BaseModel, Field
 
-from core import settings
 from catalog.utils.constants import SortingEnum, SortingTypeEnum
+from core import settings
 
 
 class FilterQuerySchema(BaseModel):

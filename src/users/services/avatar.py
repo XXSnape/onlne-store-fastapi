@@ -1,9 +1,10 @@
+import uuid
+
 from fastapi import UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from users.database.repositories.avatar import AvatarRepository
 from users.exceptions.files import incorrect_extension
-import uuid
 
 
 async def save_avatar(

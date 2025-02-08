@@ -1,13 +1,13 @@
 from sqladmin import ModelView
 
-from core import UUIDFilenameAdminMixin
 from catalog.database import (
-    ProductModel,
     ProductImageModel,
+    ProductModel,
     SaleModel,
     SpecificationModel,
     SpecificationProductModel,
 )
+from core import UUIDFilenameAdminMixin
 
 
 class ProductAdmin(ModelView, model=ProductModel):

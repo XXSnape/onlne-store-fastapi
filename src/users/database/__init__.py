@@ -1,1 +1,1 @@
-from .models import UserModel, AvatarModel
+from .models import AvatarModel, UserModel

@@ -6,11 +6,11 @@ from catalog.database.repositories.product import (
 )
 from catalog.schemas.catalog import FilterQuerySchema
 from catalog.schemas.products import (
-    ProductGeneralSchema,
     ProductDetailsSchema,
-    SaleProductsSchema,
-    ResultSaleSchema,
+    ProductGeneralSchema,
     ResultCatalogSchema,
+    ResultSaleSchema,
+    SaleProductsSchema,
 )
 
 

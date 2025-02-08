@@ -16,24 +16,25 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
+from catalog.database import (
+    CategoryImageModel,
+    CategoryModel,
+    ProductModel,
+    ReviewModel,
+    SaleModel,
+    SpecificationModel,
+    SpecificationProductModel,
+    TagCategoryModel,
+    TagModel,
+)
+
 # add your model's MetaData object here
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 from core import BaseModel, settings
-from users.database import UserModel, AvatarModel
-from catalog.database import (
-    ProductModel,
-    CategoryModel,
-    CategoryImageModel,
-    SaleModel,
-    SpecificationModel,
-    SpecificationProductModel,
-    ReviewModel,
-    TagModel,
-    TagCategoryModel,
-)
 from orders.database import OrderModel, OrderProductModel
+from users.database import AvatarModel, UserModel
 
 target_metadata = BaseModel.metadata
 config.set_main_option("sqlalchemy.url", settings.db.url)

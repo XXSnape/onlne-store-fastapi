@@ -5,8 +5,8 @@ from core import logger
 from users.database.repositories.user import UserRepository
 from users.exceptions.auth import unauthorized_error
 from users.schemas.sign_in import SignInSchema
-from users.utils.cookie import put_token_in_cookies
 from users.utils.auth import validate_password
+from users.utils.cookie import put_token_in_cookies
 
 
 async def login_user(
@@ -15,6 +15,7 @@ async def login_user(
     user = await UserRepository.get_object_attrs_by_params(
         "id",
         "password",
+        "is_admin",
         session=session,
         data={"username": credentials.username},
     )
@@ -31,5 +32,8 @@ async def login_user(
         )
         raise unauthorized_error
     put_token_in_cookies(
-        user_id=user.id, response=response, username=credentials.username
+        user_id=user.id,
+        response=response,
+        username=credentials.username,
+        is_admin=user.is_admin,
     )

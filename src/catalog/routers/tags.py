@@ -3,8 +3,8 @@ from typing import Annotated
 from fastapi import APIRouter, Query
 
 from catalog.schemas.tags import TagSchema
-from core import SessionDep
 from catalog.services.tags import get_tags_by_category_id
+from core import SessionDep
 
 router = APIRouter()
 

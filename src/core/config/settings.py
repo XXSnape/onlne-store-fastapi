@@ -29,6 +29,7 @@ class AppSettings(BaseSettings):
 
     cookie_key_card: str = "card-id"
     limit: int = 20
+    session_key: str
 
 
 class AuthJWTSettings(BaseSettings):

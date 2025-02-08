@@ -1,4 +1,4 @@
-from sqlalchemy import UniqueConstraint, ForeignKey
+from sqlalchemy import ForeignKey, UniqueConstraint
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -6,11 +6,9 @@ from catalog.database.models.mixins.product import ProductRelationshipMixin
 from core import BaseModel, creation_time, price_decimal
 from orders.utils.constants import (
     DeliveryTypeEnum,
-    PaymentTypeEnum,
     OrderStatusEnum,
+    PaymentTypeEnum,
 )
-
-
 from users.database.models.mixins.user import UserRelationshipMixin
 
 

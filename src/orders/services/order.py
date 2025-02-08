@@ -2,10 +2,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from catalog.schemas.products import ProductGeneralSchema
 from core.exceptions.not_found import not_found
-from orders.database import OrderProductModel, OrderModel
+from orders.database import OrderModel, OrderProductModel
 from orders.database.repositories.order import (
-    OrderRepository,
     OrderProductRepository,
+    OrderRepository,
 )
 from orders.schemas.orders import OrderInSchema, OrdersSchema
 from orders.utils.constants import OrderStatusEnum

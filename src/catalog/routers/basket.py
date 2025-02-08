@@ -1,18 +1,17 @@
-from fastapi import APIRouter
-from fastapi import Cookie
 from typing import Annotated
+
+from fastapi import APIRouter, Cookie
 from starlette.responses import Response
 
-from catalog.schemas.products import ProductGeneralSchema
-from core import SessionDep, settings
 from catalog.dependencies.redis import RedisDep
-
 from catalog.schemas.basket import BasketInSchema
+from catalog.schemas.products import ProductGeneralSchema
 from catalog.services.basket import (
-    get_products_in_card,
-    delete_product_from_basket,
     add_product_to_basket,
+    delete_product_from_basket,
+    get_products_in_card,
 )
+from core import SessionDep, settings
 
 router = APIRouter()
 

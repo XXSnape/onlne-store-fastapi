@@ -1,9 +1,9 @@
 from fastapi import APIRouter
-from .products import router as products_router
-from .tags import router as tags_router
-from .basket import router as basket_router
 
+from .basket import router as basket_router
+from .products import router as products_router
 from .reviews import router as reviews_router
+from .tags import router as tags_router
 
 router = APIRouter()
 

@@ -7,8 +7,8 @@ from .category import (
 from .product import (
     ProductAdmin,
     ProductImageAdmin,
+    SaleAdmin,
     SpecificationAdmin,
     SpecificationProductAdmin,
-    SaleAdmin,
 )
 from .review import ReviewAdmin

@@ -1,6 +1,6 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import joinedload, defer
+from sqlalchemy.orm import defer, joinedload
 
 from core import ManagerRepository
 from users.database import UserModel

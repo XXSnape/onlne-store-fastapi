@@ -1,10 +1,10 @@
 from typing import Sequence
 
-from sqlalchemy import select, Row
+from sqlalchemy import Row, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from catalog.database import TagCategoryModel, TagModel
 from core import ManagerRepository
-from catalog.database import TagModel, TagCategoryModel
 
 
 class TagCategoryRepository(ManagerRepository):

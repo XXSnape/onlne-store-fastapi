@@ -1,6 +1,7 @@
 from datetime import UTC, datetime, timedelta
 
 import jwt
+
 from core import settings
 
 
@@ -53,14 +54,20 @@ def decode_jwt(
     return decoded
 
 
-def get_access_token(user_id: int, username: str) -> str:
+def get_access_token(user_id: int, username: str, is_admin: bool) -> str:
     """
-    Создает токен доступа с полезной нагрузкой в виде id и username пользователя,
+    Создает токен доступа с полезной нагрузкой в виде id,
+    username и статуса is_admin пользователя,
     которому принадлежит токен
     :param user_id: id пользователя
     :param username: username пользователя
+    :param is_admin: является ли пользователь админом
     :return: токен доcтупа
     """
-    payload = {"sub": str(user_id), "username": username}
+    payload = {
+        "sub": str(user_id),
+        "username": username,
+        "is_admin": str(int(is_admin)),
+    }
     token = encode_jwt(payload=payload)
     return token

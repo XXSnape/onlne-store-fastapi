@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from users.database.repositories.user import UserRepository
 from users.exceptions.auth import unauthorized_error
 from users.schemas.password import ChangePasswordSchema
-from users.utils.auth import validate_password, get_hashed_password
+from users.utils.auth import get_hashed_password, validate_password
 
 
 async def change_user_password(

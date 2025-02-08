@@ -6,11 +6,11 @@ from abc import ABC, abstractmethod
 from typing import Any, Optional
 
 from fastapi import HTTPException, status
-from sqlalchemy import insert, select, update, Row
+from sqlalchemy import Row, insert, select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
-from core import logger
 
+from core import logger
 
 OBJECT_NOT_CREATED_ERROR = "The object has not been created"
 

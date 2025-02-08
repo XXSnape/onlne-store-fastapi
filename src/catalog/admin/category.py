@@ -1,12 +1,12 @@
 from sqladmin import ModelView
 
-from core import UUIDFilenameAdminMixin
 from catalog.database import (
-    CategoryModel,
     CategoryImageModel,
-    TagModel,
+    CategoryModel,
     TagCategoryModel,
+    TagModel,
 )
+from core import UUIDFilenameAdminMixin
 
 
 class CategoryAdmin(ModelView, model=CategoryModel):
