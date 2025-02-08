@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import Depends, HTTPException, status, Cookie
 from jwt import InvalidTokenError
 from core.utils.jwt import decode_jwt
-from .. import settings
+from .. import settings, logger
 
 
 # def get_user_or_none(
@@ -29,10 +29,11 @@ def get_token_payload(
         payload = decode_jwt(
             token=token,
         )
-    except InvalidTokenError as e:
+    except InvalidTokenError:
+        logger.exception("Токен невалиден")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=f"invalid token error: {e}",
+            detail=f"invalid token error",
         )
     return payload
 

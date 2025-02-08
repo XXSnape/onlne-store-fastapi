@@ -4,7 +4,7 @@ from fastapi import Cookie, Depends
 from jwt import InvalidTokenError
 from starlette.responses import Response
 
-from core import settings
+from core import settings, logger
 from core.utils.jwt import decode_jwt
 from frontend.schemas.user import UserIsAuthenticatedSchema
 
@@ -27,6 +27,7 @@ def get_token_payload_without_exc(
             token=token,
         )
     except InvalidTokenError as e:
+        logger.exception("Токен невалиден")
         response.delete_cookie(key=settings.auth_jwt.cookie_key_token)
         return None
     return payload

@@ -11,7 +11,7 @@ from catalog.database import (
     ProductModel,
 )
 from catalog.exceptions.count import too_many_products
-from core import ManagerRepository, ImageModelMixin
+from core import ManagerRepository, ImageModelMixin, logger
 from orders.database import OrderModel, OrderProductModel
 from orders.utils.constants import OrderStatusEnum
 from users.database import UserModel
@@ -73,5 +73,9 @@ class OrderProductRepository(ManagerRepository):
             await session.execute(update_stmt)
             await session.commit()
         except sqlalchemy.exc.IntegrityError as e:
-            print(e, type(e))
+            logger.exception(
+                "Недостаточно продуктов на складе для оформления заказа",
+                extra={"order_id": order_id},
+            )
+
             raise too_many_products
