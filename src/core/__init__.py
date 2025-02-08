@@ -1,4 +1,4 @@
-from .config import settings
+from .config import settings, logger
 from .database import (
     db_helper,
     ManagerRepository,

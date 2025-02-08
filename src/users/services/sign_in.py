@@ -1,6 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.responses import Response
 
+from core import logger
 from users.database.repositories.user import UserRepository
 from users.exceptions.auth import unauthorized_error
 from users.schemas.sign_in import SignInSchema
@@ -24,6 +25,10 @@ async def login_user(
         )
         is False
     ):
+        logger.info(
+            "Не удалось авторизоваться",
+            extra={"username": credentials.username},
+        )
         raise unauthorized_error
     put_token_in_cookies(
         user_id=user.id, response=response, username=credentials.username

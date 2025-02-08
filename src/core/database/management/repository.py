@@ -9,6 +9,8 @@ from fastapi import HTTPException, status
 from sqlalchemy import delete, func, insert, select, update, Row
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
+from core import logger
+
 
 OBJECT_NOT_CREATED_ERROR = "The object has not been created"
 
@@ -24,7 +26,6 @@ class AbstractRepository(ABC):
         session: AsyncSession,
         data: dict,
         exception_detail: str = OBJECT_NOT_CREATED_ERROR,
-        commit_need: bool = True,
     ) -> int:
         """
         Добавляет новый объект в базу данных.
@@ -52,7 +53,6 @@ class AbstractRepository(ABC):
         self,
         session: AsyncSession,
         data: dict,
-        commit_need=True,
     ) -> bool:
         """
         Удаляет объекты из базы данных.
@@ -149,7 +149,6 @@ class ManagerRepository(AbstractRepository):
         session: AsyncSession,
         data: dict,
         exception_detail: str = OBJECT_NOT_CREATED_ERROR,
-        commit_need: bool = True,
     ) -> int:
         """
         Добавляет новый объект в базу данных.
@@ -173,12 +172,11 @@ class ManagerRepository(AbstractRepository):
         stmt = insert(cls.model).values(**data).returning(cls.model.id)
         try:
             result = await session.execute(stmt)
-            if commit_need:
-                await session.commit()
+            await session.commit()
             return result.scalar_one()
 
         except IntegrityError as err:
-            print(err)
+            logger.exception(exception_detail)
             await session.rollback()
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
@@ -190,7 +188,6 @@ class ManagerRepository(AbstractRepository):
         cls,
         session: AsyncSession,
         data: dict,
-        commit_need=True,
     ) -> bool:
         """
         Удаляет объекты из базы данных.
@@ -210,8 +207,7 @@ class ManagerRepository(AbstractRepository):
         stmt = delete(cls.model).filter_by(**data).returning(cls.model.id)
         result = await session.execute(stmt)
         result = bool(result.fetchone())
-        if commit_need:
-            await session.commit()
+        await session.commit()
         return result
 
     @classmethod
