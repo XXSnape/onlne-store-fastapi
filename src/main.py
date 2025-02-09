@@ -1,3 +1,4 @@
+import asyncio
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
@@ -24,6 +25,7 @@ from catalog.admin import (
 from catalog.routers import router as products_router
 from core import db_helper, settings
 from core.admin.auth import AdminAuth
+from core.admin.superuser import create_admin_if_not_exists
 from frontend.routers import router as frontend_router
 from orders.admin import OrderAdmin, OrderProductAdmin
 from orders.routers import router as orders_router
@@ -82,4 +84,5 @@ for view in views:
 
 
 if __name__ == "__main__":
+    asyncio.run(create_admin_if_not_exists())
     uvicorn.run("main:app", reload=True, host="0.0.0.0")

@@ -5,7 +5,7 @@ from starlette.templating import Jinja2Templates
 
 from frontend.dependencies.user import UserDep
 
-router = APIRouter()
+router = APIRouter(include_in_schema=False)
 templates = Jinja2Templates(
     directory="frontend/templates/",
 )
