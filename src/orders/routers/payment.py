@@ -5,7 +5,7 @@ from core import SessionDep, UserIdDep
 from orders.schemas.payment import PaymentInSchema
 from orders.services.orders import pay_order
 
-router = APIRouter()
+router = APIRouter(tags=['payment'])
 
 
 @router.post("/payment/{order_id}")

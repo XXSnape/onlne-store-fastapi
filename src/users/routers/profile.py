@@ -8,7 +8,7 @@ from users.services.avatar import save_avatar
 from users.services.password import change_user_password
 from users.services.profile import get_user_profile, update_user_profile
 
-router = APIRouter()
+router = APIRouter(tags=['profile'])
 
 
 @router.get("/profile", response_model=ProfileSchema)

@@ -13,7 +13,7 @@ from catalog.services.basket import (
 )
 from core import SessionDep, settings
 
-router = APIRouter()
+router = APIRouter(tags=['basket'])
 
 
 @router.post("/basket", response_model=list[ProductGeneralSchema])

@@ -4,7 +4,7 @@ from catalog.schemas.reviews import ReviewInSchema, ReviewSchema
 from catalog.services.reviews import write_review_on_product
 from core import SessionDep, UserIdDep
 
-router = APIRouter()
+router = APIRouter(tags=['product'])
 
 
 @router.post(

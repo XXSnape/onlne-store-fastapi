@@ -6,7 +6,7 @@ from catalog.schemas.tags import TagSchema
 from catalog.services.tags import get_tags_by_category_id
 from core import SessionDep
 
-router = APIRouter()
+router = APIRouter(tags=['tags'])
 
 
 @router.get("/tags", response_model=list[TagSchema])

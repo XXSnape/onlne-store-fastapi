@@ -12,7 +12,7 @@ from orders.services.orders import (
     get_user_orders,
 )
 
-router = APIRouter()
+router = APIRouter(tags=['orders'])
 
 
 @router.post("/orders", response_model=OrderIdOutSchema)
