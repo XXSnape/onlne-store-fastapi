@@ -61,5 +61,5 @@ docker compose up
 
 #### ADMIN_NAME - Имя админа
 #### ADMIN_LOGIN - Логин админа
-#### ADMIN_PASSWORD - Логин пароль админа
+#### ADMIN_PASSWORD - Пароль админа
 
