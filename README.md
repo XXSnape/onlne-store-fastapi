@@ -29,7 +29,7 @@ ___
 * Убедитесь, что docker установлен на локальной машине ([Как установить Docker?](https://docs.docker.com/get-started/get-docker/))
 * Склонируйте репозиторий на локальную машину
 ```sh
-https://github.com/raydqver/onlne-store-fastapi.git
+https://github.com/XXSnape/onlne-store-fastapi.git
 ```
 
 * Создайте файл .env co своими данными и скопируйте все из .env_template,
