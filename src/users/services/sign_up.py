@@ -21,7 +21,7 @@ async def create_user(
         username=credentials.username,
         is_admin=False,
     )
-    logger.warning(
+    logger.info(
         "Зарегистрирован новый пользователь",
         extra={"user_id": user_id, "username": credentials.username},
     )
