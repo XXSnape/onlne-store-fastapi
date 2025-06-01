@@ -13,8 +13,7 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
-from core.utils.jwt import get_access_token
-from src.core import db_helper, settings
+from src.core import settings
 from src.main import app
 from users.database import UserModel
 from users.utils.auth import get_hashed_password
@@ -26,27 +25,26 @@ async_session_maker = async_sessionmaker(
 
 
 @pytest.fixture(scope="session", autouse=True)
-async def create_users():
+async def init_db():
     async with async_session_maker() as session:
-        session.add(
-            UserModel(
-                fullname="Name Surname",
-                username="user1",
-                password=get_hashed_password("qwerty"),
-            )
+        session.add_all(
+            [
+                UserModel(
+                    fullname="Name Surname",
+                    username="user1",
+                    password=get_hashed_password("qwerty"),
+                ),
+                UserModel(
+                    fullname="Name2 Surname2",
+                    username="user2",
+                    password=get_hashed_password("qwerty2"),
+                ),
+            ]
         )
         await session.commit()
 
 
-async def override_get_async_session() -> AsyncGenerator[AsyncSession, None]:
-    """
-    Генерирует сессию для асинхронного взаимодействия с тестовой базой данных внутри приложения.
-    """
-    async with async_session_maker() as session:  # type: AsyncSession
-        yield session
-
-
-@pytest.fixture()
+@pytest.fixture(scope="function")
 async def async_session() -> AsyncGenerator[AsyncSession, None]:
     """
     Генерирует сессию для асинхронного взаимодействия с тестовой базой данных внутри тестов.
@@ -64,13 +62,3 @@ async def ac() -> AsyncGenerator[AsyncClient, None]:
         transport=ASGITransport(app=app), base_url="http://test"
     ) as ac:
         yield ac
-
-
-@pytest.fixture(scope="session")
-def access_token():
-    return get_access_token(user_id=1, username="user1", is_admin=False)
-
-
-app.dependency_overrides[db_helper.get_async_session] = (
-    override_get_async_session
-)
