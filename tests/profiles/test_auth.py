@@ -71,3 +71,10 @@ async def test_sign_up_passed(
         cookies={"access-token": access_token},
     )
     assert profile_response.status_code == 200
+
+
+async def test_sign_out(ac: AsyncClient):
+    response = await ac.post(
+        "api/sign-out",
+    )
+    assert response.status_code == 200
