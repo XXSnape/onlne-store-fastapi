@@ -51,7 +51,6 @@ async def test_sign_up_passed(
         },
     )
     assert response.status_code == 200
-    assert bool(response.cookies) is True
     count = await UserRepository.count_number_objects_by_params(
         session=async_session, data=None
     )
@@ -97,3 +96,16 @@ async def test_sign_in_failed(ac: AsyncClient, data: dict[str, str]):
     response = await ac.post("api/sign-in", json=data)
     assert response.status_code == 401
     assert bool(response.cookies) is False
+
+
+async def test_sign_in_passed(ac: AsyncClient):
+    response = await ac.post(
+        "api/sign-in", json={"username": "user1", "password": "qwerty"}
+    )
+    assert response.status_code == 200
+    access_token = response.cookies["access-token"]
+    profile_response = await ac.get(
+        "api/profile",
+        cookies={"access-token": access_token},
+    )
+    assert profile_response.status_code == 200
