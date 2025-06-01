@@ -21,10 +21,14 @@ from catalog.services.products import (
 )
 from core import SessionDep
 
-router = APIRouter(tags=['catalog'])
+router = APIRouter(tags=["catalog"])
 
 
-@router.get("/product/{product_id}", response_model=ProductDetailsSchema, tags=['product'])
+@router.get(
+    "/product/{product_id}",
+    response_model=ProductDetailsSchema,
+    tags=["product"],
+)
 async def get_product(product_id: int, session: SessionDep):
     return await get_product_by_id(session=session, product_id=product_id)
 

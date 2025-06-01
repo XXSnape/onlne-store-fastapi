@@ -11,7 +11,7 @@ from users.schemas.sign_up import SignUpSchema
 from users.services.sign_in import login_user
 from users.services.sign_up import create_user
 
-router = APIRouter(tags=['auth'])
+router = APIRouter(tags=["auth"])
 
 
 @router.post("/sign-up")
