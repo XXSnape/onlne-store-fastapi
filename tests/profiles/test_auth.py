@@ -46,7 +46,7 @@ async def test_sign_up_passed(
         "api/sign-up",
         json={
             "name": "Same Fullname",
-            "username": "MyUsername",
+            "username": "user3",
             "password": "password",
         },
     )
@@ -57,7 +57,7 @@ async def test_sign_up_passed(
     )
     assert count == 3
     user = await UserRepository.get_object_by_params(
-        session=async_session, data={"username": "MyUsername"}
+        session=async_session, data={"username": "user3"}
     )
     assert (
         user.fullname == "Same Fullname"
@@ -78,3 +78,22 @@ async def test_sign_out(ac: AsyncClient):
         "api/sign-out",
     )
     assert response.status_code == 200
+
+
+@pytest.mark.parametrize(
+    "data",
+    [
+        {
+            "username": "user100",
+            "password": "DifficultPassword",
+        },
+        {
+            "username": "user1",
+            "password": "incorrectpsw",
+        },
+    ],
+)
+async def test_sign_in_failed(ac: AsyncClient, data: dict[str, str]):
+    response = await ac.post("api/sign-in", json=data)
+    assert response.status_code == 401
+    assert bool(response.cookies) is False
