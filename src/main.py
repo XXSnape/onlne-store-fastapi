@@ -1,6 +1,7 @@
 import asyncio
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 import uvicorn
 from fastapi import FastAPI
@@ -66,11 +67,12 @@ app.include_router(profiles_router, prefix="/api")
 app.include_router(products_router, prefix="/api")
 app.include_router(orders_router, prefix="/api")
 
+FRONTEND_DIR = Path(__file__).resolve().parent / "frontend" / "static"
 
-app.mount("/static", StaticFiles(directory="frontend/static"))
-app.mount("/order-detail/static/", StaticFiles(directory="frontend/static/"))
-app.mount("/catalog/static/", StaticFiles(directory="frontend/static/"))
-app.mount("/product/static/", StaticFiles(directory="frontend/static/"))
+app.mount("/static", StaticFiles(directory=FRONTEND_DIR))
+app.mount("/order-detail/static/", StaticFiles(directory=FRONTEND_DIR))
+app.mount("/catalog/static/", StaticFiles(directory=FRONTEND_DIR))
+app.mount("/product/static/", StaticFiles(directory=FRONTEND_DIR))
 app.mount("/uploads", StaticFiles(directory="uploads/"))
 app.mount("/product/uploads", StaticFiles(directory="uploads/"))
 app.mount("/catalog/uploads", StaticFiles(directory="uploads/"))
