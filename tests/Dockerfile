@@ -9,4 +9,4 @@ RUN python -m pip install --no-cache-dir poetry==1.8.3 \
     && rm -rf $(poetry config cache-dir)/{cache,artifacts}
 
 COPY .env conftest.py profiles ./
-CMD alembic upgrade head && pytest -s
+CMD alembic upgrade head && pytest -s -v
