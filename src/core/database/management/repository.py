@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 from typing import Any, Optional
 
 from fastapi import HTTPException, status
-from sqlalchemy import Row, insert, select, update
+from sqlalchemy import Row, insert, select, update, func
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -117,7 +117,7 @@ class AbstractRepository(ABC):
 
     @abstractmethod
     async def count_number_objects_by_params(
-        self, session: AsyncSession, data: dict
+        self, session: AsyncSession, data: dict | None
     ) -> int:
         """
         Считает количество записей в таблице.
@@ -229,3 +229,21 @@ class ManagerRepository(AbstractRepository):
         ).filter_by(**data)
         result = await session.execute(query)
         return result.one_or_none()
+
+    @classmethod
+    async def count_number_objects_by_params(
+        cls, session: AsyncSession, data: dict | None
+    ) -> int:
+        """
+        Считает количество записей в таблице.
+
+        Параметры:
+
+        session: Сессия для асинхронной работы с базой данных
+
+        Возвращает количество записей в таблице.
+        """
+        if data is None:
+            data = {}
+        query = select(func.count(cls.model.id)).filter_by(**data)
+        return await session.scalar(query)
