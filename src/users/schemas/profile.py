@@ -11,6 +11,7 @@ class ProfileInSchema(BaseModel):
         Field(
             validation_alias=AliasChoices("fullname", "fullName"),
             serialization_alias="fullName",
+            pattern=r"^\w+ \w+$",
         ),
     ]
     email: str
