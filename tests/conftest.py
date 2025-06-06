@@ -16,7 +16,7 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
-from catalog.database import CategoryModel, TagModel
+from catalog.database import CategoryModel, TagModel, ProductModel
 from core.utils.jwt import get_access_token
 from src.core import settings
 from src.main import app
@@ -63,7 +63,18 @@ async def init_db():
             TagModel(name="Tag2", categories=[categories[0]]),
             TagModel(name="Tag3"),
         ]
-        session.add_all(categories + tags)
+        products = [
+            ProductModel(
+                title="Product1", price_per_unit=100, count=0, category_id=1
+            ),
+            ProductModel(
+                title="Product2", price_per_unit=100, count=10, category_id=2
+            ),
+            ProductModel(
+                title="Product3", price_per_unit=100, count=0, category_id=3
+            ),
+        ]
+        session.add_all(categories + tags + products)
 
         await session.commit()
 
