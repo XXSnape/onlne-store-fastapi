@@ -13,6 +13,7 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
+from core.utils.jwt import get_access_token
 from src.core import settings
 from src.main import app
 from users.database import UserModel
@@ -59,6 +60,12 @@ async def ac() -> AsyncGenerator[AsyncClient, None]:
     Возвращает клиента для асинхронного взаимодействия с приложением внутри тестов.
     """
     async with AsyncClient(
-        transport=ASGITransport(app=app), base_url="http://test"
+        transport=ASGITransport(app=app),
+        base_url="http://test",
+        cookies={
+            "access-token": get_access_token(
+                user_id=1, username="user1", is_admin=False
+            )
+        },
     ) as ac:
         yield ac

@@ -64,10 +64,8 @@ async def test_sign_up_passed(
         and user.is_admin is False
         and isinstance(user.password, bytes)
     )
-    access_token = response.cookies["access-token"]
     profile_response = await ac.get(
         "api/profile",
-        cookies={"access-token": access_token},
     )
     assert profile_response.status_code == 200
 
@@ -103,9 +101,7 @@ async def test_sign_in_passed(ac: AsyncClient):
         "api/sign-in", json={"username": "user1", "password": "qwerty"}
     )
     assert response.status_code == 200
-    access_token = response.cookies["access-token"]
     profile_response = await ac.get(
         "api/profile",
-        cookies={"access-token": access_token},
     )
     assert profile_response.status_code == 200
