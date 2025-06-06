@@ -1,32 +1,25 @@
-from pathlib import Path
-
 import pytest
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
 import re
-from core.utils.jwt import get_access_token
+
+from .utils import make_request_to_save_avatar
 from users.database.repositories.user import UserRepository
 from users.utils.auth import validate_password
 
 
 async def test_get_profile_without_correct_cookies(ac: AsyncClient):
-    resp1 = await ac.post("api/profile")
-    assert resp1.status_code == 422
-    resp2 = await ac.post(
-        "api/profile", cookies={"access-token": "incorrect.token"}
-    )
-    assert resp2.status_code == 401
+    old_cookies = ac.cookies
+    ac.cookies = {"access-token": "incorrect.token"}
+    resp1 = await ac.get("api/profile")
+    assert resp1.status_code == 401
+    ac.cookies = old_cookies
 
 
 async def test_get_profile_with_correct_cookies(ac: AsyncClient):
-    response = await ac.post(
-        "api/sign-in", json={"username": "user1", "password": "qwerty"}
-    )
-    access_token = response.cookies["access-token"]
     profile_response = await ac.get(
         "api/profile",
-        cookies={"access-token": access_token},
     )
     assert profile_response.status_code == 200
     assert profile_response.json() == {
@@ -38,7 +31,6 @@ async def test_get_profile_with_correct_cookies(ac: AsyncClient):
 
 
 async def test_update_profile(ac: AsyncClient, async_session: AsyncSession):
-    token = get_access_token(user_id=1, username="user1", is_admin=False)
     data = {
         "fullName": "new",
         "email": "new@mail.com",
@@ -47,7 +39,6 @@ async def test_update_profile(ac: AsyncClient, async_session: AsyncSession):
     response1 = await ac.post(
         "api/profile",
         json=data,
-        cookies={"access-token": token},
     )
     assert response1.status_code == 422
     user = await UserRepository.get_user_profile(
@@ -58,7 +49,6 @@ async def test_update_profile(ac: AsyncClient, async_session: AsyncSession):
     response2 = await ac.post(
         "api/profile",
         json=data,
-        cookies={"access-token": token},
     )
     assert response2.status_code == 200
     assert response2.json() == data | {"avatar": None}
@@ -82,10 +72,7 @@ async def test_update_profile(ac: AsyncClient, async_session: AsyncSession):
 async def test_change_password_failed(
     ac: AsyncClient, data: dict[str, str], async_session: AsyncSession
 ):
-    token = get_access_token(user_id=1, username="user1", is_admin=False)
-    response = await ac.post(
-        "api/profile/password", json=data, cookies={"access-token": token}
-    )
+    response = await ac.post("api/profile/password", json=data)
     assert response.status_code in (401, 422)
     user = await UserRepository.get_object_by_params(
         session=async_session, data={"id": 1}
@@ -102,7 +89,6 @@ async def test_change_password_passed(
     response = await ac.post(
         "api/sign-in", json={"username": "user1", "password": "qwerty"}
     )
-    cookies = {"access-token": response.cookies["access-token"]}
     assert response.status_code == 200
     response = await ac.post(
         "api/profile/password",
@@ -110,7 +96,6 @@ async def test_change_password_passed(
             "currentPassword": "qwerty",
             "newPassword": "new-password",
         },
-        cookies=cookies,
     )
     assert response.status_code == 200
     response = await ac.post(
@@ -138,17 +123,12 @@ async def test_change_password_passed(
 
 async def test_save_new_avatar(ac: AsyncClient, async_session: AsyncSession):
     filename = "good-avatar.png"
-    path_to_avatar = Path(__file__).resolve().parent / "avatars" / filename
-    token = get_access_token(user_id=1, username="user1", is_admin=False)
-    cookies = {"access-token": token}
     response = await ac.get("api/profile")
     assert response.json()["avatar"] is None
-    with path_to_avatar.open(mode="rb") as file:
-        files = {"avatar": (filename, file)}
-        response = await ac.post(
-            "api/profile/avatar", cookies=cookies, files=files
-        )
-        assert response.status_code == 200
+    avatar_response = await make_request_to_save_avatar(
+        ac=ac, filename=filename
+    )
+    assert avatar_response.status_code == 200
     response = await ac.get("api/profile")
     json = response.json()
     assert json["avatar"]["alt"] == filename
@@ -159,3 +139,14 @@ async def test_save_new_avatar(ac: AsyncClient, async_session: AsyncSession):
         )
         is not None
     )
+
+
+async def test_fail_save_avatar(ac: AsyncClient):
+    response = await ac.get("api/profile")
+    json_response1 = response.json()
+    avatar_response = await make_request_to_save_avatar(
+        ac=ac, filename="bad-avatar.txt"
+    )
+    assert avatar_response.status_code == 422
+    response = await ac.get("api/profile")
+    assert response.json() == json_response1
