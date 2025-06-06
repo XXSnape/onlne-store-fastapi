@@ -5,6 +5,9 @@
 from typing import AsyncGenerator
 
 import pytest
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
+from redis import asyncio as aioredis
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy import NullPool
 from sqlalchemy.ext.asyncio import (
@@ -47,7 +50,14 @@ async def init_db():
             CategoryModel(title="Category1"),
             CategoryModel(title="Category2"),
             CategoryModel(title="Category3"),
+            CategoryModel(title="Category4"),
+            CategoryModel(title="Category5"),
+            CategoryModel(title="Category6"),
         ]
+        categories[3].children = [categories[4]]
+        categories[2].children = [categories[3]]
+        categories[0].children = [categories[1], categories[2]]
+
         tags = [
             TagModel(name="Tag1", categories=categories[:2]),
             TagModel(name="Tag2", categories=[categories[0]]),
@@ -67,11 +77,18 @@ async def async_session() -> AsyncGenerator[AsyncSession, None]:
         yield session
 
 
+@pytest.fixture(scope="session", autouse=True)
+async def set_cache():
+    redis = aioredis.from_url(settings.redis.url)
+    FastAPICache.init(RedisBackend(redis), prefix="fastapi-cache")
+
+
 @pytest.fixture(scope="session")
 async def ac() -> AsyncGenerator[AsyncClient, None]:
     """
     Возвращает клиента для асинхронного взаимодействия с приложением внутри тестов.
     """
+
     async with AsyncClient(
         transport=ASGITransport(app=app),
         base_url="http://test",

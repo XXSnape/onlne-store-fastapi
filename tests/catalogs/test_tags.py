@@ -33,3 +33,5 @@ async def test_get_tags(
 ):
     response = await ac.get("api/tags", params=params)
     assert response.json() == result
+
+
