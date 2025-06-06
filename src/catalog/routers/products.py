@@ -42,7 +42,6 @@ async def popular_product(session: SessionDep):
 @router.get("/products/limited", response_model=list[ProductGeneralSchema])
 @cache(expire=60 * 5)
 async def limited_product(session: SessionDep):
-    await asyncio.sleep(5)
     return await get_products(session=session, is_limited=True)
 
 
