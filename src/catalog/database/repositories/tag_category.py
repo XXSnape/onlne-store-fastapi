@@ -18,7 +18,8 @@ class TagCategoryRepository(ManagerRepository):
             select(TagModel.id, TagModel.name)
             .select_from(TagModel)
             .outerjoin(cls.model, cls.model.tag_id == TagModel.id)
-        )
+            .order_by(TagModel.id)
+        ).distinct()
         if category_id:
             query = query.where(cls.model.category_id == category_id)
         result = await session.execute(query)
