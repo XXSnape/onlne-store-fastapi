@@ -13,6 +13,7 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
+from catalog.database import CategoryModel, TagModel
 from core.utils.jwt import get_access_token
 from src.core import settings
 from src.main import app
@@ -42,6 +43,18 @@ async def init_db():
                 ),
             ]
         )
+        categories = [
+            CategoryModel(title="Category1"),
+            CategoryModel(title="Category2"),
+            CategoryModel(title="Category3"),
+        ]
+        tags = [
+            TagModel(name="Tag1", categories=categories[:2]),
+            TagModel(name="Tag2", categories=[categories[0]]),
+            TagModel(name="Tag3"),
+        ]
+        session.add_all(categories + tags)
+
         await session.commit()
 
 
