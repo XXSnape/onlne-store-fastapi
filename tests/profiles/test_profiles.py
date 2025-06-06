@@ -1,7 +1,10 @@
+from pathlib import Path
+
 import pytest
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
+import re
 from core.utils.jwt import get_access_token
 from users.database.repositories.user import UserRepository
 from users.utils.auth import validate_password
@@ -130,4 +133,29 @@ async def test_change_password_passed(
             password="new-password", hashed_password=user.password
         )
         is True
+    )
+
+
+async def test_save_new_avatar(ac: AsyncClient, async_session: AsyncSession):
+    filename = "good-avatar.png"
+    path_to_avatar = Path(__file__).resolve().parent / "avatars" / filename
+    token = get_access_token(user_id=1, username="user1", is_admin=False)
+    cookies = {"access-token": token}
+    response = await ac.get("api/profile")
+    assert response.json()["avatar"] is None
+    with path_to_avatar.open(mode="rb") as file:
+        files = {"avatar": (filename, file)}
+        response = await ac.post(
+            "api/profile/avatar", cookies=cookies, files=files
+        )
+        assert response.status_code == 200
+    response = await ac.get("api/profile")
+    json = response.json()
+    assert json["avatar"]["alt"] == filename
+    assert (
+        re.fullmatch(
+            r"uploads/avatars/1_[\w-]{36}_good-avatar.png",
+            json["avatar"]["src"],
+        )
+        is not None
     )
