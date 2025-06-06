@@ -12,14 +12,15 @@ class CategoryRepository(ManagerRepository):
     @classmethod
     async def get_categories(cls, session: AsyncSession):
         query = (
-            select(CategoryModel)
+            select(cls.model)
             .options(
-                joinedload(CategoryModel.image),
-                selectinload(
-                    CategoryModel.children, recursion_depth=5
-                ).joinedload(CategoryModel.image),
+                joinedload(cls.model.image),
+                selectinload(cls.model.children, recursion_depth=5).joinedload(
+                    cls.model.image
+                ),
             )
-            .where(CategoryModel.parent_id.is_(None))
+            .where(cls.model.parent_id.is_(None))
+            .order_by(cls.model.id)
         )
         result = await session.execute(query)
         return result.scalars().all()
