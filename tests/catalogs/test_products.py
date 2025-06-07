@@ -1,9 +1,10 @@
 from httpx import AsyncClient
 
 
-def clear_date(products: dict):
+def clear_date(products: dict, attrs=("date",)):
     for product in products:
-        product.pop("date")
+        for attr in attrs:
+            product.pop(attr)
 
 
 async def test_limited_products(ac: AsyncClient):
@@ -86,7 +87,7 @@ async def test_banners(ac: AsyncClient):
         },
         {
             "id": 7,
-            "price": "700.0000",
+            "price": "50.0000",
             "title": "Product7",
             "images": [],
             "category": 1,
@@ -99,7 +100,7 @@ async def test_banners(ac: AsyncClient):
         },
         {
             "id": 8,
-            "price": "800.0000",
+            "price": "700.0000",
             "title": "Product8",
             "images": [],
             "category": 3,
@@ -172,7 +173,7 @@ async def test_popular_products(ac: AsyncClient):
         },
         {
             "id": 7,
-            "price": "700.0000",
+            "price": "50.0000",
             "title": "Product7",
             "images": [],
             "category": 1,
@@ -184,3 +185,31 @@ async def test_popular_products(ac: AsyncClient):
             "rating": 4,
         },
     ]
+
+
+async def test_sales(ac: AsyncClient):
+    response = await ac.get("api/sales")
+    data = response.json()
+    clear_date(data["items"], attrs=("dateFrom",))
+    assert data == {
+        "currentPage": 1,
+        "items": [
+            {
+                "id": 7,
+                "price": "700.0000",
+                "title": "Product7",
+                "images": [],
+                "salePrice": "50.0000",
+                "dateTo": "06-09",
+            },
+            {
+                "id": 8,
+                "price": "800.0000",
+                "title": "Product8",
+                "images": [],
+                "salePrice": "700.0000",
+                "dateTo": "07-09",
+            },
+        ],
+        "lastPage": 1,
+    }

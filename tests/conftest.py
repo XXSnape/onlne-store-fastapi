@@ -2,6 +2,7 @@
 Модуль с настройками для тестов.
 """
 
+from datetime import date
 from typing import AsyncGenerator
 
 import pytest
@@ -16,7 +17,13 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
-from catalog.database import CategoryModel, TagModel, ProductModel, ReviewModel
+from catalog.database import (
+    CategoryModel,
+    TagModel,
+    ProductModel,
+    ReviewModel,
+    SaleModel,
+)
 from core.utils.jwt import get_access_token
 from src.core import settings
 from src.main import app
@@ -107,6 +114,7 @@ async def init_db():
                 count=7,
                 category_id=1,
                 reviews=[ReviewModel(rate=4, text="Some text", user_id=1)],
+                sale=SaleModel(sale_price=50, date_to=date(2030, 9, 6)),
             ),
             ProductModel(
                 title="Product8",
@@ -114,6 +122,7 @@ async def init_db():
                 count=8,
                 category_id=3,
                 reviews=[ReviewModel(rate=5, text="Some text", user_id=1)],
+                sale=SaleModel(sale_price=700, date_to=date(2030, 9, 7)),
             ),
         ]
         session.add_all(categories + tags + products)
