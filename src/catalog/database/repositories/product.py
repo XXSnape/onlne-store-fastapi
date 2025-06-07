@@ -81,14 +81,14 @@ class ProductRepository(ManagerRepository):
         )
 
         if is_popular:
-            popular_products = subquery.order_by(
-                func.count(cls.model.id).desc()
+            popular_products = subquery.where(ReviewModel.id != None).order_by(
+                func.count(cls.model.id).desc(), cls.model.id
             )
             query = query.where(cls.model.id.in_(popular_products))
 
         if is_banner:
             banners_products = subquery.order_by(
-                coalesce(func.avg(ReviewModel.rate), 0).desc(),
+                coalesce(func.avg(ReviewModel.rate), 0).desc(), cls.model.id
             )
             query = query.where(cls.model.id.in_(banners_products))
 
