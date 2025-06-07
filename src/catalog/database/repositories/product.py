@@ -9,6 +9,7 @@ from sqlalchemy.orm import (
     joinedload,
     selectinload,
 )
+from sqlalchemy.sql.functions import coalesce
 
 from catalog.database import (
     CategoryModel,
@@ -87,7 +88,7 @@ class ProductRepository(ManagerRepository):
 
         if is_banner:
             banners_products = subquery.order_by(
-                func.avg(ReviewModel.rate).desc()
+                coalesce(func.avg(ReviewModel.rate), 0).desc(),
             )
             query = query.where(cls.model.id.in_(banners_products))
 
@@ -95,6 +96,7 @@ class ProductRepository(ManagerRepository):
             query = query.where(cls.model.count == 0)
         if ids:
             query = query.where(cls.model.id.in_(ids))
+        query = query.order_by(cls.model.id)
         result = await session.execute(query)
         return result.scalars().all()
 
