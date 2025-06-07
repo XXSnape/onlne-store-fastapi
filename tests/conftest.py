@@ -54,19 +54,19 @@ async def init_db():
             ]
         )
         categories = [
-            CategoryModel(title="Category1"),
-            CategoryModel(title="Category2"),
-            CategoryModel(title="Category3"),
-            CategoryModel(title="Category4"),
-            CategoryModel(title="Category5"),
-            CategoryModel(title="Category6"),
+            CategoryModel(title="Category1", id=1),
+            CategoryModel(title="Category2", id=2),
+            CategoryModel(title="Category3", id=3),
+            CategoryModel(title="Category4", id=4),
+            CategoryModel(title="Category5", id=5),
+            CategoryModel(title="Category6", id=6),
         ]
         categories[3].children = [categories[4]]
         categories[2].children = [categories[3]]
         categories[0].children = [categories[1], categories[2]]
 
         tags = [
-            TagModel(name="Tag1", categories=categories[:2]),
+            TagModel(name="Tag1", categories=[categories[0], categories[1]]),
             TagModel(name="Tag2", categories=[categories[0]]),
             TagModel(name="Tag3"),
         ]
@@ -113,6 +113,7 @@ async def init_db():
                 price_per_unit=700,
                 count=7,
                 category_id=1,
+                free_delivery=True,
                 reviews=[ReviewModel(rate=4, text="Some text", user_id=1)],
                 sale=SaleModel(sale_price=50, date_to=date(2030, 9, 6)),
             ),
