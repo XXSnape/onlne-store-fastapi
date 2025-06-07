@@ -16,7 +16,7 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
-from catalog.database import CategoryModel, TagModel, ProductModel
+from catalog.database import CategoryModel, TagModel, ProductModel, ReviewModel
 from core.utils.jwt import get_access_token
 from src.core import settings
 from src.main import app
@@ -68,10 +68,48 @@ async def init_db():
                 title="Product1", price_per_unit=100, count=0, category_id=1
             ),
             ProductModel(
-                title="Product2", price_per_unit=100, count=10, category_id=2
+                title="Product2", price_per_unit=200, count=10, category_id=2
             ),
             ProductModel(
-                title="Product3", price_per_unit=100, count=0, category_id=3
+                title="Product3",
+                price_per_unit=300,
+                count=0,
+                category_id=3,
+                reviews=[ReviewModel(rate=1, text="Some text", user_id=1)],
+            ),
+            ProductModel(
+                title="Product4",
+                price_per_unit=400,
+                count=4,
+                category_id=2,
+            ),
+            ProductModel(
+                title="Product5",
+                price_per_unit=500,
+                count=5,
+                category_id=2,
+                reviews=[ReviewModel(rate=2, text="Some text", user_id=1)],
+            ),
+            ProductModel(
+                title="Product6",
+                price_per_unit=600,
+                count=6,
+                category_id=1,
+                reviews=[ReviewModel(rate=5, text="Some text", user_id=1)],
+            ),
+            ProductModel(
+                title="Product7",
+                price_per_unit=700,
+                count=7,
+                category_id=1,
+                reviews=[ReviewModel(rate=4, text="Some text", user_id=1)],
+            ),
+            ProductModel(
+                title="Product8",
+                price_per_unit=800,
+                count=8,
+                category_id=3,
+                reviews=[ReviewModel(rate=5, text="Some text", user_id=1)],
             ),
         ]
         session.add_all(categories + tags + products)
