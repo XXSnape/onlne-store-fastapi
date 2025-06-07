@@ -161,15 +161,20 @@ class ProductRepository(ManagerRepository):
                 cls.model.category_id == filtering_data.category_id
             )
         if filtering_data.tags:
-            products_with_tags = (
-                select(cls.model.id)
-                .distinct()
+            subq = (
+                select(1)
+                .select_from(TagCategoryModel)
                 .join(CategoryModel)
-                .join(TagCategoryModel)
-                .join(TagModel)
-                .where(TagModel.id.in_(filtering_data.tags))
-            )
-            query = query.where(cls.model.id.in_(products_with_tags))
+                .where(
+                    CategoryModel.id == cls.model.category_id,
+                    TagCategoryModel.tag_id.in_(filtering_data.tags),
+                )
+                .having(
+                    func.count(TagCategoryModel.tag_id.distinct())
+                    >= len(filtering_data.tags)
+                )
+            ).exists()
+            query = query.where(subq)
 
         count_query = select(func.count()).select_from(query.subquery())
         count_result = await session.scalar(count_query)
@@ -207,6 +212,9 @@ class ProductRepository(ManagerRepository):
                     sort_type=filtering_data.sort_type,
                 )
             )
+        query = query.offset(
+            (filtering_data.current_page - 1) * settings.app.limit
+        ).limit(filtering_data.limit)
         result = await session.execute(query)
         return result.scalars().all(), count_result
 
