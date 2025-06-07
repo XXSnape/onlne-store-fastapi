@@ -82,6 +82,10 @@ async def init_db():
                 price_per_unit=400,
                 count=4,
                 category_id=2,
+                reviews=[
+                    ReviewModel(rate=1, text="Some text", user_id=1),
+                    ReviewModel(rate=1, text="Some text", user_id=2),
+                ],
             ),
             ProductModel(
                 title="Product5",
