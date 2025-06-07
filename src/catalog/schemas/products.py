@@ -107,8 +107,10 @@ class ResultSchema(BaseModel):
     @computed_field(alias="lastPage")
     @property
     def last_page(self) -> int:
-        return self.items_count // settings.app.limit + (
-            self.items_count % settings.app.limit != 0
+        return (
+            self.items_count // settings.app.limit
+            + (self.items_count % settings.app.limit != 0)
+            or 1
         )
 
 
