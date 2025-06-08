@@ -1,6 +1,6 @@
 from typing import Sequence
 
-from sqlalchemy import func, or_, select
+from sqlalchemy import func, or_, select, desc, asc
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import (
     InstrumentedAttribute,
@@ -31,26 +31,32 @@ class ProductRepository(ManagerRepository):
     model = ProductModel
 
     @staticmethod
-    def get_sorting_attribute(column, sort_type: SortingTypeEnum):
-        return getattr(
+    def get_sorting_attribute(
+        column, sort_type: SortingTypeEnum, add_coalesce: bool = False
+    ):
+        func = desc if sort_type == SortingTypeEnum.dec else asc
+        if add_coalesce:
+            return func(coalesce(column, 0))
+        return func(
             column,
-            ("desc" if sort_type == SortingTypeEnum.dec else "asc"),
-        )()
+        )
 
     @classmethod
-    def get_query_with_cte_filtering(
+    def get_query_with_ordering(
         cls, query, attribute: InstrumentedAttribute[int], function, sort_type
     ):
-        sorting_by_reviews_cte = (
-            select(cls.model.id, function(attribute).label("sorting"))
-            .join(ReviewModel, cls.model.id == ReviewModel.product_id)
-            .group_by(cls.model.id)
-        ).cte()
-        return query.outerjoin(sorting_by_reviews_cte).order_by(
-            cls.get_sorting_attribute(
-                column=sorting_by_reviews_cte.c.sorting,
-                sort_type=sort_type,
+        subq = (
+            select(
+                function(attribute).label("sorting"),
             )
+            .where(ReviewModel.product_id == cls.model.id)
+            .group_by(cls.model.id)
+        ).scalar_subquery()
+        return query.order_by(
+            cls.get_sorting_attribute(
+                column=subq, sort_type=sort_type, add_coalesce=True
+            ),
+            cls.model.id,
         )
 
     @classmethod
@@ -180,7 +186,7 @@ class ProductRepository(ManagerRepository):
         count_result = await session.scalar(count_query)
 
         if filtering_data.sort == SortingEnum.reviews:
-            query = cls.get_query_with_cte_filtering(
+            query = cls.get_query_with_ordering(
                 query=query,
                 attribute=cls.model.id,
                 function=func.count,
@@ -188,7 +194,7 @@ class ProductRepository(ManagerRepository):
             )
 
         if filtering_data.sort == SortingEnum.rating:
-            query = cls.get_query_with_cte_filtering(
+            query = cls.get_query_with_ordering(
                 query=query,
                 attribute=ReviewModel.rate,
                 function=func.avg,
@@ -204,13 +210,15 @@ class ProductRepository(ManagerRepository):
                     column=cls.model.price_per_unit,
                     sort_type=filtering_data.sort_type,
                 ),
+                cls.model.id,
             )
         if filtering_data.sort == SortingEnum.date:
             query = query.order_by(
                 cls.get_sorting_attribute(
                     column=cls.model.date,
                     sort_type=filtering_data.sort_type,
-                )
+                ),
+                cls.model.id,
             )
         query = query.offset(
             (filtering_data.current_page - 1) * settings.app.limit
