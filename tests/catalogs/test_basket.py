@@ -1,3 +1,6 @@
+import http
+
+import httpx
 from httpx import AsyncClient
 from .clear_data import clear_date
 
@@ -55,3 +58,37 @@ async def test_filling_and_removing_basket(ac: AsyncClient):
     assert clear_date(delete_product_data) == [repeated_addition_data[-1]]
     result = await ac.get("api/basket")
     assert clear_date(result.json()) == delete_product_data
+    await ac.request(
+        method="delete", url="api/basket", json={"id": 4, "count": 3}
+    )
+
+
+async def test_incorrect_data(ac: AsyncClient):
+    await ac.post("api/basket", json={"id": 2, "count": 2})
+    response = await ac.request(
+        method="delete", url="api/basket", json={"id": 1, "count": 2}
+    )
+    assert response.status_code == httpx.codes.UNPROCESSABLE_ENTITY
+    basket = await ac.get("api/basket")
+    data = basket.json()
+    assert clear_date(data) == [
+        {
+            "id": 2,
+            "price": "200.0000",
+            "title": "Product2",
+            "images": [],
+            "category": 2,
+            "count": 2,
+            "description": "Нет описания",
+            "freeDelivery": False,
+            "tags": [{"id": 1, "name": "Tag1"}],
+            "reviews": 0,
+            "rating": 0,
+        }
+    ]
+    add_product = await ac.post("api/basket", json={"id": 4, "count": 100})
+    assert add_product.status_code == httpx.codes.UNPROCESSABLE_ENTITY
+    add_product = await ac.post("api/basket", json={"id": 100, "count": 1})
+    assert add_product.status_code == httpx.codes.NOT_FOUND
+    basket = await ac.get("api/basket")
+    assert clear_date(basket.json()) == data
