@@ -25,6 +25,12 @@ from catalog.database import (
     SaleModel,
 )
 from core.utils.jwt import get_access_token
+from orders.database import OrderProductModel, OrderModel
+from orders.utils.constants import (
+    DeliveryTypeEnum,
+    PaymentTypeEnum,
+    OrderStatusEnum,
+)
 from src.core import settings
 from src.main import app
 from users.database import UserModel
@@ -75,7 +81,24 @@ async def init_db():
                 title="Product1", price_per_unit=100, count=0, category_id=1
             ),
             ProductModel(
-                title="Product2", price_per_unit=200, count=10, category_id=2
+                title="Product2",
+                price_per_unit=200,
+                count=10,
+                category_id=2,
+                orders=[
+                    OrderProductModel(
+                        count=2,
+                        order=OrderModel(
+                            delivery_type=DeliveryTypeEnum.ordinary,
+                            payment_type=PaymentTypeEnum.online,
+                            status=OrderStatusEnum.paid,
+                            city="city",
+                            address="address",
+                            total_cost=400,
+                            user_id=2,
+                        ),
+                    )
+                ],
             ),
             ProductModel(
                 title="Product3",
@@ -91,7 +114,7 @@ async def init_db():
                 category_id=2,
                 reviews=[
                     ReviewModel(rate=1, text="Some text", user_id=1),
-                    ReviewModel(rate=1, text="Some text", user_id=2),
+                    ReviewModel(rate=1, text="Some2 text", user_id=2),
                 ],
             ),
             ProductModel(
