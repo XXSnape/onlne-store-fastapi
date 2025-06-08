@@ -220,25 +220,83 @@ async def test_sales(ac: AsyncClient):
     "params, result",
     [
         (
-            {"filter[name]": "Product2"},
+            {"filter[name]": "prod"},
             {
                 "currentPage": 1,
                 "items": [
                     {
-                        "id": 2,
-                        "price": "200.0000",
-                        "title": "Product2",
+                        "id": 8,
+                        "price": "700.0000",
+                        "title": "Product8",
+                        "images": [],
+                        "category": 3,
+                        "count": 8,
+                        "description": "Нет описания",
+                        "freeDelivery": False,
+                        "tags": [],
+                        "reviews": 1,
+                        "rating": 5,
+                    },
+                    {
+                        "id": 7,
+                        "price": "50.0000",
+                        "title": "Product7",
+                        "images": [],
+                        "category": 1,
+                        "count": 7,
+                        "description": "Нет описания",
+                        "freeDelivery": True,
+                        "tags": [
+                            {"id": 1, "name": "Tag1"},
+                            {"id": 2, "name": "Tag2"},
+                        ],
+                        "reviews": 1,
+                        "rating": 4,
+                    },
+                    {
+                        "id": 6,
+                        "price": "600.0000",
+                        "title": "Product6",
+                        "images": [],
+                        "category": 1,
+                        "count": 6,
+                        "description": "Нет описания",
+                        "freeDelivery": False,
+                        "tags": [
+                            {"id": 1, "name": "Tag1"},
+                            {"id": 2, "name": "Tag2"},
+                        ],
+                        "reviews": 1,
+                        "rating": 5,
+                    },
+                    {
+                        "id": 5,
+                        "price": "500.0000",
+                        "title": "Product5",
                         "images": [],
                         "category": 2,
-                        "count": 10,
+                        "count": 5,
                         "description": "Нет описания",
                         "freeDelivery": False,
                         "tags": [{"id": 1, "name": "Tag1"}],
-                        "reviews": 0,
-                        "rating": 0,
-                    }
+                        "reviews": 1,
+                        "rating": 2,
+                    },
+                    {
+                        "id": 4,
+                        "price": "400.0000",
+                        "title": "Product4",
+                        "images": [],
+                        "category": 2,
+                        "count": 4,
+                        "description": "Нет описания",
+                        "freeDelivery": False,
+                        "tags": [{"id": 1, "name": "Tag1"}],
+                        "reviews": 2,
+                        "rating": 1,
+                    },
                 ],
-                "lastPage": 1,
+                "lastPage": 2,
             },
         ),
         (
@@ -1205,3 +1263,34 @@ async def test_catalog(ac: AsyncClient, params, result):
     data = response.json()
     clear_date(data["items"])
     assert data == result
+
+
+@pytest.mark.parametrize(
+    "params",
+    [
+        {"filter[name]": "thing"},
+        {
+            "filter[minPrice]": 801,
+        },
+        {"filter[maxPrice]": 10},
+        {"category": 100},
+        {"tags[]": [100]},
+        {"currentPage": 3},
+    ],
+)
+async def test_empty_catalog(ac: AsyncClient, params):
+    response = await ac.get(
+        "api/catalog",
+        params=params,
+    )
+    current_page = params.get("currentPage", 1)
+    last_page = params.get("currentPage")
+    if last_page is None:
+        last_page = 1
+    else:
+        last_page = 2
+    assert response.json() == {
+        "currentPage": current_page,
+        "items": [],
+        "lastPage": last_page,
+    }
