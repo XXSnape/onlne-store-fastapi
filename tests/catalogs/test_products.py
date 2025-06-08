@@ -1,11 +1,6 @@
 import pytest
 from httpx import AsyncClient
-
-
-def clear_date(products: dict, attrs=("date",)):
-    for product in products:
-        for attr in attrs:
-            product.pop(attr)
+from .clear_data import clear_date
 
 
 async def test_limited_products(ac: AsyncClient):
