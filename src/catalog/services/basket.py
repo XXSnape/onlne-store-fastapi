@@ -7,7 +7,7 @@ from sqlalchemy.sql.annotation import Annotated
 from starlette.responses import Response
 
 from catalog.database.repositories.product import ProductRepository
-from catalog.exceptions.count import too_many_products
+from catalog.exceptions.count import too_many_products, there_are_no_items_in_cart
 from catalog.schemas.basket import BasketInSchema
 from catalog.services.products import get_products
 from core import settings
@@ -33,6 +33,8 @@ async def delete_product_from_basket(
     card = await redis.hgetall(card_id)
     if not card:
         return []
+    if str(product_id) not in card:
+        raise there_are_no_items_in_cart
     card.pop(str(product_id))
     await redis.delete(card_id)
     if not card:
