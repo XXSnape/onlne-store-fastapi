@@ -188,7 +188,7 @@ class ProductRepository(ManagerRepository):
         if filtering_data.sort == SortingEnum.reviews:
             query = cls.get_query_with_ordering(
                 query=query,
-                attribute=cls.model.id,
+                attribute=ReviewModel.id,
                 function=func.count,
                 sort_type=filtering_data.sort_type,
             )
