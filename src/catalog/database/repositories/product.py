@@ -146,7 +146,7 @@ class ProductRepository(ManagerRepository):
             )
         )
         if filtering_data.name:
-            query = query.where(cls.model.title.contains(filtering_data.name))
+            query = query.where(cls.model.title.icontains(filtering_data.name))
         if filtering_data.min_price:
             query = query.where(
                 cls.model.price_per_unit >= filtering_data.min_price,
