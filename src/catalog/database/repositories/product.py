@@ -221,7 +221,7 @@ class ProductRepository(ManagerRepository):
                 cls.model.id,
             )
         query = query.offset(
-            (filtering_data.current_page - 1) * settings.app.limit
+            (filtering_data.current_page - 1) * filtering_data.limit
         ).limit(filtering_data.limit)
         result = await session.execute(query)
         return result.scalars().all(), count_result

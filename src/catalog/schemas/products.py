@@ -103,15 +103,15 @@ class ResultSchema(BaseModel):
         ),
     ]
     items_count: Annotated[int, Field(exclude=True)]
+    limit: Annotated[int, Field(exclude=True)]
 
     @computed_field(alias="lastPage")
     @property
     def last_page(self) -> int:
-        return (
-            self.items_count // settings.app.limit
-            + (self.items_count % settings.app.limit != 0)
-            or 1
-        )
+        pages = self.items_count // self.limit
+        if pages != 0 and self.items_count % self.limit != 0:
+            pages += 1
+        return pages or 1
 
 
 class ResultSaleSchema(ResultSchema):

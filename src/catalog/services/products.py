@@ -12,6 +12,7 @@ from catalog.schemas.products import (
     ResultSaleSchema,
     SaleProductsSchema,
 )
+from core import settings
 from core.exceptions.not_found import not_found
 
 
@@ -58,6 +59,7 @@ async def get_sales_products(session: AsyncSession, current_page: int):
         ],
         current_page=current_page,
         items_count=count,
+        limit=settings.app.limit
     )
 
 
@@ -74,4 +76,5 @@ async def get_catalog(
         ],
         current_page=filtering_data.current_page,
         items_count=count,
+        limit=filtering_data.limit
     )
