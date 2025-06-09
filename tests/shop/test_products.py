@@ -1289,3 +1289,35 @@ async def test_empty_catalog(ac: AsyncClient, params):
         "items": [],
         "lastPage": last_page,
     }
+
+
+async def test_product(ac: AsyncClient):
+    response = await ac.get("api/product/8")
+    data = response.json()
+    data.pop("date")
+    clear_date(data["reviews"])
+    assert data == {
+        "id": 8,
+        "price": "700.0000",
+        "title": "Product8",
+        "images": [],
+        "category": 3,
+        "count": 8,
+        "description": "Нет описания",
+        "freeDelivery": False,
+        "tags": [],
+        "reviews": [
+            {
+                "text": "Some text",
+                "rate": 5,
+                "author": "user1",
+                "email": "Не указано",
+            }
+        ],
+        "rating": 5,
+        "fullDescription": "Нет полного описания",
+        "specifications": [
+            {"name": "Spec1", "value": "Value1"},
+            {"name": "Spec2", "value": "Value2"},
+        ],
+    }

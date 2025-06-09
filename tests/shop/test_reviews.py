@@ -61,7 +61,6 @@ async def test_review(ac: AsyncClient):
     assert result_product_data == product_data
 
 
-@pytest.mark.review
 @pytest.mark.parametrize("product_id", (1, 4))
 async def test_fail_repeat_review(
     ac: AsyncClient, async_session: AsyncSession, product_id: int
