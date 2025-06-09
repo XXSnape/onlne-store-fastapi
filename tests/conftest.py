@@ -128,6 +128,10 @@ async def init_db():
                 category_id=3,
                 reviews=[ReviewModel(rate=1, text="Some text", user_id=1)],
             ),
+        ]
+        session.add_all(categories + tags + products)
+        await session.commit()
+        products = [
             ProductModel(
                 id=4,
                 title="Product4",
@@ -179,7 +183,7 @@ async def init_db():
                 sale=SaleModel(sale_price=700, date_to=date(2030, 9, 7)),
             ),
         ]
-        session.add_all(categories + tags + products)
+        session.add_all(products)
 
         await session.commit()
 
