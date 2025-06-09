@@ -63,6 +63,11 @@ async def init_db():
                     username="user2",
                     password=get_hashed_password("qwerty2"),
                 ),
+                UserModel(
+                    fullname="Name3 Surname3",
+                    username="user3",
+                    password=get_hashed_password("qwerty3"),
+                ),
             ]
         )
         categories = [
@@ -124,7 +129,7 @@ async def init_db():
                 price_per_unit=200,
                 count=10,
                 category_id=2,
-                orders=[OrderProductModel(count=2, order=order2)],
+                orders=[OrderProductModel(count=2, order=order1)],
             ),
             ProductModel(
                 id=3,

@@ -1,6 +1,7 @@
-from typing import Sequence
+from decimal import Decimal
+from typing import Sequence, Any, Coroutine
 
-from sqlalchemy import func, or_, select, desc, asc
+from sqlalchemy import func, or_, select, desc, asc, MappingResult, Row
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import (
     InstrumentedAttribute,
@@ -10,7 +11,6 @@ from sqlalchemy.orm import (
     selectinload,
 )
 from sqlalchemy.sql.functions import coalesce
-
 from catalog.database import (
     CategoryModel,
     ProductModel,
@@ -254,6 +254,20 @@ class ProductRepository(ManagerRepository):
         )
         result = await session.execute(query)
         return result.scalars().one().reviews
+
+    @classmethod
+    async def get_price_of_goods(
+        cls, session: AsyncSession, ids: list[int]
+    ) -> Sequence[Row[tuple[int, Decimal]]]:
+        query = (
+            select(cls.model.id, cls.model.price)
+            .options(
+                joinedload(cls.model.sale).load_only(SaleModel.sale_price)
+            )
+            .where(cls.model.id.in_(ids))
+        )
+        result = await session.execute(query)
+        return result.all()
 
 
 class SaleRepository(ManagerRepository):

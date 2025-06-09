@@ -35,7 +35,7 @@ async def test_sign_up_failed(
     count = await UserRepository.count_number_objects_by_params(
         session=async_session, data=None
     )
-    assert count == 2
+    assert count == 3
 
 
 async def test_sign_up_passed(
@@ -46,7 +46,7 @@ async def test_sign_up_passed(
         "api/sign-up",
         json={
             "name": "Same Fullname",
-            "username": "user3",
+            "username": "user4",
             "password": "password",
         },
     )
@@ -54,9 +54,9 @@ async def test_sign_up_passed(
     count = await UserRepository.count_number_objects_by_params(
         session=async_session, data=None
     )
-    assert count == 3
+    assert count == 4
     user = await UserRepository.get_object_by_params(
-        session=async_session, data={"username": "user3"}
+        session=async_session, data={"username": "user4"}
     )
     assert (
         user.fullname == "Same Fullname"

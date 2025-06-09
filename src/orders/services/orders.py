@@ -1,7 +1,11 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from catalog.database.repositories.product import ProductRepository
 from catalog.schemas.products import ProductGeneralSchema
-from core.exceptions.not_found import not_found
+from core.exceptions.not_found import (
+    not_found,
+    no_product_with_these_parameters_was_found,
+)
 from orders.database import OrderModel, OrderProductModel
 from orders.database.repositories.order import (
     OrderProductRepository,
@@ -37,11 +41,20 @@ async def add_details_to_order(
     user_id: int,
     order_details: OrderInSchema,
 ):
-    order: OrderModel = await OrderRepository.get_object_by_params(
-        session=session, data={"id": order_id, "user_id": user_id}
+    order: OrderModel = await OrderRepository.get_order_with_products(
+        session=session,
+        order_id=order_id,
+        user_id=user_id,
     )
-    if not order:
-        raise not_found
+    summ = sum(
+        product_in_details.count * product_in_details.product.price
+        for product_in_details in order.products
+    )
+    if summ != order_details.total_cost:
+        await session.delete(order)
+        await session.commit()
+        raise no_product_with_these_parameters_was_found
+
     order.delivery_type = order_details.delivery_type
     order.payment_type = order_details.payment_type
     order.total_cost = order_details.total_cost

@@ -29,7 +29,7 @@ async def create_order(
     return {"orderId": order_id}
 
 
-@router.post("/orders/{order_id}", dependencies=[Depends(get_user_id)])
+@router.post("/orders/{order_id}")
 async def confirm_order(
     order_id: int,
     session: SessionDep,

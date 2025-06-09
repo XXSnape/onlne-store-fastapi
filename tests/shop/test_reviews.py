@@ -6,7 +6,6 @@ import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from catalog.database.repositories.review import ReviewRepository
-from core.utils.jwt import get_access_token
 from .clear_data import clear_date
 
 
@@ -30,17 +29,9 @@ async def test_review(ac: AsyncClient):
         "rating": 0,
         "fullDescription": "Нет полного описания",
     }
-    request = httpx.Request(
-        "POST",
-        "http://test/api/product/2/reviews",
-        json={"text": "Good Product2", "rate": 5},
-        cookies={
-            "access-token": get_access_token(
-                user_id=2, username="user2", is_admin=False
-            )
-        },
+    response = await ac.post(
+        "api/product/2/reviews", json={"text": "Good Product2", "rate": 5}
     )
-    response = await ac.send(request)
     reviews_data = response.json()
     reviews_data_copy = deepcopy(reviews_data)
     assert clear_date(
@@ -48,7 +39,7 @@ async def test_review(ac: AsyncClient):
     ) == [
         {
             "email": "Не указано",
-            "author": "user2",
+            "author": "user1",
             "rate": 5,
             "text": "Good Product2",
         }

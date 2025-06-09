@@ -1,20 +1,24 @@
+import httpx
 import pytest
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
 import re
 
+from core.utils.jwt import get_access_token
 from .utils import make_request_to_save_avatar
 from users.database.repositories.user import UserRepository
 from users.utils.auth import validate_password
 
 
 async def test_get_profile_without_correct_cookies(ac: AsyncClient):
-    old_cookies = ac.cookies
-    ac.cookies = {"access-token": "incorrect.token"}
-    resp1 = await ac.get("api/profile")
-    assert resp1.status_code == 401
-    ac.cookies = old_cookies
+    request = httpx.Request(
+        "GET",
+        "http://test/api/profile",
+        cookies={"access-token": "incorrect.token"},
+    )
+    response = await ac.send(request)
+    assert response.status_code == 401
 
 
 async def test_get_profile_with_correct_cookies(ac: AsyncClient):
@@ -36,20 +40,31 @@ async def test_update_profile(ac: AsyncClient, async_session: AsyncSession):
         "email": "new@mail.com",
         "phone": "79151234567",
     }
-    response1 = await ac.post(
-        "api/profile",
+    cookies = {
+        "access-token": get_access_token(
+            user_id=3, username="user3", is_admin=False
+        )
+    }
+    request1 = httpx.Request(
+        "POST",
+        "http://test/api/profile",
         json=data,
+        cookies=cookies,
     )
+    response1 = await ac.send(request1)
     assert response1.status_code == 422
     user = await UserRepository.get_user_profile(
-        session=async_session, user_id=1
+        session=async_session, user_id=3
     )
-    assert user.fullname == "Name Surname"
+    assert user.fullname == "Name3 Surname3"
     data.update(fullName="NewName NewSurname")
-    response2 = await ac.post(
-        "api/profile",
+    request2 = httpx.Request(
+        "POST",
+        "http://test/api/profile",
         json=data,
+        cookies=cookies,
     )
+    response2 = await ac.send(request2)
     assert response2.status_code == 200
     assert response2.json() == data | {"avatar": None}
     await async_session.refresh(user)
