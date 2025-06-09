@@ -70,6 +70,33 @@ async def init_db():
         categories[3].children = [categories[4]]
         categories[2].children = [categories[3]]
         categories[0].children = [categories[1], categories[2]]
+        order1 = OrderModel(
+            delivery_type=DeliveryTypeEnum.ordinary,
+            payment_type=PaymentTypeEnum.online,
+            status=OrderStatusEnum.paid,
+            city="city 1",
+            address="address 1",
+            total_cost=1200,
+            user_id=1,
+        )
+        order2 = OrderModel(
+            delivery_type=DeliveryTypeEnum.ordinary,
+            payment_type=PaymentTypeEnum.online,
+            status=OrderStatusEnum.paid,
+            city="city 2",
+            address="address 2",
+            total_cost=500,
+            user_id=2,
+        )
+        order3 = OrderModel(
+            delivery_type=DeliveryTypeEnum.ordinary,
+            payment_type=PaymentTypeEnum.online,
+            status=OrderStatusEnum.unpaid,
+            city="city 1",
+            address="address 1",
+            total_cost=400,
+            user_id=1,
+        )
 
         tags = [
             TagModel(name="Tag1", categories=[categories[0], categories[1]]),
@@ -78,29 +105,23 @@ async def init_db():
         ]
         products = [
             ProductModel(
-                title="Product1", price_per_unit=100, count=0, category_id=1
+                id=1,
+                title="Product1",
+                price_per_unit=100,
+                count=0,
+                category_id=1,
+                orders=[OrderProductModel(count=2, order=order3)],
             ),
             ProductModel(
+                id=2,
                 title="Product2",
                 price_per_unit=200,
                 count=10,
                 category_id=2,
-                orders=[
-                    OrderProductModel(
-                        count=2,
-                        order=OrderModel(
-                            delivery_type=DeliveryTypeEnum.ordinary,
-                            payment_type=PaymentTypeEnum.online,
-                            status=OrderStatusEnum.paid,
-                            city="city",
-                            address="address",
-                            total_cost=400,
-                            user_id=2,
-                        ),
-                    )
-                ],
+                orders=[OrderProductModel(count=2, order=order2)],
             ),
             ProductModel(
+                id=3,
                 title="Product3",
                 price_per_unit=300,
                 count=0,
@@ -108,6 +129,7 @@ async def init_db():
                 reviews=[ReviewModel(rate=1, text="Some text", user_id=1)],
             ),
             ProductModel(
+                id=4,
                 title="Product4",
                 price_per_unit=400,
                 count=4,
@@ -116,8 +138,13 @@ async def init_db():
                     ReviewModel(rate=1, text="Some text", user_id=1),
                     ReviewModel(rate=1, text="Some2 text", user_id=2),
                 ],
+                orders=[
+                    OrderProductModel(count=1, order=order1),
+                    OrderProductModel(count=1, order=order2),
+                ],
             ),
             ProductModel(
+                id=5,
                 title="Product5",
                 price_per_unit=500,
                 count=5,
@@ -125,6 +152,7 @@ async def init_db():
                 reviews=[ReviewModel(rate=2, text="Some text", user_id=1)],
             ),
             ProductModel(
+                id=6,
                 title="Product6",
                 price_per_unit=600,
                 count=6,
@@ -132,6 +160,7 @@ async def init_db():
                 reviews=[ReviewModel(rate=5, text="Some text", user_id=1)],
             ),
             ProductModel(
+                id=7,
                 title="Product7",
                 price_per_unit=700,
                 count=7,
@@ -141,6 +170,7 @@ async def init_db():
                 sale=SaleModel(sale_price=50, date_to=date(2030, 9, 6)),
             ),
             ProductModel(
+                id=8,
                 title="Product8",
                 price_per_unit=800,
                 count=8,
@@ -185,3 +215,21 @@ async def ac() -> AsyncGenerator[AsyncClient, None]:
         },
     ) as ac:
         yield ac
+
+
+# @pytest.fixture(scope="session")
+# async def ac_user2() -> AsyncGenerator[AsyncClient, None]:
+#     """
+#     Возвращает клиента для асинхронного взаимодействия с приложением внутри тестов.
+#     """
+#
+#     async with AsyncClient(
+#         transport=ASGITransport(app=app),
+#         base_url="http://test",
+#         cookies={
+#             "access-token": get_access_token(
+#                 user_id=1, username="user1", is_admin=False
+#             )
+#         },
+#     ) as ac:
+#         yield ac

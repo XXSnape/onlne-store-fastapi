@@ -1,8 +1,11 @@
 from copy import deepcopy
 
+import httpx
 from httpx import AsyncClient
 import pytest
+from sqlalchemy.ext.asyncio import AsyncSession
 
+from catalog.database.repositories.review import ReviewRepository
 from core.utils.jwt import get_access_token
 from .clear_data import clear_date
 
@@ -23,18 +26,21 @@ async def test_review(ac: AsyncClient):
         "freeDelivery": False,
         "tags": [{"id": 1, "name": "Tag1"}],
         "reviews": [],
+        "specifications": [],
         "rating": 0,
         "fullDescription": "Нет полного описания",
     }
-    old_cookies = ac.cookies
-    ac.cookies = {
-        "access-token": get_access_token(
-            user_id=2, username="user2", is_admin=False
-        )
-    }
-    response = await ac.post(
-        "api/product/2/reviews", json={"text": "Good Product2", "rate": 5}
+    request = httpx.Request(
+        "POST",
+        "http://test/api/product/2/reviews",
+        json={"text": "Good Product2", "rate": 5},
+        cookies={
+            "access-token": get_access_token(
+                user_id=2, username="user2", is_admin=False
+            )
+        },
     )
+    response = await ac.send(request)
     reviews_data = response.json()
     reviews_data_copy = deepcopy(reviews_data)
     assert clear_date(
@@ -53,4 +59,29 @@ async def test_review(ac: AsyncClient):
     result_product_data = response.json()
     result_product_data.pop("date")
     assert result_product_data == product_data
-    ac.cookies = old_cookies
+
+
+@pytest.mark.review
+@pytest.mark.parametrize("product_id", (1, 4))
+async def test_fail_repeat_review(
+    ac: AsyncClient, async_session: AsyncSession, product_id: int
+):
+    reviews_count_before_request = (
+        await ReviewRepository.count_number_objects_by_params(
+            session=async_session, data={"product_id": product_id}
+        )
+    )
+    response = await ac.get(f"api/product/{product_id}")
+    make_review_response = await ac.post(
+        f"api/product/{product_id}/reviews",
+        json={"text": "Good Product4", "rate": 5},
+    )
+    assert make_review_response.status_code == httpx.codes.UNPROCESSABLE_ENTITY
+    the_same_response = await ac.get(f"api/product/{product_id}")
+    assert response.json() == the_same_response.json()
+    assert (
+        reviews_count_before_request
+        == await ReviewRepository.count_number_objects_by_params(
+            session=async_session, data={"product_id": product_id}
+        )
+    )
