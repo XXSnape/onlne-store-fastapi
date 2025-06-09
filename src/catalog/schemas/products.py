@@ -12,9 +12,10 @@ from pydantic import (
 )
 from pydantic_core.core_schema import ValidationInfo
 
-from core import DateSchema, ImageSchema, settings
+from core import DateSchema, ImageSchema
 
 from .reviews import ReviewSchema
+from .specifications import SpecificationSchema
 from .tags import TagSchema
 
 short_date_serializer = PlainSerializer(
@@ -64,6 +65,7 @@ class ProductDetailsSchema(ProductGeneralSchema):
         ),
     ]
     reviews: list[ReviewSchema]
+    specifications: list[SpecificationSchema]
 
 
 class SaleProductsSchema(ProductBaseSchema):
