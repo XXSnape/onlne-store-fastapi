@@ -6,6 +6,7 @@ from datetime import date
 from typing import AsyncGenerator
 
 import pytest
+import sqlalchemy
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
 from redis import asyncio as aioredis
@@ -23,7 +24,9 @@ from catalog.database import (
     ProductModel,
     ReviewModel,
     SaleModel,
+    SpecificationModel,
 )
+from core import BaseModel
 from core.utils.jwt import get_access_token
 from orders.database import OrderProductModel, OrderModel
 from orders.utils.constants import (
@@ -44,6 +47,9 @@ async_session_maker = async_sessionmaker(
 
 @pytest.fixture(scope="session", autouse=True)
 async def init_db():
+    async with engine.begin() as conn:
+        await conn.run_sync(BaseModel.metadata.drop_all)
+        await conn.run_sync(BaseModel.metadata.create_all)
     async with async_session_maker() as session:
         session.add_all(
             [
@@ -130,7 +136,6 @@ async def init_db():
             ),
         ]
         session.add_all(categories + tags + products)
-        await session.commit()
         products = [
             ProductModel(
                 id=4,
@@ -181,10 +186,19 @@ async def init_db():
                 category_id=3,
                 reviews=[ReviewModel(rate=5, text="Some text", user_id=1)],
                 sale=SaleModel(sale_price=700, date_to=date(2030, 9, 7)),
+                specifications=[
+                    SpecificationModel(
+                        name="Spec1",
+                        value="Value1",
+                    ),
+                    SpecificationModel(
+                        name="Spec2",
+                        value="Value2",
+                    ),
+                ],
             ),
         ]
         session.add_all(products)
-
         await session.commit()
 
 
