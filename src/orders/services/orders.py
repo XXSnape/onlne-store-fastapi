@@ -1,3 +1,4 @@
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from catalog.database.repositories.product import ProductRepository
@@ -31,7 +32,15 @@ async def add_products_to_new_order(
             for product in products
         ]
     )
-    await session.commit()
+    try:
+
+        await session.commit()
+    except IntegrityError:
+        await session.rollback()
+        await OrderRepository.delete_object_by_params(
+            session=session, data={"id": order_id}
+        )
+        raise no_product_with_these_parameters_was_found
     return order_id
 
 
@@ -46,6 +55,8 @@ async def add_details_to_order(
         order_id=order_id,
         user_id=user_id,
     )
+    if not order:
+        raise not_found
     summ = sum(
         product_in_details.count * product_in_details.product.price
         for product_in_details in order.products
