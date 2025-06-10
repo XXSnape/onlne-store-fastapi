@@ -10,4 +10,3 @@ def clean_orders_from_dates(orders: list[dict]):
     for order in orders:
         clean_dates(order["products"])
     return orders
-
