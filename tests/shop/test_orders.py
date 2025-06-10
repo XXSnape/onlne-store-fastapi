@@ -200,7 +200,7 @@ async def test_order_creation_cycle(ac: AsyncClient):
         f"api/orders/{data['orderId']}",
         json=new_order_data,
     )
-    assert r2.status_code == 200
+    assert r2.status_code == httpx.codes.OK
     orders_with_confirmation = await ac.get("api/orders")
     orders_with_confirmation_data = clean_orders_from_dates(
         orders_with_confirmation.json()
@@ -223,7 +223,7 @@ async def test_order_creation_cycle(ac: AsyncClient):
             "code": 999,
         },
     )
-    assert pay_for_order.status_code == 200
+    assert pay_for_order.status_code == httpx.codes.OK
     orders_with_payment = await ac.get("api/orders")
     orders_with_confirmation_data[-1]["status"] = OrderStatusEnum.paid.value
     assert (
@@ -333,7 +333,7 @@ async def test_incorrect_total_cost(
         "api/orders",
         json=products,
     )
-    assert response.status_code == 200
+    assert response.status_code == httpx.codes.OK
     data = response.json()
     assert (
         await OrderRepository.count_number_objects_by_params(

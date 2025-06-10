@@ -1,3 +1,4 @@
+import httpx
 import pytest
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -30,7 +31,7 @@ async def test_sign_up_failed(
     ac: AsyncClient, async_session: AsyncSession, data: dict[str, str]
 ):
     response = await ac.post("api/sign-up", json=data)
-    assert response.status_code == 422
+    assert response.status_code == httpx.codes.UNPROCESSABLE_ENTITY
     assert bool(response.cookies) is False
     count = await UserRepository.count_number_objects_by_params(
         session=async_session, data=None
@@ -50,7 +51,7 @@ async def test_sign_up_passed(
             "password": "password",
         },
     )
-    assert response.status_code == 200
+    assert response.status_code == httpx.codes.OK
     count = await UserRepository.count_number_objects_by_params(
         session=async_session, data=None
     )
@@ -67,14 +68,14 @@ async def test_sign_up_passed(
     profile_response = await ac.get(
         "api/profile",
     )
-    assert profile_response.status_code == 200
+    assert profile_response.status_code == httpx.codes.OK
 
 
 async def test_sign_out(ac: AsyncClient):
     response = await ac.post(
         "api/sign-out",
     )
-    assert response.status_code == 200
+    assert response.status_code == httpx.codes.OK
 
 
 @pytest.mark.parametrize(
@@ -92,7 +93,7 @@ async def test_sign_out(ac: AsyncClient):
 )
 async def test_sign_in_failed(ac: AsyncClient, data: dict[str, str]):
     response = await ac.post("api/sign-in", json=data)
-    assert response.status_code == 401
+    assert response.status_code == httpx.codes.UNAUTHORIZED
     assert bool(response.cookies) is False
 
 
@@ -100,8 +101,8 @@ async def test_sign_in_passed(ac: AsyncClient):
     response = await ac.post(
         "api/sign-in", json={"username": "user1", "password": "qwerty"}
     )
-    assert response.status_code == 200
+    assert response.status_code == httpx.codes.OK
     profile_response = await ac.get(
         "api/profile",
     )
-    assert profile_response.status_code == 200
+    assert profile_response.status_code == httpx.codes.OK

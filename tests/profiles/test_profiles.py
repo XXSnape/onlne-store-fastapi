@@ -15,17 +15,22 @@ async def test_get_profile_without_correct_cookies(ac: AsyncClient):
     request = httpx.Request(
         "GET",
         "http://test/api/profile",
-        cookies={"access-token": "incorrect.token"},
+        cookies={
+            "access-token": get_access_token(
+                user_id=1, username="user1", is_admin=False
+            )
+            + "abc"
+        },
     )
     response = await ac.send(request)
-    assert response.status_code == 401
+    assert response.status_code == httpx.codes.UNAUTHORIZED
 
 
 async def test_get_profile_with_correct_cookies(ac: AsyncClient):
     profile_response = await ac.get(
         "api/profile",
     )
-    assert profile_response.status_code == 200
+    assert profile_response.status_code == httpx.codes.OK
     assert profile_response.json() == {
         "fullName": "Name Surname",
         "email": "Не указано",
@@ -52,7 +57,7 @@ async def test_update_profile(ac: AsyncClient, async_session: AsyncSession):
         cookies=cookies,
     )
     response1 = await ac.send(request1)
-    assert response1.status_code == 422
+    assert response1.status_code == httpx.codes.UNPROCESSABLE_ENTITY
     user = await UserRepository.get_user_profile(
         session=async_session, user_id=3
     )
@@ -65,7 +70,7 @@ async def test_update_profile(ac: AsyncClient, async_session: AsyncSession):
         cookies=cookies,
     )
     response2 = await ac.send(request2)
-    assert response2.status_code == 200
+    assert response2.status_code == httpx.codes.OK
     assert response2.json() == data | {"avatar": None}
     await async_session.refresh(user)
     assert (user.fullname, user.email, user.phone) == tuple(data.values())
@@ -88,7 +93,10 @@ async def test_change_password_failed(
     ac: AsyncClient, data: dict[str, str], async_session: AsyncSession
 ):
     response = await ac.post("api/profile/password", json=data)
-    assert response.status_code in (401, 422)
+    assert response.status_code in (
+        httpx.codes.UNAUTHORIZED,
+        httpx.codes.UNPROCESSABLE_ENTITY,
+    )
     user = await UserRepository.get_object_by_params(
         session=async_session, data={"id": 1}
     )
@@ -104,7 +112,7 @@ async def test_change_password_passed(
     response = await ac.post(
         "api/sign-in", json={"username": "user1", "password": "qwerty"}
     )
-    assert response.status_code == 200
+    assert response.status_code == httpx.codes.OK
     response = await ac.post(
         "api/profile/password",
         json={
@@ -112,15 +120,15 @@ async def test_change_password_passed(
             "newPassword": "new-password",
         },
     )
-    assert response.status_code == 200
+    assert response.status_code == httpx.codes.OK
     response = await ac.post(
         "api/sign-in", json={"username": "user1", "password": "qwerty"}
     )
-    assert response.status_code == 401
+    assert response.status_code == httpx.codes.UNAUTHORIZED
     response = await ac.post(
         "api/sign-in", json={"username": "user1", "password": "new-password"}
     )
-    assert response.status_code == 200
+    assert response.status_code == httpx.codes.OK
     user = await UserRepository.get_object_by_params(
         session=async_session, data={"id": 1}
     )
@@ -143,7 +151,7 @@ async def test_save_new_avatar(ac: AsyncClient, async_session: AsyncSession):
     avatar_response = await make_request_to_save_avatar(
         ac=ac, filename=filename
     )
-    assert avatar_response.status_code == 200
+    assert avatar_response.status_code == httpx.codes.OK
     response = await ac.get("api/profile")
     json = response.json()
     assert json["avatar"]["alt"] == filename
@@ -162,6 +170,6 @@ async def test_fail_save_avatar(ac: AsyncClient):
     avatar_response = await make_request_to_save_avatar(
         ac=ac, filename="bad-avatar.txt"
     )
-    assert avatar_response.status_code == 422
+    assert avatar_response.status_code == httpx.codes.UNPROCESSABLE_ENTITY
     response = await ac.get("api/profile")
     assert response.json() == json_response1
