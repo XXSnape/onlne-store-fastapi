@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 from typing import Any, Optional
 
 from fastapi import HTTPException, status
-from sqlalchemy import Row, insert, select, update, func
+from sqlalchemy import Row, insert, select, update, func, delete
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -247,3 +247,33 @@ class ManagerRepository(AbstractRepository):
             data = {}
         query = select(func.count(cls.model.id)).filter_by(**data)
         return await session.scalar(query)
+
+    @classmethod
+    async def delete_object_by_params(
+        cls,
+        session: AsyncSession,
+        data: dict,
+        commit_need=True,
+    ) -> bool:
+        """
+        Удаляет объекты из базы данных.
+
+        Параметры:
+
+        session: Сессия для асинхронной работы с базой данных
+        data: Словарь с данными, по которым будет осуществлен поиск объектов для удаления
+
+
+        commit_need: Принимает значения True или False.
+        Если установлен в True, то изменения будут сохранены в базе. По умолчанию True.
+
+        Возвращает True, если объекты были удалены и False в противном случае.
+        """
+        stmt = delete(cls.model).filter_by(**data).returning(cls.model.id)
+        result = await session.execute(stmt)
+        result = bool(result.fetchone())
+        if result is False:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+        if commit_need:
+            await session.commit()
+        return result
