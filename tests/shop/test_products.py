@@ -18,7 +18,6 @@ async def test_types_of_products(ac: AsyncClient, path: str, filename: str):
     assert data == upload_data(filename)
 
 
-
 async def test_sales(ac: AsyncClient):
     response = await ac.get("api/sales")
     data = response.json()
