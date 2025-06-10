@@ -1,8 +1,11 @@
 import datetime
 
+import httpx
 import pytest
 from httpx import AsyncClient
+from sqlalchemy.ext.asyncio import AsyncSession
 
+from orders.database.repositories.order import OrderRepository
 from orders.utils.constants import (
     DeliveryTypeEnum,
     PaymentTypeEnum,
@@ -281,3 +284,142 @@ async def test_order_creation_cycle(ac: AsyncClient):
             },
         ],
     }
+
+
+@pytest.mark.orders
+async def test_incorrect_total_cost(
+    ac: AsyncClient, async_session: AsyncSession
+):
+    count_before_creation = (
+        await OrderRepository.count_number_objects_by_params(
+            session=async_session, data={"user_id": 1}
+        )
+    )
+    d = datetime.datetime.now().isoformat()
+    products = [
+        {
+            "id": 5,
+            "price": "500.0000",
+            "title": "Product5",
+            "date": d,
+            "images": [],
+            "category": 2,
+            "count": 2,
+            "description": "Нет описания",
+            "freeDelivery": False,
+            "tags": [{"id": 1, "name": "Tag1"}],
+            "reviews": 1,
+            "rating": 2,
+        },
+        {
+            "id": 7,
+            "price": "50.0000",
+            "title": "Product7",
+            "date": d,
+            "images": [],
+            "category": 1,
+            "count": 3,
+            "description": "Нет описания",
+            "freeDelivery": True,
+            "tags": [
+                {"id": 1, "name": "Tag1"},
+                {"id": 2, "name": "Tag2"},
+            ],
+            "reviews": 1,
+            "rating": 4,
+        },
+    ]
+    response = await ac.post(
+        "api/orders",
+        json=products,
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert (
+        await OrderRepository.count_number_objects_by_params(
+            session=async_session, data={"user_id": 1}
+        )
+        == count_before_creation + 1
+    )
+    new_order_data = {
+        "id": data["orderId"],
+        "createdAt": d,
+        "fullName": "name",
+        "email": "example@gmail.com",
+        "phone": "78888888888",
+        "deliveryType": DeliveryTypeEnum.express.value,
+        "paymentType": PaymentTypeEnum.online.value,
+        "totalCost": "100.0000",
+        "status": OrderStatusEnum.unpaid.value,
+        "city": "city1",
+        "address": "address1",
+        "products": products,
+    }
+    r2 = await ac.post(
+        f"api/orders/{data['orderId']}",
+        json=new_order_data,
+    )
+    assert r2.status_code == httpx.codes.UNPROCESSABLE_ENTITY
+    assert (
+        await OrderRepository.count_number_objects_by_params(
+            session=async_session, data={"user_id": 1}
+        )
+        == count_before_creation
+    )
+
+
+@pytest.mark.orders
+async def test_confirm_paid_order(ac: AsyncClient):
+    d = datetime.datetime.now().isoformat()
+    products = [
+        {
+            "id": 5,
+            "price": "500.0000",
+            "title": "Product5",
+            "date": d,
+            "images": [],
+            "category": 2,
+            "count": 2,
+            "description": "Нет описания",
+            "freeDelivery": False,
+            "tags": [{"id": 1, "name": "Tag1"}],
+            "reviews": 1,
+            "rating": 2,
+        },
+        {
+            "id": 7,
+            "price": "50.0000",
+            "title": "Product7",
+            "date": d,
+            "images": [],
+            "category": 1,
+            "count": 3,
+            "description": "Нет описания",
+            "freeDelivery": True,
+            "tags": [
+                {"id": 1, "name": "Tag1"},
+                {"id": 2, "name": "Tag2"},
+            ],
+            "reviews": 1,
+            "rating": 4,
+        },
+    ]
+    order_data = {
+        "id": 1,
+        "createdAt": d,
+        "fullName": "name",
+        "email": "example@gmail.com",
+        "phone": "78888888888",
+        "deliveryType": DeliveryTypeEnum.express.value,
+        "paymentType": PaymentTypeEnum.online.value,
+        "totalCost": "1150.0000",
+        "status": OrderStatusEnum.unpaid.value,
+        "city": "city1",
+        "address": "address1",
+        "products": products,
+    }
+    response = await ac.post(
+        f"api/orders/1",
+        json=order_data,
+    )
+    assert response.status_code == httpx.codes.NOT_FOUND
