@@ -51,10 +51,10 @@ async def add_details_to_order(
         for product_in_details in order.products
     )
     if summ != order_details.total_cost:
-        await session.delete(order)
-        await session.commit()
+        await OrderRepository.delete_object_by_params(
+            session=session, data={"id": order.id}
+        )
         raise no_product_with_these_parameters_was_found
-
     order.delivery_type = order_details.delivery_type
     order.payment_type = order_details.payment_type
     order.total_cost = order_details.total_cost
