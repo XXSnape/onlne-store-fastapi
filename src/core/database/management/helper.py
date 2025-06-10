@@ -4,7 +4,6 @@
 
 from collections.abc import AsyncGenerator
 
-from sqlalchemy import NullPool
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
     async_sessionmaker,
@@ -30,7 +29,7 @@ class DBHelper:
         Если установлен в True, то в консоль будут выводиться запросы к базе. По умолчанию False.
         """
         self.engine = create_async_engine(
-            url=url, echo=echo, poolclass=NullPool
+            url=url, echo=echo
         )  # Двигатель для работы с асинхронной базой данных
         self.session_factory = async_sessionmaker(
             bind=self.engine,
