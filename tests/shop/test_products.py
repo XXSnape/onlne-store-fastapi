@@ -2,6 +2,8 @@ import pytest
 from httpx import AsyncClient
 from .data import clean_dates, upload_data
 
+type query_params = dict[str, int | bool | str]
+
 
 @pytest.mark.parametrize(
     "path, filename",
@@ -44,14 +46,6 @@ async def test_sales(ac: AsyncClient):
         ],
         "lastPage": 1,
     }
-
-
-# (name_search.json, by_prices.json,
-# priced_and_unavailable.json, priced_and_unavailable_2.json,
-# search_by_category.json, search_by_tag.json, search_by_tags.json,
-# free_delivery_products.json, sort_by_price.json, sort_by_rating.json,
-# sort_by_rating_increment.json, sort_by_reviews_1.json, sort_by_reviews_2.json,
-# big_limit.json, small_limit.json)
 
 
 @pytest.mark.parametrize(
@@ -178,9 +172,7 @@ async def test_sales(ac: AsyncClient):
         ),
     ],
 )
-async def test_catalog(
-    ac: AsyncClient, params: dict[str, int | bool | str], filename: str
-):
+async def test_catalog(ac: AsyncClient, params: query_params, filename: str):
 
     response = await ac.get(
         "api/catalog",
@@ -205,7 +197,7 @@ async def test_catalog(
         {"currentPage": 3},
     ],
 )
-async def test_empty_catalog(ac: AsyncClient, params):
+async def test_empty_catalog(ac: AsyncClient, params: query_params):
     response = await ac.get(
         "api/catalog",
         params=params,

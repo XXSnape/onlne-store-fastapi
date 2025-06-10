@@ -11,130 +11,28 @@ from orders.utils.constants import (
     PaymentTypeEnum,
     OrderStatusEnum,
 )
-from .data import clean_orders_from_dates, clean_dates
+from .data import clean_orders_from_dates, clean_dates, upload_data
+from copy import deepcopy
 
 
 @pytest.mark.orders
 async def test_order_creation_cycle(ac: AsyncClient):
-    d = datetime.datetime.now().isoformat()
-    orders = await ac.get("api/orders")
-    initial_orders_data = orders.json()
+    initial_orders_response = await ac.get("api/orders")
+    initial_orders_data = initial_orders_response.json()
     clean_orders_from_dates(initial_orders_data)
+    user1_orders = upload_data("user1_orders.json")
 
-    assert initial_orders_data == [
-        {
-            "id": 1,
-            "fullName": "Name Surname",
-            "email": "Не указано",
-            "phone": "Не указано",
-            "deliveryType": "ordinary",
-            "paymentType": "online",
-            "totalCost": "800.0000",
-            "status": "paid",
-            "city": "city 1",
-            "address": "address 1",
-            "products": [
-                {
-                    "id": 2,
-                    "price": "200.0000",
-                    "title": "Product2",
-                    "images": [],
-                    "category": 2,
-                    "count": 2,
-                    "description": "Нет описания",
-                    "freeDelivery": False,
-                    "tags": [{"id": 1, "name": "Tag1"}],
-                    "reviews": 0,
-                    "rating": 0,
-                },
-                {
-                    "id": 4,
-                    "price": "400.0000",
-                    "title": "Product4",
-                    "images": [],
-                    "category": 2,
-                    "count": 1,
-                    "description": "Нет описания",
-                    "freeDelivery": False,
-                    "tags": [{"id": 1, "name": "Tag1"}],
-                    "reviews": 2,
-                    "rating": 1,
-                },
-            ],
-        },
-        {
-            "id": 3,
-            "fullName": "Name Surname",
-            "email": "Не указано",
-            "phone": "Не указано",
-            "deliveryType": "ordinary",
-            "paymentType": "online",
-            "totalCost": "200.0000",
-            "status": "unpaid",
-            "city": "city 1",
-            "address": "address 1",
-            "products": [
-                {
-                    "id": 1,
-                    "price": "100.0000",
-                    "title": "Product1",
-                    "images": [],
-                    "category": 1,
-                    "count": 2,
-                    "description": "Нет описания",
-                    "freeDelivery": False,
-                    "tags": [
-                        {"id": 1, "name": "Tag1"},
-                        {"id": 2, "name": "Tag2"},
-                    ],
-                    "reviews": 0,
-                    "rating": 0,
-                }
-            ],
-        },
-    ]
-
-    products = [
-        {
-            "id": 5,
-            "price": "500.0000",
-            "title": "Product5",
-            "date": d,
-            "images": [],
-            "category": 2,
-            "count": 2,
-            "description": "Нет описания",
-            "freeDelivery": False,
-            "tags": [{"id": 1, "name": "Tag1"}],
-            "reviews": 1,
-            "rating": 2,
-        },
-        {
-            "id": 7,
-            "price": "50.0000",
-            "title": "Product7",
-            "date": d,
-            "images": [],
-            "category": 1,
-            "count": 3,
-            "description": "Нет описания",
-            "freeDelivery": True,
-            "tags": [
-                {"id": 1, "name": "Tag1"},
-                {"id": 2, "name": "Tag2"},
-            ],
-            "reviews": 1,
-            "rating": 4,
-        },
-    ]
+    assert initial_orders_data == user1_orders
+    products = upload_data("products_to_order.json")
+    products_without_dates = clean_dates(deepcopy(products))
     response = await ac.post(
         "api/orders",
         json=products,
     )
-    data = response.json()
-    orders_without_confirmation = await ac.get("api/orders")
+    created_order_data = response.json()
+    orders_without_confirmation_response = await ac.get("api/orders")
     orders_without_confirmation_data = clean_orders_from_dates(
-        orders_without_confirmation.json()
+        orders_without_confirmation_response.json()
     )
     assert orders_without_confirmation_data == initial_orders_data + [
         {
@@ -148,43 +46,13 @@ async def test_order_creation_cycle(ac: AsyncClient):
             "status": "unpaid",
             "city": None,
             "address": None,
-            "products": [
-                {
-                    "id": 5,
-                    "price": "500.0000",
-                    "title": "Product5",
-                    "images": [],
-                    "category": 2,
-                    "count": 2,
-                    "description": "Нет описания",
-                    "freeDelivery": False,
-                    "tags": [{"id": 1, "name": "Tag1"}],
-                    "reviews": 1,
-                    "rating": 2,
-                },
-                {
-                    "id": 7,
-                    "price": "50.0000",
-                    "title": "Product7",
-                    "images": [],
-                    "category": 1,
-                    "count": 3,
-                    "description": "Нет описания",
-                    "freeDelivery": True,
-                    "tags": [
-                        {"id": 1, "name": "Tag1"},
-                        {"id": 2, "name": "Tag2"},
-                    ],
-                    "reviews": 1,
-                    "rating": 4,
-                },
-            ],
+            "products": products_without_dates,
         }
     ]
 
     new_order_data = {
-        "id": data["orderId"],
-        "createdAt": d,
+        "id": created_order_data["orderId"],
+        "createdAt": "2025-06-10T19:03:11.294955",
         "fullName": "name",
         "email": "example@gmail.com",
         "phone": "78888888888",
@@ -196,11 +64,11 @@ async def test_order_creation_cycle(ac: AsyncClient):
         "address": "address1",
         "products": products,
     }
-    r2 = await ac.post(
-        f"api/orders/{data['orderId']}",
+    confirm_order_response = await ac.post(
+        f"api/orders/{created_order_data['orderId']}",
         json=new_order_data,
     )
-    assert r2.status_code == httpx.codes.OK
+    assert confirm_order_response.status_code == httpx.codes.OK
     orders_with_confirmation = await ac.get("api/orders")
     orders_with_confirmation_data = clean_orders_from_dates(
         orders_with_confirmation.json()
@@ -213,8 +81,8 @@ async def test_order_creation_cycle(ac: AsyncClient):
         address="address1",
     )
     assert orders_with_confirmation_data == orders_without_confirmation_data
-    pay_for_order = await ac.post(
-        f"api/payment/{data['orderId']}",
+    pay_for_order_response = await ac.post(
+        f"api/payment/{created_order_data['orderId']}",
         json={
             "number": "1234567890123456",
             "name": "name",
@@ -223,24 +91,24 @@ async def test_order_creation_cycle(ac: AsyncClient):
             "code": 999,
         },
     )
-    assert pay_for_order.status_code == httpx.codes.OK
-    orders_with_payment = await ac.get("api/orders")
+    assert pay_for_order_response.status_code == httpx.codes.OK
+    orders_with_payment_response = await ac.get("api/orders")
     orders_with_confirmation_data[-1]["status"] = OrderStatusEnum.paid.value
     assert (
-        clean_orders_from_dates(orders_with_payment.json())
+        clean_orders_from_dates(orders_with_payment_response.json())
         == orders_with_confirmation_data
     )
-    products = [
-        (
-            5,
-            3,
-        ),
+    leftover_products = [
+        (5, 3),
         (7, 4),
     ]
-    for product_id, count in products:
+    for index, (product_id, count) in enumerate(leftover_products):
         response = await ac.get(f"api/product/{product_id}")
         assert response.json()["count"] == count
-    order_details_response = await ac.get(f"api/orders/{data['orderId']}")
+        products[index]["count"] = count
+    order_details_response = await ac.get(
+        f"api/orders/{created_order_data['orderId']}"
+    )
     order_details_data = order_details_response.json()
     order_details_data.pop("createdAt")
     clean_dates(order_details_data["products"])
@@ -255,34 +123,7 @@ async def test_order_creation_cycle(ac: AsyncClient):
         "status": "paid",
         "city": "city1",
         "address": "address1",
-        "products": [
-            {
-                "id": 5,
-                "price": "500.0000",
-                "title": "Product5",
-                "images": [],
-                "category": 2,
-                "count": 2,
-                "description": "Нет описания",
-                "freeDelivery": False,
-                "tags": [{"id": 1, "name": "Tag1"}],
-                "reviews": 1,
-                "rating": 2,
-            },
-            {
-                "id": 7,
-                "price": "50.0000",
-                "title": "Product7",
-                "images": [],
-                "category": 1,
-                "count": 3,
-                "description": "Нет описания",
-                "freeDelivery": True,
-                "tags": [{"id": 1, "name": "Tag1"}, {"id": 2, "name": "Tag2"}],
-                "reviews": 1,
-                "rating": 4,
-            },
-        ],
+        "products": products_without_dates,
     }
 
 
@@ -295,40 +136,7 @@ async def test_incorrect_total_cost(
             session=async_session, data={"user_id": 1}
         )
     )
-    d = datetime.datetime.now().isoformat()
-    products = [
-        {
-            "id": 5,
-            "price": "500.0000",
-            "title": "Product5",
-            "date": d,
-            "images": [],
-            "category": 2,
-            "count": 2,
-            "description": "Нет описания",
-            "freeDelivery": False,
-            "tags": [{"id": 1, "name": "Tag1"}],
-            "reviews": 1,
-            "rating": 2,
-        },
-        {
-            "id": 7,
-            "price": "50.0000",
-            "title": "Product7",
-            "date": d,
-            "images": [],
-            "category": 1,
-            "count": 3,
-            "description": "Нет описания",
-            "freeDelivery": True,
-            "tags": [
-                {"id": 1, "name": "Tag1"},
-                {"id": 2, "name": "Tag2"},
-            ],
-            "reviews": 1,
-            "rating": 4,
-        },
-    ]
+    products = upload_data("products_to_order.json")
     response = await ac.post(
         "api/orders",
         json=products,
@@ -343,7 +151,7 @@ async def test_incorrect_total_cost(
     )
     new_order_data = {
         "id": data["orderId"],
-        "createdAt": d,
+        "createdAt": datetime.datetime.now().isoformat(),
         "fullName": "name",
         "email": "example@gmail.com",
         "phone": "78888888888",
@@ -355,11 +163,13 @@ async def test_incorrect_total_cost(
         "address": "address1",
         "products": products,
     }
-    r2 = await ac.post(
+    confirm_order_response = await ac.post(
         f"api/orders/{data['orderId']}",
         json=new_order_data,
     )
-    assert r2.status_code == httpx.codes.UNPROCESSABLE_ENTITY
+    assert (
+        confirm_order_response.status_code == httpx.codes.UNPROCESSABLE_ENTITY
+    )
     assert (
         await OrderRepository.count_number_objects_by_params(
             session=async_session, data={"user_id": 1}
@@ -371,39 +181,7 @@ async def test_incorrect_total_cost(
 @pytest.mark.orders
 async def test_confirm_paid_order(ac: AsyncClient):
     d = datetime.datetime.now().isoformat()
-    products = [
-        {
-            "id": 5,
-            "price": "500.0000",
-            "title": "Product5",
-            "date": d,
-            "images": [],
-            "category": 2,
-            "count": 2,
-            "description": "Нет описания",
-            "freeDelivery": False,
-            "tags": [{"id": 1, "name": "Tag1"}],
-            "reviews": 1,
-            "rating": 2,
-        },
-        {
-            "id": 7,
-            "price": "50.0000",
-            "title": "Product7",
-            "date": d,
-            "images": [],
-            "category": 1,
-            "count": 3,
-            "description": "Нет описания",
-            "freeDelivery": True,
-            "tags": [
-                {"id": 1, "name": "Tag1"},
-                {"id": 2, "name": "Tag2"},
-            ],
-            "reviews": 1,
-            "rating": 4,
-        },
-    ]
+    products = upload_data("products_to_order.json")
     order_data = {
         "id": 1,
         "createdAt": d,

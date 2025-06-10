@@ -1,0 +1,88 @@
+[
+    {
+        "id": 1,
+        "fullName": "Name Surname",
+        "email": "Не указано",
+        "phone": "Не указано",
+        "deliveryType": "ordinary",
+        "paymentType": "online",
+        "totalCost": "800.0000",
+        "status": "paid",
+        "city": "city 1",
+        "address": "address 1",
+        "products": [
+            {
+                "id": 2,
+                "price": "200.0000",
+                "title": "Product2",
+                "images": [],
+                "category": 2,
+                "count": 2,
+                "description": "Нет описания",
+                "freeDelivery": false,
+                "tags": [
+                    {
+                        "id": 1,
+                        "name": "Tag1"
+                    }
+                ],
+                "reviews": 0,
+                "rating": 0
+            },
+            {
+                "id": 4,
+                "price": "400.0000",
+                "title": "Product4",
+                "images": [],
+                "category": 2,
+                "count": 1,
+                "description": "Нет описания",
+                "freeDelivery": false,
+                "tags": [
+                    {
+                        "id": 1,
+                        "name": "Tag1"
+                    }
+                ],
+                "reviews": 2,
+                "rating": 1
+            }
+        ]
+    },
+    {
+        "id": 3,
+        "fullName": "Name Surname",
+        "email": "Не указано",
+        "phone": "Не указано",
+        "deliveryType": "ordinary",
+        "paymentType": "online",
+        "totalCost": "200.0000",
+        "status": "unpaid",
+        "city": "city 1",
+        "address": "address 1",
+        "products": [
+            {
+                "id": 1,
+                "price": "100.0000",
+                "title": "Product1",
+                "images": [],
+                "category": 1,
+                "count": 2,
+                "description": "Нет описания",
+                "freeDelivery": false,
+                "tags": [
+                    {
+                        "id": 1,
+                        "name": "Tag1"
+                    },
+                    {
+                        "id": 2,
+                        "name": "Tag2"
+                    }
+                ],
+                "reviews": 0,
+                "rating": 0
+            }
+        ]
+    }
+]
