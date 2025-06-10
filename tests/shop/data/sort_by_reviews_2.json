@@ -1,0 +1,46 @@
+{
+    "currentPage": 2,
+    "items": [
+        {
+            "id": 1,
+            "price": "100.0000",
+            "title": "Product1",
+            "images": [],
+            "category": 1,
+            "count": 0,
+            "description": "Нет описания",
+            "freeDelivery": false,
+            "tags": [
+                {
+                    "id": 1,
+                    "name": "Tag1"
+                },
+                {
+                    "id": 2,
+                    "name": "Tag2"
+                }
+            ],
+            "reviews": 0,
+            "rating": 0
+        },
+        {
+            "id": 2,
+            "price": "200.0000",
+            "title": "Product2",
+            "images": [],
+            "category": 2,
+            "count": 10,
+            "description": "Нет описания",
+            "freeDelivery": false,
+            "tags": [
+                {
+                    "id": 1,
+                    "name": "Tag1"
+                }
+            ],
+            "reviews": 0,
+            "rating": 0
+        }
+    ],
+    "lastPage": 2
+}

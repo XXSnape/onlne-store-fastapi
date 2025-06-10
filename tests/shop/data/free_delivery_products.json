@@ -1,0 +1,28 @@
+{
+    "currentPage": 1,
+    "items": [
+        {
+            "id": 7,
+            "price": "50.0000",
+            "title": "Product7",
+            "images": [],
+            "category": 1,
+            "count": 7,
+            "description": "Нет описания",
+            "freeDelivery": true,
+            "tags": [
+                {
+                    "id": 1,
+                    "name": "Tag1"
+                },
+                {
+                    "id": 2,
+                    "name": "Tag2"
+                }
+            ],
+            "reviews": 1,
+            "rating": 4
+        }
+    ],
+    "lastPage": 1
+}

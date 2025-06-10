@@ -1,0 +1,99 @@
+{
+    "currentPage": 1,
+    "items": [
+        {
+            "id": 8,
+            "price": "700.0000",
+            "title": "Product8",
+            "images": [],
+            "category": 3,
+            "count": 8,
+            "description": "Нет описания",
+            "freeDelivery": false,
+            "tags": [],
+            "reviews": 1,
+            "rating": 5
+        },
+        {
+            "id": 7,
+            "price": "50.0000",
+            "title": "Product7",
+            "images": [],
+            "category": 1,
+            "count": 7,
+            "description": "Нет описания",
+            "freeDelivery": true,
+            "tags": [
+                {
+                    "id": 1,
+                    "name": "Tag1"
+                },
+                {
+                    "id": 2,
+                    "name": "Tag2"
+                }
+            ],
+            "reviews": 1,
+            "rating": 4
+        },
+        {
+            "id": 6,
+            "price": "600.0000",
+            "title": "Product6",
+            "images": [],
+            "category": 1,
+            "count": 6,
+            "description": "Нет описания",
+            "freeDelivery": false,
+            "tags": [
+                {
+                    "id": 1,
+                    "name": "Tag1"
+                },
+                {
+                    "id": 2,
+                    "name": "Tag2"
+                }
+            ],
+            "reviews": 1,
+            "rating": 5
+        },
+        {
+            "id": 5,
+            "price": "500.0000",
+            "title": "Product5",
+            "images": [],
+            "category": 2,
+            "count": 5,
+            "description": "Нет описания",
+            "freeDelivery": false,
+            "tags": [
+                {
+                    "id": 1,
+                    "name": "Tag1"
+                }
+            ],
+            "reviews": 1,
+            "rating": 2
+        },
+        {
+            "id": 4,
+            "price": "400.0000",
+            "title": "Product4",
+            "images": [],
+            "category": 2,
+            "count": 4,
+            "description": "Нет описания",
+            "freeDelivery": false,
+            "tags": [
+                {
+                    "id": 1,
+                    "name": "Tag1"
+                }
+            ],
+            "reviews": 2,
+            "rating": 1
+        }
+    ],
+    "lastPage": 2
+}
