@@ -87,7 +87,7 @@ async def init_db():
             status=OrderStatusEnum.paid,
             city="city 1",
             address="address 1",
-            total_cost=1200,
+            total_cost=800,
             user_id=1,
         )
         order2 = OrderModel(
@@ -96,7 +96,7 @@ async def init_db():
             status=OrderStatusEnum.paid,
             city="city 2",
             address="address 2",
-            total_cost=500,
+            total_cost=400,
             user_id=2,
         )
         order3 = OrderModel(
@@ -105,10 +105,10 @@ async def init_db():
             status=OrderStatusEnum.unpaid,
             city="city 1",
             address="address 1",
-            total_cost=400,
+            total_cost=200,
             user_id=1,
         )
-
+        session.add_all([order1, order2, order3])
         tags = [
             TagModel(name="Tag1", categories=[categories[0], categories[1]]),
             TagModel(name="Tag2", categories=[categories[0]]),

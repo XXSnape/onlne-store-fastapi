@@ -1,12 +1,12 @@
 import pytest
 from httpx import AsyncClient
-from .clear_data import clear_date
+from .clear_data import clean_dates
 
 
 async def test_limited_products(ac: AsyncClient):
     response = await ac.get("api/products/limited")
     data = response.json()
-    clear_date(data)
+    clean_dates(data)
     assert data == [
         {
             "id": 1,
@@ -40,7 +40,7 @@ async def test_limited_products(ac: AsyncClient):
 async def test_banners(ac: AsyncClient):
     response = await ac.get("api/banners")
     data = response.json()
-    clear_date(data)
+    clean_dates(data)
     assert data == [
         {
             "id": 3,
@@ -113,7 +113,7 @@ async def test_banners(ac: AsyncClient):
 async def test_popular_products(ac: AsyncClient):
     response = await ac.get("api/products/popular")
     data = response.json()
-    clear_date(data)
+    clean_dates(data)
     assert data == [
         {
             "id": 3,
@@ -186,7 +186,7 @@ async def test_popular_products(ac: AsyncClient):
 async def test_sales(ac: AsyncClient):
     response = await ac.get("api/sales")
     data = response.json()
-    clear_date(data["items"], attrs=("dateFrom",))
+    clean_dates(data["items"], attrs=("dateFrom",))
     assert data == {
         "currentPage": 1,
         "items": [
@@ -1256,7 +1256,7 @@ async def test_catalog(ac: AsyncClient, params, result):
     )
 
     data = response.json()
-    clear_date(data["items"])
+    clean_dates(data["items"])
     assert data == result
 
 
@@ -1295,7 +1295,7 @@ async def test_product(ac: AsyncClient):
     response = await ac.get("api/product/8")
     data = response.json()
     data.pop("date")
-    clear_date(data["reviews"])
+    clean_dates(data["reviews"])
     assert data == {
         "id": 8,
         "price": "700.0000",

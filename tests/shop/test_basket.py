@@ -2,7 +2,7 @@ import http
 
 import httpx
 from httpx import AsyncClient
-from .clear_data import clear_date
+from .clear_data import clean_dates
 
 
 async def test_filling_and_removing_basket(ac: AsyncClient):
@@ -11,7 +11,7 @@ async def test_filling_and_removing_basket(ac: AsyncClient):
     add_product = await ac.post("api/basket", json={"id": 2, "count": 2})
     assert add_product.cookies.get("card-id") is not None
     add_product_data = add_product.json()
-    assert clear_date(add_product_data) == [
+    assert clean_dates(add_product_data) == [
         {
             "id": 2,
             "price": "200.0000",
@@ -28,11 +28,11 @@ async def test_filling_and_removing_basket(ac: AsyncClient):
     ]
 
     result_after_1_product = await ac.get("api/basket")
-    assert add_product_data == clear_date(result_after_1_product.json())
+    assert add_product_data == clean_dates(result_after_1_product.json())
 
     add_product2 = await ac.post("api/basket", json={"id": 4, "count": 1})
     add_product2_data = add_product2.json()
-    assert clear_date(add_product2_data) == add_product_data + [
+    assert clean_dates(add_product2_data) == add_product_data + [
         {
             "id": 4,
             "price": "400.0000",
@@ -50,14 +50,14 @@ async def test_filling_and_removing_basket(ac: AsyncClient):
     repeated_addition = await ac.post("api/basket", json={"id": 4, "count": 3})
     add_product2_data[-1]["count"] = 3
     repeated_addition_data = repeated_addition.json()
-    assert clear_date(repeated_addition_data) == add_product2_data
+    assert clean_dates(repeated_addition_data) == add_product2_data
     delete_product = await ac.request(
         method="delete", url="api/basket", json={"id": 2, "count": 2}
     )
     delete_product_data = delete_product.json()
-    assert clear_date(delete_product_data) == [repeated_addition_data[-1]]
+    assert clean_dates(delete_product_data) == [repeated_addition_data[-1]]
     result = await ac.get("api/basket")
-    assert clear_date(result.json()) == delete_product_data
+    assert clean_dates(result.json()) == delete_product_data
     await ac.request(
         method="delete", url="api/basket", json={"id": 4, "count": 3}
     )
@@ -71,7 +71,7 @@ async def test_incorrect_data(ac: AsyncClient):
     assert response.status_code == httpx.codes.UNPROCESSABLE_ENTITY
     basket = await ac.get("api/basket")
     data = basket.json()
-    assert clear_date(data) == [
+    assert clean_dates(data) == [
         {
             "id": 2,
             "price": "200.0000",
@@ -91,4 +91,4 @@ async def test_incorrect_data(ac: AsyncClient):
     add_product = await ac.post("api/basket", json={"id": 100, "count": 1})
     assert add_product.status_code == httpx.codes.NOT_FOUND
     basket = await ac.get("api/basket")
-    assert clear_date(basket.json()) == data
+    assert clean_dates(basket.json()) == data

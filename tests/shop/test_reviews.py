@@ -6,10 +6,10 @@ import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from catalog.database.repositories.review import ReviewRepository
-from .clear_data import clear_date
+from .clear_data import clean_dates
 
 
-@pytest.mark.review
+@pytest.mark.reviews
 async def test_review(ac: AsyncClient):
     response = await ac.get("api/product/2")
     product_data = response.json()
@@ -34,7 +34,7 @@ async def test_review(ac: AsyncClient):
     )
     reviews_data = response.json()
     reviews_data_copy = deepcopy(reviews_data)
-    assert clear_date(
+    assert clean_dates(
         reviews_data,
     ) == [
         {
