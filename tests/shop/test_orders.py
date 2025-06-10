@@ -11,7 +11,7 @@ from orders.utils.constants import (
     PaymentTypeEnum,
     OrderStatusEnum,
 )
-from .clear_data import clean_orders_from_dates, clean_dates
+from .data import clean_orders_from_dates, clean_dates
 
 
 @pytest.mark.orders

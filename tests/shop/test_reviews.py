@@ -6,7 +6,7 @@ import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from catalog.database.repositories.review import ReviewRepository
-from .clear_data import clean_dates
+from .data import clean_dates
 
 
 @pytest.mark.reviews
