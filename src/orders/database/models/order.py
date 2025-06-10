@@ -59,9 +59,14 @@ class OrderProductModel(ProductRelationshipMixin, BaseModel):
     )
     order: Mapped["OrderModel"] = relationship(back_populates="products")
 
+    def __getattribute__(self, item):
+        if item == "id":
+            return getattr(super().__getattribute__("product"), item)
+        return super().__getattribute__(item)
+
     def __getattr__(self, item: str):
         if item.startswith("_"):
-            return super().getattr(item)
+            return super().__getattr__(item)
         if item == "category":
             return getattr(super().__getattribute__("product"), "category_id")
         if item == "reviews":
