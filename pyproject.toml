@@ -19,14 +19,17 @@ fastapi-cache2 = {extras = ["redis"], version = "^0.2.2"}
 python-json-logger = "^3.2.1"
 itsdangerous = "^2.2.0"
 
-[tool.poetry.group.dev.dependencies]
+
+[tool.poetry.group.lint.dependencies]
 black = "^25.1.0"
-isort = "^6.0.0"
-flake8 = "^7.1.1"
+flake8 = "^7.2.0"
+isort = "^6.0.1"
+
+
+[tool.poetry.group.tests.dependencies]
 httpx = "^0.28.1"
-pytest = "^8.3.5"
+pytest = "^8.4.0"
 pytest-asyncio = "^1.0.0"
-pytest-cov = "^6.1.1"
 
 [tool.black]
 line-length = 79
