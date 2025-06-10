@@ -7,7 +7,10 @@ from sqlalchemy.sql.annotation import Annotated
 from starlette.responses import Response
 
 from catalog.database.repositories.product import ProductRepository
-from catalog.exceptions.count import too_many_products, there_are_no_items_in_cart
+from catalog.exceptions.count import (
+    there_are_no_items_in_cart,
+    too_many_products,
+)
 from catalog.schemas.basket import BasketInSchema
 from catalog.services.products import get_products
 from core import settings

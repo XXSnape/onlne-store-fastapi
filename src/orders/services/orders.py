@@ -1,11 +1,10 @@
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from catalog.database.repositories.product import ProductRepository
 from catalog.schemas.products import ProductGeneralSchema
 from core.exceptions.not_found import (
-    not_found,
     no_product_with_these_parameters_was_found,
+    not_found,
 )
 from orders.database import OrderModel, OrderProductModel
 from orders.database.repositories.order import (

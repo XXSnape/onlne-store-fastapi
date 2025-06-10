@@ -1,9 +1,8 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter
 from starlette.responses import Response
 
 from catalog.schemas.products import ProductGeneralSchema
 from core import SessionDep, UserIdDep
-from core.dependencies.user_by_cookie import get_user_id
 from orders.schemas.orders import OrderIdOutSchema, OrderInSchema, OrdersSchema
 from orders.services.orders import (
     add_details_to_order,

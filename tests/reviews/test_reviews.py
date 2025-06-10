@@ -1,8 +1,8 @@
 from copy import deepcopy
 
 import httpx
-from httpx import AsyncClient
 import pytest
+from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from catalog.database.repositories.review import ReviewRepository

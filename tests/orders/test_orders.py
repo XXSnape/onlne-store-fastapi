@@ -1,4 +1,5 @@
 import datetime
+from copy import deepcopy
 
 import httpx
 import pytest
@@ -8,12 +9,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from orders.database.repositories.order import OrderRepository
 from orders.utils.constants import (
     DeliveryTypeEnum,
-    PaymentTypeEnum,
     OrderStatusEnum,
+    PaymentTypeEnum,
 )
-from tests.utils import clean_orders_from_dates, clean_dates, upload_data
-
-from copy import deepcopy
+from tests.utils import clean_dates, clean_orders_from_dates, upload_data
 
 
 async def test_order_creation_cycle(ac: AsyncClient):

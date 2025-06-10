@@ -2,17 +2,17 @@
 Модуль с настройками для тестов.
 """
 
+import shutil
 from datetime import date
 from os import getenv
 from pathlib import Path
 from typing import AsyncGenerator
 
 import pytest
-import shutil
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
-from redis import asyncio as aioredis
 from httpx import ASGITransport, AsyncClient
+from redis import asyncio as aioredis
 from sqlalchemy import NullPool
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
@@ -22,19 +22,19 @@ from sqlalchemy.ext.asyncio import (
 
 from catalog.database import (
     CategoryModel,
-    TagModel,
     ProductModel,
     ReviewModel,
     SaleModel,
     SpecificationModel,
+    TagModel,
 )
 from core import BaseModel, db_helper
 from core.utils.jwt import get_access_token
-from orders.database import OrderProductModel, OrderModel
+from orders.database import OrderModel, OrderProductModel
 from orders.utils.constants import (
     DeliveryTypeEnum,
-    PaymentTypeEnum,
     OrderStatusEnum,
+    PaymentTypeEnum,
 )
 from src.core import settings
 from src.main import app

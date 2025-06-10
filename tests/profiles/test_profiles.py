@@ -1,13 +1,12 @@
+import re
+
 import httpx
 import pytest
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
-import re
-
 from core.utils.jwt import get_access_token
 from tests.utils import make_request_to_save_avatar
-
 from users.database.repositories.user import UserRepository
 from users.utils.auth import validate_password
 

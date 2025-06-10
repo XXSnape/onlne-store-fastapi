@@ -1,7 +1,7 @@
 from decimal import Decimal
-from typing import Sequence, Any, Coroutine
+from typing import Sequence
 
-from sqlalchemy import func, or_, select, desc, asc, MappingResult, Row
+from sqlalchemy import Row, asc, desc, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import (
     InstrumentedAttribute,
@@ -11,13 +11,13 @@ from sqlalchemy.orm import (
     selectinload,
 )
 from sqlalchemy.sql.functions import coalesce
+
 from catalog.database import (
     CategoryModel,
     ProductModel,
     ReviewModel,
     SaleModel,
     TagCategoryModel,
-    TagModel,
 )
 from catalog.schemas.catalog import FilterQuerySchema
 from catalog.utils.constants import SortingEnum, SortingTypeEnum

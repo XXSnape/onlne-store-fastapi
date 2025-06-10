@@ -59,7 +59,7 @@ async def get_sales_products(session: AsyncSession, current_page: int):
         ],
         current_page=current_page,
         items_count=count,
-        limit=settings.app.limit
+        limit=settings.app.limit,
     )
 
 
@@ -76,5 +76,5 @@ async def get_catalog(
         ],
         current_page=filtering_data.current_page,
         items_count=count,
-        limit=filtering_data.limit
+        limit=filtering_data.limit,
     )
