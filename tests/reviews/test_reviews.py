@@ -6,10 +6,9 @@ import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from catalog.database.repositories.review import ReviewRepository
-from .data import clean_dates
+from tests.utils import clean_dates
 
 
-@pytest.mark.reviews
 async def test_review(ac: AsyncClient):
     response = await ac.get("api/product/2")
     product_data = response.json()

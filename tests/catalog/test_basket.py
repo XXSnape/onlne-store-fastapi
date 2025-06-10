@@ -1,8 +1,7 @@
-import http
-
 import httpx
 from httpx import AsyncClient
-from .data import clean_dates
+
+from tests.utils import clean_dates
 
 
 async def test_filling_and_removing_basket(ac: AsyncClient):

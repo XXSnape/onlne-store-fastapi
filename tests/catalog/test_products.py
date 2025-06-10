@@ -1,6 +1,8 @@
 import pytest
 from httpx import AsyncClient
-from .data import clean_dates, upload_data
+
+from tests.utils import upload_data, clean_dates
+
 
 type query_params = dict[str, int | bool | str]
 

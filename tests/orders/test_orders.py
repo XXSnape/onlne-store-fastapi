@@ -11,11 +11,11 @@ from orders.utils.constants import (
     PaymentTypeEnum,
     OrderStatusEnum,
 )
-from .data import clean_orders_from_dates, clean_dates, upload_data
+from tests.utils import clean_orders_from_dates, clean_dates, upload_data
+
 from copy import deepcopy
 
 
-@pytest.mark.orders
 async def test_order_creation_cycle(ac: AsyncClient):
     initial_orders_response = await ac.get("api/orders")
     initial_orders_data = initial_orders_response.json()
@@ -127,7 +127,6 @@ async def test_order_creation_cycle(ac: AsyncClient):
     }
 
 
-@pytest.mark.orders
 async def test_incorrect_total_cost(
     ac: AsyncClient, async_session: AsyncSession
 ):
@@ -178,7 +177,6 @@ async def test_incorrect_total_cost(
     )
 
 
-@pytest.mark.orders
 async def test_confirm_paid_order(ac: AsyncClient):
     d = datetime.datetime.now().isoformat()
     products = upload_data("products_to_order.json")

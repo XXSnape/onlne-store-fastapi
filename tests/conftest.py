@@ -3,10 +3,12 @@
 """
 
 from datetime import date
+from os import getenv
+from pathlib import Path
 from typing import AsyncGenerator
 
 import pytest
-import sqlalchemy
+import shutil
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
 from redis import asyncio as aioredis
@@ -26,7 +28,7 @@ from catalog.database import (
     SaleModel,
     SpecificationModel,
 )
-from core import BaseModel
+from core import BaseModel, db_helper
 from core.utils.jwt import get_access_token
 from orders.database import OrderProductModel, OrderModel
 from orders.utils.constants import (
@@ -43,6 +45,21 @@ engine = create_async_engine(settings.db.url, poolclass=NullPool)
 async_session_maker = async_sessionmaker(
     engine, expire_on_commit=False, autoflush=False
 )
+
+
+@pytest.fixture(scope="session", autouse=True)
+def check_testing_env() -> None:
+    if getenv("LIMIT") != "5":
+        pytest.exit(
+            "Environment is not ready for testing",
+        )
+
+
+@pytest.fixture(scope="session", autouse=True)
+def delete_uploads():
+    yield
+    uploads = Path(__file__).resolve().parent / "uploads"
+    shutil.rmtree(uploads)
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -240,19 +257,14 @@ async def ac() -> AsyncGenerator[AsyncClient, None]:
         yield ac
 
 
-# @pytest.fixture(scope="session")
-# async def ac_user2() -> AsyncGenerator[AsyncClient, None]:
-#     """
-#     Возвращает клиента для асинхронного взаимодействия с приложением внутри тестов.
-#     """
-#
-#     async with AsyncClient(
-#         transport=ASGITransport(app=app),
-#         base_url="http://test",
-#         cookies={
-#             "access-token": get_access_token(
-#                 user_id=1, username="user1", is_admin=False
-#             )
-#         },
-#     ) as ac:
-#         yield ac
+async def override_get_async_session() -> AsyncGenerator[AsyncSession, None]:
+    """
+    Генерирует сессию для асинхронного взаимодействия с тестовой базой данных внутри приложения.
+    """
+    async with async_session_maker() as session:  # type: AsyncSession
+        yield session
+
+
+app.dependency_overrides[db_helper.get_async_session] = (
+    override_get_async_session
+)
