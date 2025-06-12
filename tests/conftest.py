@@ -49,7 +49,7 @@ async_session_maker = async_sessionmaker(
 
 @pytest.fixture(scope="session", autouse=True)
 def check_testing_env() -> None:
-    if getenv("LIMIT") != "5":
+    if getenv("LIMIT") != "5" or getenv("TESTING").lower() != "true":
         pytest.exit(
             "Environment is not ready for testing",
         )

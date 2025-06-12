@@ -7,21 +7,22 @@ def create_private_and_public_keys() -> None:
     """
     Генерирует закрытый и открытый ключи в директории certs, если их нет
     """
-    PATH = Path(__file__).parent / "src" / "core" / "certs"
-    if (len(os.listdir(PATH)) == 0) is False:
+    path = Path(__file__).parent / "src" / "core" / "certs"
+    path.mkdir(exist_ok=True)
+    if (len(os.listdir(path)) == 0) is False:
         return
-    subprocess.run(["openssl", "genrsa", "-out", PATH / "private.pem", "2048"])
+    subprocess.run(["openssl", "genrsa", "-out", path / "private.pem", "2048"])
     subprocess.run(
         [
             "openssl",
             "rsa",
             "-in",
-            PATH / "private.pem",
+            path / "private.pem",
             "-outform",
             "PEM",
             "-pubout",
             "-out",
-            PATH / "public.pem",
+            path / "public.pem",
         ]
     )
 
