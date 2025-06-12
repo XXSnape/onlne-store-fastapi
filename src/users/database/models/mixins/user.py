@@ -8,9 +8,9 @@ if TYPE_CHECKING:
 
 
 class UserRelationshipMixin:
-    _is_unique_user = False
-    _back_populates = None
-    _on_delete_user = "CASCADE"
+    _is_unique_user: bool = False
+    _back_populates: str | None = None
+    _on_delete_user: str = "CASCADE"
 
     @declared_attr
     def user_id(cls) -> Mapped[int]:

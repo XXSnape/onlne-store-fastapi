@@ -6,10 +6,12 @@ from jwt import InvalidTokenError
 from core import logger, settings
 from core.utils.jwt import decode_jwt
 
+type token_payload = dict[str, str | int]
+
 
 def get_token_payload(
     token: Annotated[str, Cookie(alias=settings.auth_jwt.cookie_key_token)],
-) -> dict[str, str | int]:
+) -> token_payload:
     """
     Декодирует токен и возвращает полезную нагрузку из него
     :param token: токен
@@ -28,10 +30,12 @@ def get_token_payload(
     return payload
 
 
-def get_user_id(payload: Annotated[dict, Depends(get_token_payload)]) -> int:
+def get_user_id(
+    payload: Annotated[token_payload, Depends(get_token_payload)],
+) -> int:
     """
-    Получает id пользователя
-    :param payload: Annotated[dict, Depends(get_token_payload)])
+    Получает полезную нагрузку токена
+    :param payload: Annotated[token_payload, Depends(get_token_payload)])
     :return: id пользователя
     """
     return int(payload.get("sub"))

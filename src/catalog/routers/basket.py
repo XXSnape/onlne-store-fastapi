@@ -62,6 +62,8 @@ async def delete_product(
         str | None, Cookie(alias=settings.app.cookie_key_card)
     ] = None,
 ):
+    """Удаляет все товары в корзине по идентификатору product_id
+    вне зависимости от аттрибута count параметра basket_in"""
     if card_id is None:
         return []
     return await delete_product_from_basket(

@@ -20,7 +20,7 @@ def get_filtering_options(
         Query(
             alias="filter[minPrice]",
         ),
-    ] = 1,
+    ] = Decimal(1),
     max_price: Annotated[
         Decimal | None,
         Query(

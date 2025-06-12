@@ -2,7 +2,6 @@ import datetime
 from copy import deepcopy
 
 import httpx
-import pytest
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -177,6 +176,7 @@ async def test_incorrect_total_cost(
 
 
 async def test_confirm_paid_order(ac: AsyncClient):
+    """Тестирует, что нельзя подменить данные уже оплаченного заказа"""
     d = datetime.datetime.now().isoformat()
     products = upload_data("products_to_order.json")
     order_data = {
@@ -194,7 +194,7 @@ async def test_confirm_paid_order(ac: AsyncClient):
         "products": products,
     }
     response = await ac.post(
-        f"api/orders/1",
+        "api/orders/1",
         json=order_data,
     )
     assert response.status_code == httpx.codes.NOT_FOUND

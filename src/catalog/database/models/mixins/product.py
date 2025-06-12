@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 class ProductRelationshipMixin:
     _is_unique_product = False
     _on_delete_product = "CASCADE"
-    _back_populates = None
+    _back_populates: str | None = None
 
     @declared_attr
     def product_id(cls) -> Mapped[int]:

@@ -10,7 +10,7 @@ from sqlalchemy import Row, delete, func, insert, select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from core import logger
+from core import BaseModel, logger
 
 OBJECT_NOT_CREATED_ERROR = "The object has not been created"
 
@@ -38,9 +38,6 @@ class AbstractRepository(ABC):
         exception_detail: Сообщение об ошибке, которое возникает во всех случаях,
         когда не удается создать объект
 
-        exception_foreign_constraint_detail: Сообщение об ошибке,
-        которое возникает из-за ограничений внешнего ключа
-
 
         Возвращает идентификатор добавленной записи.
         """
@@ -60,8 +57,6 @@ class AbstractRepository(ABC):
         session: Сессия для асинхронной работы с базой данных
         data: Словарь с данными, по которым будет осуществлен поиск объектов для удаления
 
-        exception_detail: Сообщение об ошибке, которое возникает в случаях, когда объект не был удален
-
         Возвращает True, если объекты были удалены и False в противном случае.
         """
         raise NotImplementedError
@@ -79,22 +74,6 @@ class AbstractRepository(ABC):
         data: Словарь с данными, по которым будет осуществлен поиск объекта
 
         Возвращает объект базы данных или None.
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    async def get_object_id_by_params(
-        self, session: AsyncSession, data: dict
-    ) -> bool:
-        """
-        Ищет объект в базе данных.
-
-        Параметры:
-
-        session: Сессия для асинхронной работы с базой данных
-        data: Словарь с данными, по которым будет осуществлен поиск объекта
-
-        Возвращает True, если объект существует, и False в противном случае.
         """
         raise NotImplementedError
 
@@ -120,23 +99,37 @@ class AbstractRepository(ABC):
         self, session: AsyncSession, data: dict | None
     ) -> int:
         """
-        Считает количество записей в таблице.
+        Считает количество записей в таблице по параметрам.
 
         Параметры:
 
         session: Сессия для асинхронной работы с базой данных
+        data: Данные для фильтрации
 
         Возвращает количество записей в таблице.
         """
         raise NotImplementedError
 
+    @abstractmethod
+    async def get_object_attrs_by_params(
+        self, *attrs: str, session: AsyncSession, data: dict
+    ) -> Row[tuple[Any]] | None:
+        """
+        Делает запрос только на запрашиваемые аттрибуты объекта
+
+        attrs: Аттрибуты
+        session: Сессия для асинхронной работы с базой данных
+        data: Данные для фильтрации
+
+        Возвращает аттрибуты объекта
+
+        """
+        raise NotImplementedError
+
 
 class ManagerRepository(AbstractRepository):
-    """
-    Класс - репозиторий, реализующий все методы абстрактного класса.
-    """
 
-    model = None  # Модель базы данных
+    model: type[BaseModel] | None = None  # Модель базы данных
 
     @classmethod
     async def create_object(
@@ -145,22 +138,7 @@ class ManagerRepository(AbstractRepository):
         data: dict,
         exception_detail: str = OBJECT_NOT_CREATED_ERROR,
     ) -> int:
-        """
-        Добавляет новый объект в базу данных.
 
-        Параметры:
-
-        session: Сессия для асинхронной работы с базой данных
-        data: Словарь с данными, которые должны быть добавлены в базу
-
-        exception_detail: Сообщение об ошибке, которое возникает во всех случаях,
-        когда не удается создать объект
-
-        exception_foreign_constraint_detail: Сообщение об ошибке,
-        которое возникает из-за ограничений внешнего ключа
-
-        Возвращает идентификатор добавленной записи.
-        """
         stmt = insert(cls.model).values(**data).returning(cls.model.id)
         try:
             result = await session.execute(stmt)
@@ -179,17 +157,6 @@ class ManagerRepository(AbstractRepository):
     async def update_object_by_params(
         cls, session: AsyncSession, filter_data: dict, update_data: dict
     ) -> bool:
-        """
-        Обновляет объекты по параметрам.
-
-        Параметры:
-
-        session: Сессия для асинхронной работы с базой данных
-        filter_data: Словарь с данными для фильтрации
-        update_data: Словарь с данными для обновления
-
-        Возвращает None
-        """
         stmt = (
             update(cls.model)
             .filter_by(**filter_data)
@@ -205,17 +172,7 @@ class ManagerRepository(AbstractRepository):
     @classmethod
     async def get_object_by_params(
         cls, session: AsyncSession, data: dict
-    ) -> Optional[model]:
-        """
-        Ищет объект в базе данных.
-
-        Параметры:
-
-        session: Сессия для асинхронной работы с базой данных
-        data: Словарь с данными, по которым будет осуществлен поиск объекта
-
-        Возвращает объект базы данных или None.
-        """
+    ) -> Optional[BaseModel]:
         query = select(cls.model).filter_by(**data)
         result = await session.execute(query)
         return result.scalar_one_or_none()
@@ -234,15 +191,6 @@ class ManagerRepository(AbstractRepository):
     async def count_number_objects_by_params(
         cls, session: AsyncSession, data: dict | None
     ) -> int:
-        """
-        Считает количество записей в таблице.
-
-        Параметры:
-
-        session: Сессия для асинхронной работы с базой данных
-
-        Возвращает количество записей в таблице.
-        """
         if data is None:
             data = {}
         query = select(func.count(cls.model.id)).filter_by(**data)
@@ -253,27 +201,11 @@ class ManagerRepository(AbstractRepository):
         cls,
         session: AsyncSession,
         data: dict,
-        commit_need=True,
     ) -> bool:
-        """
-        Удаляет объекты из базы данных.
-
-        Параметры:
-
-        session: Сессия для асинхронной работы с базой данных
-        data: Словарь с данными, по которым будет осуществлен поиск объектов для удаления
-
-
-        commit_need: Принимает значения True или False.
-        Если установлен в True, то изменения будут сохранены в базе. По умолчанию True.
-
-        Возвращает True, если объекты были удалены и False в противном случае.
-        """
         stmt = delete(cls.model).filter_by(**data).returning(cls.model.id)
         result = await session.execute(stmt)
         result = bool(result.fetchone())
         if result is False:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
-        if commit_need:
-            await session.commit()
+        await session.commit()
         return result

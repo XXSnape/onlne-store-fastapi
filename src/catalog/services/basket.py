@@ -1,9 +1,7 @@
 from secrets import token_urlsafe
 
-from fastapi import Cookie
 from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.sql.annotation import Annotated
 from starlette.responses import Response
 
 from catalog.database.repositories.product import ProductRepository
@@ -31,7 +29,7 @@ async def delete_product_from_basket(
     redis: Redis,
     product_id: int,
     response: Response,
-    card_id: Annotated[str, Cookie(alias=settings.app.cookie_key_card)],
+    card_id: str,
 ):
     card = await redis.hgetall(card_id)
     if not card:
@@ -56,9 +54,7 @@ async def add_product_to_basket(
     redis: Redis,
     basket_in: BasketInSchema,
     response: Response,
-    card_id: Annotated[
-        str | None, Cookie(alias=settings.app.cookie_key_card)
-    ] = None,
+    card_id: str | None = None,
 ):
     key_product = f"product_{basket_in.id}"
     product_quantity = await redis.get(key_product)
@@ -88,7 +84,10 @@ async def add_product_to_basket(
     )
 
 
-async def get_product_quantity(session: AsyncSession, product_id: int) -> int:
+async def get_product_quantity(
+    session: AsyncSession,
+    product_id: int,
+) -> int:
     count_data = await ProductRepository.get_object_attrs_by_params(
         "count", session=session, data={"id": product_id}
     )

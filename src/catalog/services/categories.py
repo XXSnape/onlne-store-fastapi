@@ -5,7 +5,7 @@ from catalog.database.repositories.category import CategoryRepository
 from catalog.schemas.categories import ParentCategorySchema
 
 
-def get_subcategories(subcategories: list, root: CategoryModel):
+def get_subcategories(subcategories: list[CategoryModel], root: CategoryModel):
     for children in root.children:
         if children.children:
             get_subcategories(subcategories=subcategories, root=children)

@@ -184,6 +184,8 @@ class ProductRepository(ManagerRepository):
 
         count_query = select(func.count()).select_from(query.subquery())
         count_result = await session.scalar(count_query)
+        if count_result is None:
+            count_result = 0
 
         if filtering_data.sort == SortingEnum.reviews:
             query = cls.get_query_with_ordering(
