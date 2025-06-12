@@ -6,17 +6,18 @@ ___
 
 * ### [FastAPI](https://fastapi.tiangolo.com/)
 * ### [Pydantic](https://docs.pydantic.dev/latest/)
-* ### [pydantic-settings](https://docs.pydantic.dev/latest/concepts/pydantic_settings/)
+* ### [Pydantic-settings](https://docs.pydantic.dev/latest/concepts/pydantic_settings/)
 * ### [SQLAlchemy](https://www.sqlalchemy.org/)
 * ### [Alembic](https://alembic.sqlalchemy.org/en/latest/)
 * ### [Postgres](https://www.postgresql.org/)
 * ### [PyJWT](https://pypi.org/project/PyJWT/)
-* ### [bcrypt](https://pypi.org/project/bcrypt/)
-* ### [sqladmin](https://aminalaee.dev/sqladmin/)
-* ### [fastapi-storages](https://aminalaee.dev/fastapi-storages/)
-* ### [fastapi-cache2](https://pypi.org/project/fastapi-cache2/)
-* ### [aioredis](https://aioredis.readthedocs.io/en/latest/)
-* ### [python-json-logger](https://pypi.org/project/python-json-logger/)
+* ### [Bcrypt](https://pypi.org/project/bcrypt/)
+* ### [Sqladmin](https://aminalaee.dev/sqladmin/)
+* ### [Fastapi-storages](https://aminalaee.dev/fastapi-storages/)
+* ### [Fastapi-cache2](https://pypi.org/project/fastapi-cache2/)
+* ### [Redis](https://pypi.org/project/redis/)
+* ### [Python-json-logger](https://pypi.org/project/python-json-logger/)
+* ### [Pytest](https://docs.pytest.org/en/stable/index.html)
 
 ## Api:
 * Фронтенд находится по адресу http://0.0.0.0:8000/
@@ -47,7 +48,28 @@ docker compose up
 После регистрации и входа в аккаунт, в cookie записывается JWT-токен, который используется
 для авторизации.
 
-## Данные в .env_template
+## Тестирование
+Чтобы запустить тесты, установите зависимости в виртуальное окружение
+```sh
+pip install poetry && poetry install
+```
+Запустите скрипт create_certs.py, если нет файлов private.pem и public.pem в директории src/core/certs
+```sh
+python create_certs.py
+```
+Создайте файл .env и перенесите туда всё из файла .env_test
+
+Запустите контейнеры с тестовым окружением, чтобы не менять реальные данные
+```sh
+docker compose -f docker-compose.test.yml up
+```
+Перейдите в директорию tests и запустите тесты
+```sh
+cd tests && pytest
+```
+
+
+## Данные в .env_template и .env_test
 
 #### DB_HOST - Хост базы данных
 #### DB_PORT - Порт базы данных
@@ -63,3 +85,5 @@ docker compose up
 #### ADMIN_LOGIN - Логин админа
 #### ADMIN_PASSWORD - Пароль админа
 
+#### LIMIT - Количество загружаемых товаров по умолчанию, для тестов должно быть равно 5
+#### TESTING - Параметр, принимающий значение True, если окружение готово к тестированию
