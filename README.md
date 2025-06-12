@@ -61,7 +61,7 @@ python create_certs.py
 
 Запустите контейнеры с тестовым окружением, чтобы не менять реальные данные
 ```sh
-docker compose -f docker-compose.test.yml up
+docker compose -f docker-compose.test.yml up -d
 ```
 Перейдите в директорию tests и запустите тесты
 ```sh
