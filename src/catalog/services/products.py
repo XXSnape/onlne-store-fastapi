@@ -24,7 +24,7 @@ async def get_products(
     ids: list[int] | None = None,
     context: dict | None = None,
 ):
-    products = await ProductRepository.get_small_info_about_products(
+    products = await ProductRepository.get_little_info_about_products(
         session=session,
         is_popular=is_popular,
         is_limited=is_limited,

@@ -60,7 +60,7 @@ class ProductRepository(ManagerRepository):
         )
 
     @classmethod
-    async def get_small_info_about_products(
+    async def get_little_info_about_products(
         cls,
         session: AsyncSession,
         is_popular: bool = False,

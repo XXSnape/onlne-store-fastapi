@@ -10,7 +10,8 @@ from sqlalchemy import Row, delete, func, insert, select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from core import BaseModel, logger
+from core import logger
+from core.database.models.base import BaseModel
 
 OBJECT_NOT_CREATED_ERROR = "The object has not been created"
 
